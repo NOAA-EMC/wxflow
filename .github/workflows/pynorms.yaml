@@ -19,4 +19,4 @@ jobs:
     - name: Run pycodestyle
       run: |
         cd $GITHUB_WORKSPACE
-        pycodestyle --verbose ./
+        pycodestyle --verbose --config ./.pycodestyle ./

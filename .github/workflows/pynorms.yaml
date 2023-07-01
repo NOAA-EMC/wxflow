@@ -19,4 +19,4 @@ jobs:
     - name: Run pycodestyle
       run: |
         cd $GITHUB_WORKSPACE
-        pycodestyle -v --config ./.pycodestyle --exclude='.git,.github' ./
+        pycodestyle --verbose ./

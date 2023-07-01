@@ -1,19 +1,19 @@
-# global workflow specific tools
+# Tools for Weather Workflows
 
-Python tools specifically for global applications
+Common set of tools used in weather workflows
 
 ## Installation
 Simple installation instructions
 ```sh
-$> git clone https://github.com/noaa-emc/global-workflow
-$> cd global-workflow/ush/python/pygw
+$> git clone https://github.com/noaa-emc/wxflow
+$> cd wxflow
 $> pip install .
 ```
 
-It is not required to install this package.  Instead, 
+It is not required to install this package.  Instead,
 ```sh
-$> cd global-workflow/ush/python/pygw
-$> export PYTHONPATH=$PWD/src/pygw
+$> cd wxflow
+$> export PYTHONPATH=${PWD}/src/wxflow
 ```
 would put this package in the `PYTHONPATH`
 
@@ -24,11 +24,11 @@ These instructions will be updated and the tools are under development.
 Simple instructions to enable executing pytests manually
 ```sh
 # Create a python virtual environment and step into it
-$> cd global-workflow/ush/python/pygw
+$> cd wxflow
 $> python3 -m venv venv
 $> source venv/bin/activate
 
-# Install pygw with the developer requirements
+# Install `wxflow` with the developer requirements
 (venv) $> pip install .[dev]
 
 # Run pytests

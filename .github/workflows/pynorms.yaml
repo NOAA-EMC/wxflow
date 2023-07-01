@@ -15,10 +15,8 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v3
-      with:
-        path: global-workflow
 
     - name: Run pycodestyle
       run: |
-        cd $GITHUB_WORKSPACE/global-workflow
+        cd $GITHUB_WORKSPACE
         pycodestyle -v --config ./.pycodestyle --exclude='.git,.github' ./

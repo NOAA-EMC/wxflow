@@ -4,9 +4,8 @@ on: [push, pull_request]
 jobs:
   run_pytests:
     runs-on: ubuntu-latest
-    name: Install pygw and run tests with pytests
+    name: Install wxflow and run tests with pytests
     strategy:
-      max-parallel: 1
       matrix:
         python: ["3.7", "3.8", "3.9", "3.10"]
 
@@ -22,15 +21,13 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          path: global-workflow
 
-      - name: Install pygw
+      - name: Install wxflow
         run: |
-          cd $GITHUB_WORKSPACE/global-workflow/ush/python/pygw
+          cd $GITHUB_WORKSPACE
           pip install .[dev]
 
       - name: Run pytests
         run: |
-          cd $GITHUB_WORKSPACE/global-workflow/ush/python/pygw
+          cd $GITHUB_WORKSPACE
           pytest -v src/tests

@@ -1,4 +1,4 @@
-from pygw.factory import Factory
+from wxflow.factory import Factory
 
 
 class Class1:
@@ -14,10 +14,10 @@ class Class2:
 def test_factory():
     _ = Factory('Test0')
     try:
-        from pygw.factory import Test0Factory
+        from wxflow.factory import Test0Factory
     # linter will likely throw an error here since 'Test0Factory' is not a valid module until runtime
     except ModuleNotFoundError:
-        raise AssertionError("'Test0Factory' was not found in the 'pygw.factory' module")
+        raise AssertionError("'Test0Factory' was not found in the 'wxflow.factory' module")
 
 
 def test_register():

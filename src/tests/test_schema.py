@@ -2,15 +2,15 @@
 Description
 -----------
 
-Unit-tests for `pygw.schema`.
+Unit-tests for `wxflow.schema`.
 """
 
 import os
 import pytest
-from pygw import schema
-from pygw.yaml_file import parse_yaml
-from pygw.schema import SchemaError
-from pygw.configuration import cast_strdict_as_dtypedict
+from wxflow import schema
+from wxflow.yaml_file import parse_yaml
+from wxflow.schema import SchemaError
+from wxflow.configuration import cast_strdict_as_dtypedict
 
 
 # Define the path to the YAML-formatted file containing the schema
@@ -24,7 +24,7 @@ def test_build_schema():
     Description
     -----------
 
-    This function tests the `pygw.schema.build_schema` function.
+    This function tests the `wxflow.schema.build_schema` function.
 
     """
 

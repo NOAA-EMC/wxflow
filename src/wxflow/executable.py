@@ -14,7 +14,7 @@ class Executable:
     Example:
     --------
 
-    >>> from pygw.executable import Executable
+    >>> from wxflow.executable import Executable
     >>> cmd = Executable('srun')  # Lets say we need to run command e.g. "srun"
     >>> cmd.add_default_arg('my_exec.x')  # Lets say we need to run the executable "my_exec.x"
     >>> cmd.add_default_arg('my_arg.yaml')  # Lets say we need to pass an argument to this executable e.g. "my_arg.yaml"

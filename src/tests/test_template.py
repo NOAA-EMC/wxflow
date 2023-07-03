@@ -1,5 +1,5 @@
 import os
-from pygw.template import TemplateConstants, Template
+from wxflow.template import TemplateConstants, Template
 
 
 def test_substitute_string_from_dict():

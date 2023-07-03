@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 import pytest
-from pygw.executable import Executable, which, CommandNotFoundError
+from wxflow.executable import Executable, which, CommandNotFoundError
 
 
 script = """#!/bin/bash

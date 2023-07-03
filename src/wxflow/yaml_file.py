@@ -195,7 +195,7 @@ def parse_yamltmpl(path: str, data: Dict = None) -> Dict[str, Any]:
     path : str
         the path to the yaml file
     data : Dict[str, Any], optional
-        the context for pygw.Template templating
+        the context for wxflow.Template templating
     Returns
     -------
     Dict[str, Any]

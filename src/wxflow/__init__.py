@@ -5,4 +5,4 @@ __docformat__ = "restructuredtext"
 
 import os
 
-pygw_directory = os.path.dirname(__file__)
+wxflow_directory = os.path.dirname(__file__)

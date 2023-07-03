@@ -1,5 +1,5 @@
-from pygw.logger import Logger
-from pygw.logger import logit
+from wxflow.logger import Logger
+from wxflow.logger import logit
 
 level = 'debug'
 number_of_log_msgs = 5

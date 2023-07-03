@@ -4,7 +4,7 @@
 
 from collections.abc import Callable
 
-from pygw.logger import Logger, logit
+from .logger import Logger, logit
 
 logger = Logger(level="error", colored_log=True)
 

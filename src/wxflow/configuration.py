@@ -6,8 +6,8 @@ from pathlib import Path
 from pprint import pprint
 from typing import Union, List, Dict, Any
 
-from pygw.attrdict import AttrDict
-from pygw.timetools import to_datetime
+from .attrdict import AttrDict
+from .timetools import to_datetime
 
 __all__ = ['Configuration', 'cast_as_dtype', 'cast_strdict_as_dtypedict']
 

@@ -1,5 +1,5 @@
 import os
-from pygw.file_utils import FileHandler
+from wxflow.file_utils import FileHandler
 
 
 def test_mkdir(tmp_path):

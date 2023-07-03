@@ -1,6 +1,6 @@
 import pytest
 
-from pygw.exceptions import WorkflowException
+from wxflow.exceptions import WorkflowException
 
 # ----
 
@@ -11,7 +11,7 @@ class TestError(WorkflowException):
     -----------
 
     This is the base-class for exceptions encountered within the
-    pygw/errors unit-tests module; it is a sub-class of Error.
+    wxflow/errors unit-tests module; it is a sub-class of Error.
 
     """
 

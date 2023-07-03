@@ -2,7 +2,7 @@ import os
 import pytest
 from datetime import datetime
 
-from pygw.configuration import Configuration, cast_as_dtype
+from wxflow.configuration import Configuration, cast_as_dtype
 
 file0 = """#!/bin/bash
 export SOME_ENVVAR1="${USER}"

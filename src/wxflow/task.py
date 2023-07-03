@@ -1,8 +1,8 @@
 import logging
 from typing import Dict
 
-from pygw.attrdict import AttrDict
-from pygw.timetools import add_to_datetime, to_timedelta
+from .attrdict import AttrDict
+from .timetools import add_to_datetime, to_timedelta
 
 logger = logging.getLogger(__name__.split('.')[-1])
 

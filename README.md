@@ -30,6 +30,7 @@ $> source venv/bin/activate
 
 # Install `wxflow` with the developer requirements
 (venv) $> pip install .[dev]
+# NOTE: on a macOS, may need to specify ."[dev]" if using zsh
 
 # Run pytests
 (venv) $> pytest -v

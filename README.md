@@ -1,3 +1,6 @@
+[![pynorms](https://github.com/NOAA-EMC/wxflow/actions/workflows/pynorms.yaml/badge.svg)](https://github.com/NOAA-EMC/wxflow/actions/workflows/pynorms.yaml)
+[![pytests](https://github.com/NOAA-EMC/wxflow/actions/workflows/pytests.yaml/badge.svg)](https://github.com/NOAA-EMC/wxflow/actions/workflows/pytests.yaml)
+
 # Tools for Weather Workflows
 
 Common set of tools used in weather workflows

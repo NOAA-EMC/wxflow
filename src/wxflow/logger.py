@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Union, List
 import logging
 
+__all__ = ['Logger', 'logit']
+
 
 class ColoredFormatter(logging.Formatter):
     """

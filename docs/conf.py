@@ -18,7 +18,9 @@ author = 'NOAA/NWS/NCEP/EMC'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    "sphinx.ext.napoleon",
     "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode"
 ]
 
 templates_path = ['_templates']
@@ -32,3 +34,5 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = ["_themes", ]
 html_static_path = ['_static']
+
+autoclass_content = 'both'

@@ -12,6 +12,9 @@ wxflow
 .. image:: https://github.com/NOAA-EMC/wxflow/workflows/pytests/badge.svg
    :target: https://github.com/NOAA-EMC/wxflow/actions/workflows/pytests.yaml
    :alt: pytests
+.. image:: https://readthedocs.org/projects/wxflow/badge/?version=latest
+    :target: https://wxflow.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
 A Python library of common tools used in weather workflows.
 

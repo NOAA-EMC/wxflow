@@ -1,6 +1,7 @@
+![PyPI](https://img.shields.io/pypi/v/:wxflow)
 [![pynorms](https://github.com/NOAA-EMC/wxflow/actions/workflows/pynorms.yaml/badge.svg)](https://github.com/NOAA-EMC/wxflow/actions/workflows/pynorms.yaml)
 [![pytests](https://github.com/NOAA-EMC/wxflow/actions/workflows/pytests.yaml/badge.svg)](https://github.com/NOAA-EMC/wxflow/actions/workflows/pytests.yaml)
-![PyPI](https://img.shields.io/pypi/v/:wxflow)
+[![Documentation Status](https://readthedocs.org/projects/wxflow/badge/?version=latest)](https://wxflow.readthedocs.io/en/latest/?badge=latest)
 
 # Tools for Weather Workflows
 

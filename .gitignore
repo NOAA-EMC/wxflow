@@ -128,9 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Sphinx documentation
-docs/_build/
-
 # Editor backup files (Emacs, vim)
 *~
 *.sw[a-p]

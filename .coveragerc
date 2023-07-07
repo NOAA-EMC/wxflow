@@ -1,0 +1,41 @@
+# .coveragerc to control code coverage tool
+# https://coverage.readthedocs.io/en/latest/config.html
+
+[run]
+# Path where source is stored
+source = wxflow/
+
+# Omit some source code patterns when computing code coverage
+omit =
+    setup.py
+
+# whether to measure branch coverage in addition to statement coverage.
+# https://coverage.readthedocs.io/en/latest/branch.html#branch
+branch = True
+
+[report]
+# number of digits after the decimal point to display for reported coverage percentages
+precision = 2
+
+# when running a summary report in terminal, show missing lines
+# show_missing = True
+
+# don’t report files that are 100% covered. This helps you focus on files that need attention.
+# skip_covered = True
+
+# don’t report files that have no executable code (such as __init__.py files)
+skip_empty = True
+
+[html]
+# where to write the HTML report files
+directory = htmlcov
+
+# title of HTML page
+title = Leaspy - Code coverage report
+
+# To view the dynamic context (cf. above) in HTML report
+show_contexts = True
+
+[xml]
+# where to write the XML report
+output = coverage.xml

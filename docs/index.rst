@@ -15,6 +15,9 @@ wxflow
 .. image:: https://readthedocs.org/projects/wxflow/badge/?version=latest
     :target: https://wxflow.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
+.. image:: https://codecov.io/gh/noaa-emc/wxflow/branch/develop/graph/badge.svg?token=JWTPE8Z7MH
+   :target: https://codecov.io/gh/noaa-emc/wxflow
+   :alt: Codecov
 
 A Python library of common tools used in weather workflows.
 

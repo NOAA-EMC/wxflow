@@ -2,6 +2,7 @@
 [![pynorms](https://github.com/NOAA-EMC/wxflow/actions/workflows/pynorms.yaml/badge.svg)](https://github.com/NOAA-EMC/wxflow/actions/workflows/pynorms.yaml)
 [![pytests](https://github.com/NOAA-EMC/wxflow/actions/workflows/pytests.yaml/badge.svg)](https://github.com/NOAA-EMC/wxflow/actions/workflows/pytests.yaml)
 [![Documentation Status](https://readthedocs.org/projects/wxflow/badge/?version=latest)](https://wxflow.readthedocs.io/en/latest/?badge=latest)
+[![codecov](https://codecov.io/gh/noaa-emc/wxflow/branch/develop/graph/badge.svg?token=JWTPE8Z7MH)](https://codecov.io/gh/noaa-emc/wxflow)
 
 # Tools for Weather Workflows
 

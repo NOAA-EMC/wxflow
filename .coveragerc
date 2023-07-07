@@ -30,9 +30,6 @@ skip_empty = True
 # where to write the HTML report files
 directory = htmlcov
 
-# title of HTML page
-title = Leaspy - Code coverage report
-
 # To view the dynamic context (cf. above) in HTML report
 show_contexts = True
 

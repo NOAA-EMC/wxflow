@@ -4,7 +4,7 @@ import random
 import subprocess
 from pathlib import Path
 from pprint import pprint
-from typing import Union, List, Dict, Any
+from typing import Any, Dict, List, Union
 
 from .attrdict import AttrDict
 from .timetools import to_datetime

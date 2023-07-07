@@ -6,11 +6,13 @@ Unit-tests for `wxflow.schema`.
 """
 
 import os
+
 import pytest
+
 from wxflow import schema
-from wxflow.yaml_file import parse_yaml
-from wxflow.schema import SchemaError
 from wxflow.configuration import cast_strdict_as_dtypedict
+from wxflow.schema import SchemaError
+from wxflow.yaml_file import parse_yaml
 
 
 # Define the path to the YAML-formatted file containing the schema

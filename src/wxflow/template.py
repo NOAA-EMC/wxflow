@@ -1,6 +1,6 @@
-import re
-import os
 import copy
+import os
+import re
 from collections import namedtuple
 from collections.abc import Sequence
 

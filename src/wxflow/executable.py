@@ -2,7 +2,7 @@ import os
 import shlex
 import subprocess
 import sys
-from typing import Any, Optional, Union, List
+from typing import Any, List, Optional, Union
 
 __all__ = ["Executable", "which", "CommandNotFoundError"]
 

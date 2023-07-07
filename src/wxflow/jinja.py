@@ -1,12 +1,14 @@
 import io
 import os
 import sys
-import jinja2
-from markupsafe import Markup
 from pathlib import Path
 from typing import Dict
 
-from .timetools import strftime, to_YMDH, to_YMD, to_fv3time, to_isotime, to_julian
+import jinja2
+from markupsafe import Markup
+
+from .timetools import (strftime, to_fv3time, to_isotime, to_julian, to_YMD,
+                        to_YMDH)
 
 __all__ = ['Jinja']
 

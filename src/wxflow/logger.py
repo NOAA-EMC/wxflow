@@ -2,12 +2,12 @@
 Logger
 """
 
+import logging
 import os
 import sys
 from functools import wraps
 from pathlib import Path
-from typing import Union, List
-import logging
+from typing import List, Union
 
 __all__ = ['Logger', 'logit']
 

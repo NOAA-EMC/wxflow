@@ -2,4 +2,4 @@
 count = False
 max-line-length = 160
 statistics = True
-exclude = .git,.github
+exclude = .git,.github,venv,.vscode

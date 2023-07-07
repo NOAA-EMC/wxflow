@@ -1,7 +1,7 @@
-import os
-import errno
-import shutil
 import contextlib
+import errno
+import os
+import shutil
 
 __all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp']
 

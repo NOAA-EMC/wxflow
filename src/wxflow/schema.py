@@ -4,9 +4,8 @@ parsing, converted from JSON/YAML (or something else) to Python data-types."""
 
 import inspect
 import re
-
-from typing import Dict
 from pydoc import locate
+from typing import Dict
 
 try:
     from contextlib import ExitStack

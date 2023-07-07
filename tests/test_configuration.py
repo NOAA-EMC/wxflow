@@ -1,6 +1,7 @@
 import os
-import pytest
 from datetime import datetime
+
+import pytest
 
 from wxflow.configuration import Configuration, cast_as_dtype
 

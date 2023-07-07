@@ -1,6 +1,7 @@
+from datetime import datetime
+
 import pytest
 
-from datetime import datetime
 from wxflow.jinja import Jinja
 from wxflow.timetools import to_isotime
 

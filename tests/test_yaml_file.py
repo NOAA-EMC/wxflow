@@ -1,7 +1,10 @@
 import os
-import pytest
 from datetime import datetime
-from wxflow.yaml_file import YAMLFile, parse_yamltmpl, parse_j2yaml, save_as_yaml, dump_as_yaml
+
+import pytest
+
+from wxflow.yaml_file import (YAMLFile, dump_as_yaml, parse_j2yaml,
+                              parse_yamltmpl, save_as_yaml)
 
 host_yaml = """
 host:

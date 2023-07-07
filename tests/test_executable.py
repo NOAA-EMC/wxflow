@@ -1,8 +1,9 @@
 import os
 from pathlib import Path
-import pytest
-from wxflow.executable import Executable, which, CommandNotFoundError
 
+import pytest
+
+from wxflow.executable import CommandNotFoundError, Executable, which
 
 script = """#!/bin/bash
 echo ${USER}

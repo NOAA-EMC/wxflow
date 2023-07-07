@@ -1,6 +1,5 @@
-import re
 import datetime
-
+import re
 
 __all__ = ["to_datetime", "to_timedelta",
            "datetime_to_YMDH", "datetime_to_YMD", "datetime_to_JDAY",

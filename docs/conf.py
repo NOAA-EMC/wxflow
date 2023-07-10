@@ -6,10 +6,11 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+import datetime
 import os
 import sys
-import datetime
 from typing import Any, Dict
+
 import wxflow
 
 sys.path.insert(0, os.path.abspath("."))

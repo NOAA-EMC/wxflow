@@ -25,13 +25,13 @@ and then clone it locally.
    $ git clone https://github.com/yourusername/wxflow
    $ cd wxflow
 
-This project uses ``black`` to format code and ``flake8`` for linting. We also support ``pre-commit`` to ensure
+This project uses ``isort`` to sort Python import definitions alphabetically, ``black`` to format code and ``flake8`` for linting. We also support ``pre-commit`` to ensure
 these have been run. To configure your local environment please install these development dependencies and set up
 the commit hooks.
 
 .. code-block:: bash
 
-   $ pip install black flake8 pre-commit
+   $ pip install isort black flake8 pre-commit
    $ pre-commit install
 
 You can check that things are working correctly by calling pre-commit directly.

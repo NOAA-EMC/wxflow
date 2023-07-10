@@ -69,8 +69,7 @@ def test_validate_schema():
     # to pass.
     data_in["variable2"] = "I **should** fail."
     try:
-        data_out = schema.validate_schema(
-            schema_dict=schema_dict, data=data_in)
+        data_out = schema.validate_schema(schema_dict=schema_dict, data=data_in)
     except SchemaError:
         assert True
 

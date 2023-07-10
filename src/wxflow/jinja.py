@@ -7,10 +7,9 @@ from typing import Dict
 import jinja2
 from markupsafe import Markup
 
-from .timetools import (strftime, to_fv3time, to_isotime, to_julian, to_YMD,
-                        to_YMDH)
+from .timetools import strftime, to_fv3time, to_isotime, to_julian, to_YMD, to_YMDH
 
-__all__ = ['Jinja']
+__all__ = ["Jinja"]
 
 
 @jinja2.pass_eval_context
@@ -25,6 +24,7 @@ class SilentUndefined(jinja2.Undefined):
     Presently, it also does not return the filter applied to the variable.
     This will be added later when a use case for it presents itself.
     """
+
     def __str__(self):
         return "{{ " + self._undefined_name + " }}"
 
@@ -48,7 +48,9 @@ class Jinja:
     A wrapper around jinja2 to render templates
     """
 
-    def __init__(self, template_path_or_string: str, data: Dict, allow_missing: bool = True):
+    def __init__(
+        self, template_path_or_string: str, data: Dict, allow_missing: bool = True
+    ):
         """
         Description
         -----------
@@ -69,10 +71,10 @@ class Jinja:
         self.undefined = SilentUndefined if allow_missing else jinja2.StrictUndefined
 
         if os.path.isfile(template_path_or_string):
-            self.template_type = 'file'
+            self.template_type = "file"
             self.template_path = Path(template_path_or_string)
         else:
-            self.template_type = 'stream'
+            self.template_type = "stream"
             self.template_stream = template_path_or_string
 
     @property
@@ -92,11 +94,12 @@ class Jinja:
         Rendered template into text
         """
 
-        render_map = {'stream': self._render_stream,
-                      'file': self._render_file}
+        render_map = {"stream": self._render_stream, "file": self._render_file}
         return render_map[self.template_type]()
 
-    def get_set_env(self, loader: jinja2.BaseLoader, filters: Dict[str, callable] = None) -> jinja2.Environment:
+    def get_set_env(
+        self, loader: jinja2.BaseLoader, filters: Dict[str, callable] = None
+    ) -> jinja2.Environment:
         """
         Description
         -----------
@@ -128,13 +131,25 @@ class Jinja:
 
         env = jinja2.Environment(loader=loader, undefined=self.undefined)
         env.filters["strftime"] = lambda dt, fmt: strftime(dt, fmt)
-        env.filters["to_isotime"] = lambda dt: to_isotime(dt) if not isinstance(dt, SilentUndefined) else dt
-        env.filters["to_fv3time"] = lambda dt: to_fv3time(dt) if not isinstance(dt, SilentUndefined) else dt
-        env.filters["to_YMDH"] = lambda dt: to_YMDH(dt) if not isinstance(dt, SilentUndefined) else dt
-        env.filters["to_YMD"] = lambda dt: to_YMD(dt) if not isinstance(dt, SilentUndefined) else dt
-        env.filters["to_julian"] = lambda dt: to_julian(dt) if not isinstance(dt, SilentUndefined) else dt
+        env.filters["to_isotime"] = (
+            lambda dt: to_isotime(dt) if not isinstance(dt, SilentUndefined) else dt
+        )
+        env.filters["to_fv3time"] = (
+            lambda dt: to_fv3time(dt) if not isinstance(dt, SilentUndefined) else dt
+        )
+        env.filters["to_YMDH"] = (
+            lambda dt: to_YMDH(dt) if not isinstance(dt, SilentUndefined) else dt
+        )
+        env.filters["to_YMD"] = (
+            lambda dt: to_YMD(dt) if not isinstance(dt, SilentUndefined) else dt
+        )
+        env.filters["to_julian"] = (
+            lambda dt: to_julian(dt) if not isinstance(dt, SilentUndefined) else dt
+        )
         env.filters["to_f90bool"] = lambda bool: ".true." if bool else ".false."
-        env.filters['getenv'] = lambda name, default='UNDEFINED': os.environ.get(name, default)
+        env.filters["getenv"] = lambda name, default="UNDEFINED": os.environ.get(
+            name, default
+        )
 
         # Add any additional filters
         if filters is not None:
@@ -144,7 +159,9 @@ class Jinja:
         return env
 
     @staticmethod
-    def add_filter_env(env: jinja2.Environment, filter_name: str, filter_func: callable):
+    def add_filter_env(
+        env: jinja2.Environment, filter_name: str, filter_func: callable
+    ):
         """
         Description
         -----------
@@ -239,7 +256,7 @@ class Jinja:
         -------
         None
         """
-        with open(output_file, 'wb') as fh:
+        with open(output_file, "wb") as fh:
             fh.write(self.render.encode("utf-8"))
 
     def dump(self) -> None:
@@ -251,5 +268,4 @@ class Jinja:
         -------
         None
         """
-        io.TextIOWrapper(sys.stdout.buffer,
-                         encoding="utf-8").write(self.render)
+        io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8").write(self.render)

@@ -3,7 +3,7 @@ import errno
 import os
 import shutil
 
-__all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp']
+__all__ = ["mkdir", "mkdir_p", "rmdir", "chdir", "rm_p", "cp"]
 
 
 def mkdir_p(path):

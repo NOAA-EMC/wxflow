@@ -74,10 +74,8 @@ def msg_except_handle(err_cls: object) -> Callable:
 
     # Define the decorator function.
     def decorator(func: Callable):
-
         # Execute the caller function; proceed accordingly.
         def call_function(msg: str) -> None:
-
             # If an exception is encountered, raise the respective
             # exception.
             raise err_cls(msg=msg)

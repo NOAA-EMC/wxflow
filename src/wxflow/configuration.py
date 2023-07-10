@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Union
 from .attrdict import AttrDict
 from .timetools import to_datetime
 
-__all__ = ['Configuration', 'cast_as_dtype', 'cast_strdict_as_dtypedict']
+__all__ = ["Configuration", "cast_as_dtype", "cast_strdict_as_dtypedict"]
 
 
 class ShellScriptException(Exception):
@@ -17,9 +17,8 @@ class ShellScriptException(Exception):
         self.scripts = scripts
         self.errors = errors
         super(ShellScriptException, self).__init__(
-            str(errors) +
-            ': error processing' +
-            (' '.join(scripts)))
+            str(errors) + ": error processing" + (" ".join(scripts))
+        )
 
 
 class UnknownConfigError(Exception):
@@ -48,15 +47,15 @@ class Configuration:
         return a list of config_files minus the ones ending with ".default"
         """
         result = list()
-        for config in glob.glob(f'{self.config_dir}/config.*'):
-            if not config.endswith('.default'):
+        for config in glob.glob(f"{self.config_dir}/config.*"):
+            if not config.endswith(".default"):
                 result.append(config)
 
         return result
 
     def find_config(self, config_name: str) -> str:
         """
-            Given a config file name, find the full path of the config file
+        Given a config file name, find the full path of the config file
         """
 
         for config in self.config_files:
@@ -64,7 +63,8 @@ class Configuration:
                 return config
 
         raise UnknownConfigError(
-            f'{config_name} does not exist (known: {repr(config_name)}), ABORT!')
+            f"{config_name} does not exist (known: {repr(config_name)}), ABORT!"
+        )
 
     def parse_config(self, files: Union[str, bytes, list]) -> Dict[str, Any]:
         """
@@ -104,21 +104,24 @@ class Configuration:
     @staticmethod
     def _get_shell_env(scripts: List) -> Dict[str, Any]:
         varbls = dict()
-        runme = ''.join([f'source {s} ; ' for s in scripts])
-        magic = f'--- ENVIRONMENT BEGIN {random.randint(0,64**5)} ---'
+        runme = "".join([f"source {s} ; " for s in scripts])
+        magic = f"--- ENVIRONMENT BEGIN {random.randint(0,64**5)} ---"
         runme += f'/bin/echo -n "{magic}" ; /usr/bin/env -0'
-        with open('/dev/null', 'w') as null:
-            env = subprocess.Popen(runme, shell=True, stdin=null.fileno(),
-                                   stdout=subprocess.PIPE)
+        with open("/dev/null", "w") as null:
+            env = subprocess.Popen(
+                runme, shell=True, stdin=null.fileno(), stdout=subprocess.PIPE
+            )
             (out, err) = env.communicate()
         out = out.decode()
         begin = out.find(magic)
         if begin < 0:
-            raise ShellScriptException(scripts, 'Cannot find magic string; '
-                                       'at least one script failed: ' + repr(out))
-        for entry in out[begin + len(magic):].split('\x00'):
-            iequal = entry.find('=')
-            varbls[entry[0:iequal]] = entry[iequal + 1:]
+            raise ShellScriptException(
+                scripts,
+                "Cannot find magic string; " "at least one script failed: " + repr(out),
+            )
+        for entry in out[begin + len(magic) :].split("\x00"):
+            iequal = entry.find("=")
+            varbls[entry[0:iequal]] = entry[iequal + 1 :]
         return varbls
 
 
@@ -152,9 +155,9 @@ def cast_as_dtype(string: str) -> Union[str, int, float, bool, Any]:
     value : str or int or float or datetime
             default: str
     """
-    TRUTHS = ['y', 'yes', 't', 'true', '.t.', '.true.']
-    BOOLS = ['n', 'no', 'f', 'false', '.f.', '.false.'] + TRUTHS
-    BOOLS = [x.upper() for x in BOOLS] + BOOLS + ['Yes', 'No', 'True', 'False']
+    TRUTHS = ["y", "yes", "t", "true", ".t.", ".true."]
+    BOOLS = ["n", "no", "f", "false", ".f.", ".false."] + TRUTHS
+    BOOLS = [x.upper() for x in BOOLS] + BOOLS + ["Yes", "No", "True", "False"]
 
     def _cast_or_not(type: Any, string: str):
         try:
@@ -173,7 +176,7 @@ def cast_as_dtype(string: str) -> Union[str, int, float, bool, Any]:
     except Exception as exc:
         if string in BOOLS:  # Likely a boolean, convert to True/False
             return _true_or_not(string)
-        elif '.' in string:  # Likely a number and that too a float
+        elif "." in string:  # Likely a number and that too a float
             return _cast_or_not(float, string)
         else:  # Still could be a number, may be an integer
             return _cast_or_not(int, string)

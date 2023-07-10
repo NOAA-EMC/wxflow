@@ -11,8 +11,8 @@ j2tmpl = """Hello {{ name }}! {{ greeting }} It is: {{ current_date | to_isotime
 
 @pytest.fixture
 def create_template(tmp_path):
-    file_path = tmp_path / 'template.j2'
-    with open(file_path, 'w') as fh:
+    file_path = tmp_path / "template.j2"
+    with open(file_path, "w") as fh:
         fh.write(j2tmpl)
 
 
@@ -27,8 +27,7 @@ def test_render_stream():
 
 
 def test_render_file(tmp_path, create_template):
-
-    file_path = tmp_path / 'template.j2'
+    file_path = tmp_path / "template.j2"
     data = {"name": "John"}
     j = Jinja(str(file_path), data, allow_missing=True)
     assert j.render == "Hello John! {{ greeting }} It is: {{ current_date }}"

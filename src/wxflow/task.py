@@ -4,7 +4,7 @@ from typing import Dict
 from .attrdict import AttrDict
 from .timetools import add_to_datetime, to_timedelta
 
-logger = logging.getLogger(__name__.split('.')[-1])
+logger = logging.getLogger(__name__.split(".")[-1])
 
 
 class Task:
@@ -40,24 +40,37 @@ class Task:
 
         # Pull out basic runtime keys values from config into its own runtime config
         self.runtime_config = AttrDict()
-        runtime_keys = ['PDY', 'cyc', 'DATA', 'RUN', 'CDUMP']  # TODO: eliminate CDUMP and use RUN instead
+        runtime_keys = [
+            "PDY",
+            "cyc",
+            "DATA",
+            "RUN",
+            "CDUMP",
+        ]  # TODO: eliminate CDUMP and use RUN instead
         for kk in runtime_keys:
             try:
                 self.runtime_config[kk] = config[kk]
-                logger.debug(f'Deleting runtime_key {kk} from config')
+                logger.debug(f"Deleting runtime_key {kk} from config")
                 del self.config[kk]
             except KeyError:
-                raise KeyError(f"Encountered an unreferenced runtime_key {kk} in 'config'")
+                raise KeyError(
+                    f"Encountered an unreferenced runtime_key {kk} in 'config'"
+                )
 
         # Any other composite runtime variables that may be needed for the duration of the task
         # can be constructed here
 
         # Construct the current cycle datetime object
-        self.runtime_config['current_cycle'] = add_to_datetime(self.runtime_config['PDY'], to_timedelta(f"{self.runtime_config.cyc}H"))
+        self.runtime_config["current_cycle"] = add_to_datetime(
+            self.runtime_config["PDY"], to_timedelta(f"{self.runtime_config.cyc}H")
+        )
         logger.debug(f"current cycle: {self.runtime_config['current_cycle']}")
 
         # Construct the previous cycle datetime object
-        self.runtime_config['previous_cycle'] = add_to_datetime(self.runtime_config.current_cycle, -to_timedelta(f"{self.config['assim_freq']}H"))
+        self.runtime_config["previous_cycle"] = add_to_datetime(
+            self.runtime_config.current_cycle,
+            -to_timedelta(f"{self.config['assim_freq']}H"),
+        )
         logger.debug(f"previous cycle: {self.runtime_config['previous_cycle']}")
 
         pass

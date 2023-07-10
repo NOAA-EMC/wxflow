@@ -1,27 +1,41 @@
 import datetime
 import re
 
-__all__ = ["to_datetime", "to_timedelta",
-           "datetime_to_YMDH", "datetime_to_YMD", "datetime_to_JDAY",
-           "timedelta_to_HMS",
-           "strftime", "strptime",
-           "to_YMDH", "to_YMD", "to_JDAY", "to_julian",
-           "to_isotime", "to_fv3time",
-           "add_to_datetime", "add_to_timedelta"]
+__all__ = [
+    "to_datetime",
+    "to_timedelta",
+    "datetime_to_YMDH",
+    "datetime_to_YMD",
+    "datetime_to_JDAY",
+    "timedelta_to_HMS",
+    "strftime",
+    "strptime",
+    "to_YMDH",
+    "to_YMD",
+    "to_JDAY",
+    "to_julian",
+    "to_isotime",
+    "to_fv3time",
+    "add_to_datetime",
+    "add_to_timedelta",
+]
 
 
 _DATETIME_RE = re.compile(
     r"(?P<year>\d{4})(-)?(?P<month>\d{2})(-)?(?P<day>\d{2})"
-    r"(T)?(?P<hour>\d{2})?(:)?(?P<minute>\d{2})?(:)?(?P<second>\d{2})?(Z)?")
+    r"(T)?(?P<hour>\d{2})?(:)?(?P<minute>\d{2})?(:)?(?P<second>\d{2})?(Z)?"
+)
 
 _TIMEDELTA_HOURS_RE = re.compile(
     r"(?P<sign>[+-])?"
     r"((?P<days>\d+)[d])?"
-    r"(T)?((?P<hours>\d+)[H])?((?P<minutes>\d+)[M])?((?P<seconds>\d+)[S])?(Z)?")
+    r"(T)?((?P<hours>\d+)[H])?((?P<minutes>\d+)[M])?((?P<seconds>\d+)[S])?(Z)?"
+)
 _TIMEDELTA_TIME_RE = re.compile(
     r"(?P<sign>[+-])?"
     r"((?P<days>\d+)(\s)day(s)?,(\s)?)?"
-    r"(T)?(?P<hours>\d{1,2})?(:(?P<minutes>\d{1,2}))?(:(?P<seconds>\d{1,2}))?")
+    r"(T)?(?P<hours>\d{1,2})?(:(?P<minutes>\d{1,2}))?(:(?P<seconds>\d{1,2}))?"
+)
 
 
 def to_datetime(dtstr: str) -> datetime.datetime:
@@ -50,7 +64,9 @@ def to_datetime(dtstr: str) -> datetime.datetime:
 
     mm = _DATETIME_RE.match(dtstr)
     if mm:
-        return datetime.datetime(**{kk: int(vv) for kk, vv in mm.groupdict().items() if vv})
+        return datetime.datetime(
+            **{kk: int(vv) for kk, vv in mm.groupdict().items() if vv}
+        )
     else:
         raise Exception(f"Bad datetime string: '{dtstr}'")
 
@@ -82,24 +98,22 @@ def to_timedelta(tdstr: str) -> datetime.timedelta:
         Timedelta object
     """
 
-    time_dict = {'sign': '+',
-                 'days': 0,
-                 'hours': 0,
-                 'minutes': 0,
-                 'seconds': 0}
+    time_dict = {"sign": "+", "days": 0, "hours": 0, "minutes": 0, "seconds": 0}
 
-    if any(x in tdstr for x in ['day', 'days', ':']):
+    if any(x in tdstr for x in ["day", "days", ":"]):
         mm = _TIMEDELTA_TIME_RE.match(tdstr)  # timedelta representation
     else:
         mm = _TIMEDELTA_HOURS_RE.match(tdstr)  # ISO 8601 representation
 
     if mm:
-        nmm = {kk: vv if vv is not None else time_dict[kk]
-               for kk, vv in mm.groupdict().items()}
-        del nmm['sign']
+        nmm = {
+            kk: vv if vv is not None else time_dict[kk]
+            for kk, vv in mm.groupdict().items()
+        }
+        del nmm["sign"]
         nmm = {kk: float(vv) for kk, vv in nmm.items()}
         dt = datetime.timedelta(**nmm)
-        if mm.group('sign') is not None and mm.group('sign') == '-':
+        if mm.group("sign") is not None and mm.group("sign") == "-":
             dt = -dt
         return dt
     else:
@@ -123,7 +137,7 @@ def datetime_to_YMDH(dt: datetime.datetime) -> str:
         Formatted string in 'YYYYmmddHH' format.
     """
     try:
-        return dt.strftime('%Y%m%d%H')
+        return dt.strftime("%Y%m%d%H")
     except Exception:
         raise Exception(f"Bad datetime: '{dt}'")
 
@@ -145,7 +159,7 @@ def datetime_to_YMD(dt: datetime.datetime) -> str:
         Formatted string in 'YYYYmmdd' format.
     """
     try:
-        return dt.strftime('%Y%m%d')
+        return dt.strftime("%Y%m%d")
     except Exception:
         raise Exception(f"Bad datetime: '{dt}'")
 
@@ -168,7 +182,7 @@ def datetime_to_JDAY(dt: datetime.datetime) -> str:
         Formatted string in 'YYYYDOY' format.
     """
     try:
-        return dt.strftime('%Y%j')
+        return dt.strftime("%Y%j")
     except Exception:
         raise Exception(f"Bad datetime: '{dt}'")
 
@@ -247,7 +261,7 @@ def to_isotime(dt: datetime.datetime) -> str:
     str: str
         Formatted string in ISO format.
     """
-    return strftime(dt, '%Y-%m-%dT%H:%M:%SZ')
+    return strftime(dt, "%Y-%m-%dT%H:%M:%SZ")
 
 
 def to_fv3time(dt: datetime.datetime) -> str:
@@ -266,7 +280,7 @@ def to_fv3time(dt: datetime.datetime) -> str:
     str: str
         Formatted string in FV3 format.
     """
-    return strftime(dt, '%Y%m%d.%H%M%S')
+    return strftime(dt, "%Y%m%d.%H%M%S")
 
 
 def add_to_datetime(dt: datetime.datetime, td: datetime.timedelta) -> datetime.datetime:

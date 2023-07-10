@@ -200,7 +200,14 @@ class Executable:
 
         proc = None  # initialize to avoid lint warning
         try:
-            proc = subprocess.Popen(cmd, stdin=istream, stderr=estream, stdout=ostream, env=env, close_fds=False)
+            proc = subprocess.Popen(
+                cmd,
+                stdin=istream,
+                stderr=estream,
+                stdout=ostream,
+                env=env,
+                close_fds=False,
+            )
             out, err = proc.communicate()
 
             result = None
@@ -227,12 +234,16 @@ class Executable:
                     # stdout/stderr (e.g. if 'output' is not specified)
                     long_msg += "\n" + result
 
-                raise ProcessError(f"Command exited with status {proc.returncode}:", long_msg)
+                raise ProcessError(
+                    f"Command exited with status {proc.returncode}:", long_msg
+                )
 
             return result
 
         except OSError as e:
-            raise ProcessError(f"{self.exe[0]}: {e.strerror}", f"Command: {cmd_line_string}")
+            raise ProcessError(
+                f"{self.exe[0]}: {e.strerror}", f"Command: {cmd_line_string}"
+            )
 
         except subprocess.CalledProcessError as e:
             if fail_on_error:
@@ -308,7 +319,9 @@ def which_string(*args, **kwargs) -> str:
                         return exe
 
     if required:
-        raise CommandNotFoundError(f"'{args[0]}' is required. Make sure it is in your PATH.")
+        raise CommandNotFoundError(
+            f"'{args[0]}' is required. Make sure it is in your PATH."
+        )
 
     return None
 
@@ -344,10 +357,11 @@ class ProcessError(Exception):
     """
     ProcessErrors are raised when Executables exit with an error code.
     """
+
     def __init__(self, short_msg, long_msg=None):
         self.short_msg = short_msg
         self.long_msg = long_msg
-        message = short_msg + '\n' + long_msg if long_msg else short_msg
+        message = short_msg + "\n" + long_msg if long_msg else short_msg
         super().__init__(message)
 
 

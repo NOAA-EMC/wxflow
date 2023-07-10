@@ -3,8 +3,13 @@ from datetime import datetime
 
 import pytest
 
-from wxflow.yaml_file import (YAMLFile, dump_as_yaml, parse_j2yaml,
-                              parse_yamltmpl, save_as_yaml)
+from wxflow.yaml_file import (
+    YAMLFile,
+    dump_as_yaml,
+    parse_j2yaml,
+    parse_yamltmpl,
+    save_as_yaml,
+)
 
 host_yaml = """
 host:
@@ -44,20 +49,19 @@ tmpl:
 @pytest.fixture
 def create_template(tmpdir):
     """Create temporary templates for testing"""
-    tmpdir.join('host.yaml').write(host_yaml)
-    tmpdir.join('config.yaml').write(conf_yaml)
-    tmpdir.join('tmpl.yaml').write(tmpl_yaml)
-    tmpdir.join('j2tmpl.yaml').write(j2tmpl_yaml)
+    tmpdir.join("host.yaml").write(host_yaml)
+    tmpdir.join("config.yaml").write(conf_yaml)
+    tmpdir.join("tmpl.yaml").write(tmpl_yaml)
+    tmpdir.join("j2tmpl.yaml").write(j2tmpl_yaml)
 
 
 def test_yaml_file(tmp_path, create_template):
-
     # Set env. variable
-    os.environ['TMP_PATH'] = str(tmp_path)
-    conf = YAMLFile(path=str(tmp_path / 'config.yaml'))
+    os.environ["TMP_PATH"] = str(tmp_path)
+    conf = YAMLFile(path=str(tmp_path / "config.yaml"))
 
     # Write out yaml file
-    yaml_out = tmp_path / 'config_output.yaml'
+    yaml_out = tmp_path / "config_output.yaml"
     conf.save(yaml_out)
 
     # Read in the yaml file and compare w/ conf
@@ -67,14 +71,13 @@ def test_yaml_file(tmp_path, create_template):
 
 
 def test_yaml_file_with_templates(tmp_path, create_template):
-
     # Set env. variable
-    os.environ['TMP_PATH'] = str(tmp_path)
-    data = {'user': os.environ['USER']}
-    conf = parse_yamltmpl(path=str(tmp_path / 'tmpl.yaml'), data=data)
+    os.environ["TMP_PATH"] = str(tmp_path)
+    data = {"user": os.environ["USER"]}
+    conf = parse_yamltmpl(path=str(tmp_path / "tmpl.yaml"), data=data)
 
     # Write out yaml file
-    yaml_out = tmp_path / 'tmpl_output.yaml'
+    yaml_out = tmp_path / "tmpl_output.yaml"
     save_as_yaml(conf, yaml_out)
 
     # Read in the yaml file and compare w/ conf
@@ -84,14 +87,13 @@ def test_yaml_file_with_templates(tmp_path, create_template):
 
 
 def test_yaml_file_with_j2templates(tmp_path, create_template):
-
     # Set env. variable
-    os.environ['TMP_PATH'] = str(tmp_path)
-    data = {'user': os.environ['USER'], 'current_cycle': datetime.now()}
-    conf = parse_j2yaml(path=str(tmp_path / 'j2tmpl.yaml'), data=data)
+    os.environ["TMP_PATH"] = str(tmp_path)
+    data = {"user": os.environ["USER"], "current_cycle": datetime.now()}
+    conf = parse_j2yaml(path=str(tmp_path / "j2tmpl.yaml"), data=data)
 
     # Write out yaml file
-    yaml_out = tmp_path / 'j2tmpl_output.yaml'
+    yaml_out = tmp_path / "j2tmpl_output.yaml"
     save_as_yaml(conf, yaml_out)
 
     # Read in the yaml file and compare w/ conf

@@ -9,7 +9,7 @@ from functools import wraps
 from pathlib import Path
 from typing import List, Union
 
-__all__ = ['Logger', 'logit']
+__all__ = ["Logger", "logit"]
 
 
 class ColoredFormatter(logging.Formatter):
@@ -18,12 +18,12 @@ class ColoredFormatter(logging.Formatter):
     adapted from https://stackoverflow.com/a/56944256/3638629
     """
 
-    grey = '\x1b[38;21m'
-    blue = '\x1b[38;5;39m'
-    yellow = '\x1b[38;5;226m'
-    red = '\x1b[38;5;196m'
-    bold_red = '\x1b[31;1m'
-    reset = '\x1b[0m'
+    grey = "\x1b[38;21m"
+    blue = "\x1b[38;5;39m"
+    yellow = "\x1b[38;5;226m"
+    red = "\x1b[38;5;196m"
+    bold_red = "\x1b[31;1m"
+    reset = "\x1b[0m"
 
     def __init__(self, fmt):
         super().__init__()
@@ -33,7 +33,7 @@ class ColoredFormatter(logging.Formatter):
             logging.INFO: self.grey + self.fmt + self.reset,
             logging.WARNING: self.yellow + self.fmt + self.reset,
             logging.ERROR: self.red + self.fmt + self.reset,
-            logging.CRITICAL: self.bold_red + self.fmt + self.reset
+            logging.CRITICAL: self.bold_red + self.fmt + self.reset,
         }
 
     def format(self, record):
@@ -46,15 +46,19 @@ class Logger:
     """
     Improved logging
     """
-    LOG_LEVELS = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
-    DEFAULT_LEVEL = 'INFO'
-    DEFAULT_FORMAT = '%(asctime)s - %(levelname)-8s - %(name)-12s: %(message)s'
 
-    def __init__(self, name: str = None,
-                 level: str = os.environ.get("LOGGING_LEVEL"),
-                 _format: str = DEFAULT_FORMAT,
-                 colored_log: bool = False,
-                 logfile_path: Union[str, Path] = None):
+    LOG_LEVELS = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    DEFAULT_LEVEL = "INFO"
+    DEFAULT_FORMAT = "%(asctime)s - %(levelname)-8s - %(name)-12s: %(message)s"
+
+    def __init__(
+        self,
+        name: str = None,
+        level: str = os.environ.get("LOGGING_LEVEL"),
+        _format: str = DEFAULT_FORMAT,
+        colored_log: bool = False,
+        logfile_path: Union[str, Path] = None,
+    ):
         """
         Initialize Logger
 
@@ -83,9 +87,11 @@ class Logger:
         self.colored_log = colored_log
 
         if self.level not in Logger.LOG_LEVELS:
-            raise LookupError(f"{self.level} is unknown logging level\n" +
-                              f"Currently supported log levels are:\n" +
-                              f"{' | '.join(Logger.LOG_LEVELS)}")
+            raise LookupError(
+                f"{self.level} is unknown logging level\n"
+                + f"Currently supported log levels are:\n"
+                + f"{' | '.join(Logger.LOG_LEVELS)}"
+            )
 
         # Initialize the root logger if no name is present
         self._logger = logging.getLogger(name) if name else logging.getLogger()
@@ -105,7 +111,8 @@ class Logger:
         # Add file handler for logger
         if logfile_path is not None:
             _handler = Logger.add_file_handler(
-                logfile_path, level=self.level, _format=self.format)
+                logfile_path, level=self.level, _format=self.format
+            )
             self._logger.addHandler(_handler)
             _handlers.append(_handler)
 
@@ -156,9 +163,12 @@ class Logger:
         return logger
 
     @classmethod
-    def add_stream_handler(cls, level: str = DEFAULT_LEVEL,
-                           _format: str = DEFAULT_FORMAT,
-                           colored_log: bool = False):
+    def add_stream_handler(
+        cls,
+        level: str = DEFAULT_LEVEL,
+        _format: str = DEFAULT_FORMAT,
+        colored_log: bool = False,
+    ):
         """
         Create stream handler
         This classmethod will allow setting a custom stream handler on children
@@ -183,16 +193,20 @@ class Logger:
 
         handler = logging.StreamHandler(sys.stdout)
         handler.setLevel(level)
-        _format = ColoredFormatter(
-            _format) if colored_log else logging.Formatter(_format)
+        _format = (
+            ColoredFormatter(_format) if colored_log else logging.Formatter(_format)
+        )
         handler.setFormatter(_format)
 
         return handler
 
     @classmethod
-    def add_file_handler(cls, logfile_path: Union[str, Path],
-                         level: str = DEFAULT_LEVEL,
-                         _format: str = DEFAULT_FORMAT):
+    def add_file_handler(
+        cls,
+        logfile_path: Union[str, Path],
+        level: str = DEFAULT_LEVEL,
+        _format: str = DEFAULT_FORMAT,
+    ):
         """
         Create file handler.
         This classmethod will allow setting custom file handler on children
@@ -248,17 +262,15 @@ def logit(logger, name=None, message=None):
     """
 
     def decorate(func):
-
         log_name = name if name else func.__module__
         log_msg = message if message else log_name + "." + func.__name__
 
         @wraps(func)
         def wrapper(*args, **kwargs):
-
             passed_args = [repr(aa) for aa in args]
             passed_kwargs = [f"{kk}={repr(vv)}" for kk, vv in list(kwargs.items())]
 
-            call_msg = 'BEGIN: ' + log_msg
+            call_msg = "BEGIN: " + log_msg
             logger.info(call_msg)
             logger.debug(f"( {', '.join(passed_args + passed_kwargs)} )")
 
@@ -266,7 +278,7 @@ def logit(logger, name=None, message=None):
             retval = func(*args, **kwargs)
 
             # Close the logging with printing the return val
-            ret_msg = '  END: ' + log_msg
+            ret_msg = "  END: " + log_msg
             logger.info(ret_msg)
             logger.debug(f" returning: {retval}")
 

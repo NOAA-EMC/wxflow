@@ -18,21 +18,21 @@ def test_executable(tmp_path):
     tmp_path : Path
         temporary path created by pytest
     """
-    whoami = os.environ['USER']
+    whoami = os.environ["USER"]
 
-    test_file = tmp_path / 'whoami.x'
+    test_file = tmp_path / "whoami.x"
     Path(test_file).touch(mode=0o755)
-    with open(test_file, 'w') as fh:
+    with open(test_file, "w") as fh:
         fh.write(script)
 
     cmd = Executable(str(test_file))
     assert cmd.exe == [str(test_file)]
 
-    stdout_file = tmp_path / 'stdout'
-    stderr_file = tmp_path / 'stderr'
+    stdout_file = tmp_path / "stdout"
+    stderr_file = tmp_path / "stderr"
     cmd(output=str(stdout_file), error=str(stderr_file))
     with open(str(stdout_file)) as fh:
-        assert fh.read() == whoami + '\n'
+        assert fh.read() == whoami + "\n"
 
 
 def test_which(tmpdir):
@@ -45,16 +45,16 @@ def test_which(tmpdir):
         path to a temporary directory created by pytest
     """
     os.environ["PATH"] = str(tmpdir)
-    assert which('test.x') is None
+    assert which("test.x") is None
 
     with pytest.raises(CommandNotFoundError):
-        which('test.x', required=True)
+        which("test.x", required=True)
 
     path = str(tmpdir.join("test.x"))
 
     # create a test.x executable in the tmpdir
     with tmpdir.as_cwd():
-        Path('test.x').touch(mode=0o755)
+        Path("test.x").touch(mode=0o755)
 
         exe = which("test.x")
         assert exe is not None

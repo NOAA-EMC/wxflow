@@ -1,6 +1,6 @@
 import sys
 
-__all__ = ['Factory']
+__all__ = ["Factory"]
 
 
 class Factory:
@@ -21,7 +21,7 @@ class Factory:
         ----------
         name : Name of factory
         """
-        self._name = f'{name}Factory'
+        self._name = f"{name}Factory"
         self._builders = {}
 
         # Register {name}Factory as importable from wxflow.factory
@@ -29,7 +29,9 @@ class Factory:
         if not hasattr(me, self._name):
             setattr(me, self._name, self)
         else:
-            raise AttributeError(f"{self._name} is already an importable object from {me}")
+            raise AttributeError(
+                f"{self._name} is already an importable object from {me}"
+            )
 
     def register(self, key: str, builder: object):
         """
@@ -45,7 +47,7 @@ class Factory:
         object: The class that will serve as the builder for this key
         """
         if self.is_registered(key):
-            print(f'{key} is already a registered Builder in {self._name}')
+            print(f"{key} is already a registered Builder in {self._name}")
             return
         self._builders[key] = builder
 
@@ -64,9 +66,10 @@ class Factory:
         """
         if not self.is_registered(key):
             raise KeyError(
-                f"{key} is not a registered builder in {self._name}.\n" +
-                "Available builders are:\n" +
-                f"{', '.join(self._builders.keys())}")
+                f"{key} is not a registered builder in {self._name}.\n"
+                + "Available builders are:\n"
+                + f"{', '.join(self._builders.keys())}"
+            )
 
         return self._builders[key](*args, **kwargs)
 
@@ -84,7 +87,7 @@ class Factory:
         try:
             del self._builders[key]
         except KeyError:
-            print(f'{key} is not a registered Builder in {self._name}')
+            print(f"{key} is not a registered Builder in {self._name}")
 
     @property
     def registered(self):

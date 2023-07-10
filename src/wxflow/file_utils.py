@@ -2,9 +2,9 @@ from logging import getLogger
 
 from .fsutils import cp, mkdir
 
-__all__ = ['FileHandler']
+__all__ = ["FileHandler"]
 
-logger = getLogger(__name__.split('.')[-1])
+logger = getLogger(__name__.split(".")[-1])
 
 
 class FileHandler:
@@ -27,7 +27,6 @@ class FileHandler:
     """
 
     def __init__(self, config):
-
         self.config = config
 
     def sync(self):
@@ -35,8 +34,8 @@ class FileHandler:
         Method to execute bulk actions on files described in the configuration
         """
         sync_factory = {
-            'copy': self._copy_files,
-            'mkdir': self._make_dirs,
+            "copy": self._copy_files,
+            "mkdir": self._make_dirs,
         }
         # loop through the configuration keys
         for action, files in self.config.items():
@@ -57,11 +56,12 @@ class FileHandler:
         for sublist in filelist:
             if len(sublist) != 2:
                 raise Exception(
-                    f"List must be of the form ['src', 'dest'], not {sublist}")
+                    f"List must be of the form ['src', 'dest'], not {sublist}"
+                )
             src = sublist[0]
             dest = sublist[1]
             cp(src, dest)
-            logger.info(f'Copied {src} to {dest}')
+            logger.info(f"Copied {src} to {dest}")
 
     @staticmethod
     def _make_dirs(dirlist):
@@ -74,4 +74,4 @@ class FileHandler:
         """
         for dd in dirlist:
             mkdir(dd)
-            logger.info(f'Created {dd}')
+            logger.info(f"Created {dd}")

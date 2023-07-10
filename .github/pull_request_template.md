@@ -19,7 +19,7 @@ Before opening a PR, please note these guidelines:
 
 **Type of change**
 
-Please delete options that are not relevant.
+<!-- Please delete options that are not relevant. -->
 
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
@@ -31,11 +31,10 @@ Please delete options that are not relevant.
 <!-- Please describe the tests that you ran to verify your changes and on the platforms these tests were conducted. -->
 <!-- Provide instructions so we can reproduce. -->
 <!-- Please also list any relevant details for your test configuration -->
+<!-- If adding a new feature, was an accompanying test added? -->
 
-<!-- Use the following as a guide to list your tests and delete options that are not relevant. Expand as necessary. -->
-<!--
+- [ ] pynorms
 - [ ] pytests
--->
 
 **Checklist**
 

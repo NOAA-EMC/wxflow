@@ -11,7 +11,7 @@ To help speed up the review process please ensure the following:
 
 - The PR addresses an open issue.
 - All tests are passing locally with ``pytest``.
-- The project passes linting with ``black`` and ``flake8``.
+- The project passes linting with ``isort`` and ``pycodestyle``.
 - If adding a new feature you also add documentation.
 
 Developing
@@ -25,13 +25,13 @@ and then clone it locally.
    $ git clone https://github.com/yourusername/wxflow
    $ cd wxflow
 
-This project uses ``isort`` to sort Python import definitions alphabetically, ``black`` to format code and ``flake8`` for linting. We also support ``pre-commit`` to ensure
+This project uses ``isort`` to sort Python import definitions alphabetically and ``pycodestyle`` as the Python style checker against conventions in PEP8.  We also support ``pre-commit`` to ensure
 these have been run. To configure your local environment please install these development dependencies and set up
 the commit hooks.
 
 .. code-block:: bash
 
-   $ pip install isort black flake8 pre-commit
+   $ pip install isort pycodestyle pre-commit
    $ pre-commit install
 
 You can check that things are working correctly by calling pre-commit directly.
@@ -40,8 +40,7 @@ You can check that things are working correctly by calling pre-commit directly.
 
    $ pre-commit run --all-files
    isort......................................Passed
-   black......................................Passed
-   flake8.....................................Passed
+   pycodestyle................................Passed
 
 These checks will be run automatically when you make a commit (if ``pre-commit`` has been installed).
 

@@ -9,7 +9,7 @@ import os
 
 import pytest
 
-from wxflow import schema, parse_yaml, cast_strdict_as_dtypedict
+from wxflow import cast_strdict_as_dtypedict, parse_yaml, schema
 
 
 # Define the path to the YAML-formatted file containing the schema

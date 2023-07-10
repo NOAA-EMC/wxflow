@@ -39,10 +39,11 @@ You can check that things are working correctly by calling pre-commit directly.
 .. code-block:: bash
 
    $ pre-commit run --all-files
+   isort......................................Passed
    black......................................Passed
    flake8.....................................Passed
 
-These checks will be run automatically when you make a commit.
+These checks will be run automatically when you make a commit (if ``pre-commit`` has been installed).
 
 Testing
 -------

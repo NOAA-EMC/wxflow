@@ -9,10 +9,7 @@ import os
 
 import pytest
 
-from wxflow import schema
-from wxflow.configuration import cast_strdict_as_dtypedict
-from wxflow.schema import SchemaError
-from wxflow.yaml_file import parse_yaml
+from wxflow import schema, parse_yaml, cast_strdict_as_dtypedict
 
 
 # Define the path to the YAML-formatted file containing the schema
@@ -71,7 +68,7 @@ def test_validate_schema():
     try:
         data_out = schema.validate_schema(
             schema_dict=schema_dict, data=data_in)
-    except SchemaError:
+    except schema.SchemaError:
         assert True
 
     # This unit-test passes the full environment, including `data_in`,

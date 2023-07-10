@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from wxflow.timetools import *
+from wxflow import *
 
 current_date = datetime.now()
 

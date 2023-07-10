@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from wxflow.executable import CommandNotFoundError, Executable, which
+from wxflow import CommandNotFoundError, Executable, which
 
 script = """#!/bin/bash
 echo ${USER}

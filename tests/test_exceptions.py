@@ -1,6 +1,6 @@
 import pytest
 
-from wxflow.exceptions import WorkflowException
+from wxflow import WorkflowException
 
 # ----
 

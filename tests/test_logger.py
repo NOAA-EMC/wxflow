@@ -1,4 +1,4 @@
-from wxflow.logger import Logger, logit
+from wxflow import Logger, logit
 
 level = 'debug'
 number_of_log_msgs = 5

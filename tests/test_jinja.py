@@ -2,8 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from wxflow.jinja import Jinja
-from wxflow.timetools import to_isotime
+from wxflow import Jinja, to_isotime
 
 current_date = datetime.now()
 j2tmpl = """Hello {{ name }}! {{ greeting }} It is: {{ current_date | to_isotime }}"""

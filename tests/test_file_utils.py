@@ -1,6 +1,6 @@
 import os
 
-from wxflow.file_utils import FileHandler
+from wxflow import FileHandler
 
 
 def test_mkdir(tmp_path):

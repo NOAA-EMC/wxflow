@@ -1,6 +1,6 @@
 import os
 
-from wxflow.template import Template, TemplateConstants
+from wxflow import Template, TemplateConstants
 
 
 def test_substitute_string_from_dict():

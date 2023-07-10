@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pytest
 
-from wxflow.configuration import Configuration, cast_as_dtype
+from wxflow import Configuration, cast_as_dtype
 
 file0 = """#!/bin/bash
 export SOME_ENVVAR1="${USER}"

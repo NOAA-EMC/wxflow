@@ -1,4 +1,4 @@
-from wxflow.factory import Factory
+from wxflow import Factory
 
 
 class Class1:

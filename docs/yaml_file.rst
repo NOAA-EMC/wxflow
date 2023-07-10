@@ -1,4 +1,4 @@
-.. currentmodule:: wxflow
+.. module:: wxflow
 
 .. autoclass:: YAMLFile
     :members: save, dump, as_dict

@@ -1,4 +1,4 @@
-''' Standard file for building the package with Distutils. '''
+""" Standard file for building the package with Distutils. """
 
 import setuptools
 

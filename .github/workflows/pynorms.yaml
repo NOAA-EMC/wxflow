@@ -1,22 +1,12 @@
 name: pynorms
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   check_norms:
     runs-on: ubuntu-latest
-    name: Check Python coding norms with pycodestyle
+    name: Check Python coding norms
 
     steps:
-
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install pycodestyle
-
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Run pycodestyle
-      run: |
-        cd $GITHUB_WORKSPACE
-        pycodestyle --verbose --config ./.pycodestyle ./
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - uses: pre-commit/action@v3.0.0

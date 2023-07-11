@@ -1,5 +1,5 @@
 # .coveragerc to control code coverage tool
-# https://coverage.readthedocs.io/en/latest/config.html
+#
 
 [run]
 # Path where source is stored
@@ -8,6 +8,9 @@ source = wxflow/
 # Omit some source code patterns when computing code coverage
 omit =
     setup.py
+    # omit these files because they are included from other packages
+    schema.py
+    attrdict.py
 
 # whether to measure branch coverage in addition to statement coverage.
 # https://coverage.readthedocs.io/en/latest/branch.html#branch

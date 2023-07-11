@@ -10,6 +10,7 @@ from .file_utils import FileHandler
 from .fsutils import chdir, cp, mkdir, mkdir_p, rm_p, rmdir
 from .jinja import Jinja
 from .logger import Logger, logit
+from .sqlitedb import SQLiteDB
 from .task import Task
 from .template import Template, TemplateConstants
 from .timetools import *

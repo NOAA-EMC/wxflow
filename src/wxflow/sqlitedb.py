@@ -1,5 +1,5 @@
 import sqlite3
-from typing import Optional, List, Tuple, Any
+from typing import Any, List, Optional, Tuple
 
 __all__ = ["SQLiteDB"]
 
@@ -99,14 +99,15 @@ class SQLiteDB:
 
         """
 
-        query = f"PRAGMA table_info({table_name})"
-        cursor = self.execute_query(query)
-        columns = [column[1] for column in cursor.fetchall()]
-
         try:
             query = f"ALTER TABLE {table_name} DROP COLUMN {column_name}"
             self.execute_query(query)
         except sqlite3.OperationalError as exc:
+            query = f"PRAGMA table_info({table_name})"
+            cursor = self.execute_query(query)
+            columns = [column[1] for column in cursor.fetchall()]
+            if column_name not in columns:
+                raise ValueError(f"Column '{column_name}' does not exist in table '{table_name}'")
             raise sqlite3.OperationalError(exc)
 
     def update_data(

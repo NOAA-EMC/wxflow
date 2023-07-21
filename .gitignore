@@ -131,6 +131,7 @@ dmypy.json
 # Editor backup files (Emacs, vim)
 *~
 *.sw[a-p]
+.DS_Store
 
 # Pycharm IDE files
 .idea/

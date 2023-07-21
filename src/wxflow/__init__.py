@@ -6,6 +6,7 @@ from .configuration import (Configuration, cast_as_dtype,
 from .exceptions import WorkflowException, msg_except_handle
 from .executable import CommandNotFoundError, Executable, which
 from .factory import Factory
+from .file_system import FileSystem
 from .file_utils import FileHandler
 from .fsutils import chdir, cp, mkdir, mkdir_p, rm_p, rmdir
 from .jinja import Jinja

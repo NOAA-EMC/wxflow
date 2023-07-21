@@ -14,7 +14,7 @@ class Factory:
 
     def __init__(self, name: str):
         """
-        Initialize an empty {name}Factory with no Builders
+        Initialize an empty {name}Factory with no Builders and no default
 
 
         Parameters
@@ -23,6 +23,7 @@ class Factory:
         """
         self._name = f'{name}Factory'
         self._builders = {}
+        self._default = None
 
         # Register {name}Factory as importable from wxflow.factory
         me = sys.modules[__name__]
@@ -48,6 +49,17 @@ class Factory:
             print(f'{key} is already a registered Builder in {self._name}')
             return
         self._builders[key] = builder
+
+    def register_default(self, builder: object):
+        """
+        Register a default builder in the Factory
+
+        Parameters
+        ----------
+        builder: object
+            Name of the builder
+        """
+        self._default = builder
 
     def create(self, key: str, *args, **kwargs):
         """

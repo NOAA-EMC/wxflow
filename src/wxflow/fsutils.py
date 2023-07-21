@@ -3,7 +3,7 @@ import errno
 import os
 import shutil
 
-__all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp']
+__all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp', 'tree']
 
 
 def mkdir_p(path):
@@ -85,3 +85,28 @@ def cp(source: str, target: str) -> None:
         raise OSError(f"unable to copy {source} to {target}")
     except Exception as exc:
         raise Exception(exc)
+
+
+def tree(path):
+    """
+    Recursively visits path. Returns a tuple with three elements:
+    path (argument to the function), relative path, filename
+        To have the full_path:
+        for root, path, filename in tree(root):
+            full_path = os.path.join(root, path, filename)
+    Parameters
+    ----------
+    path : str
+        Path to recursively visit
+    Returns
+    -------
+    tuple : (str, str, str)
+        path (argument to the function), relative path, filename
+    """
+    for root, dirs, files in os.walk(path):
+        if len(files):
+            for file in files:
+                rr = root.replace(path, '', 1)
+                if len(rr) and rr[0] == '/':
+                    rr = rr[1:]
+                yield path, rr, file

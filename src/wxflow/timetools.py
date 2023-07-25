@@ -26,16 +26,14 @@ _TIMEDELTA_TIME_RE = re.compile(
 
 def to_datetime(dtstr: str) -> datetime.datetime:
     """
-    Description
-    -----------
     Translate a string into a datetime object in a generic way.
     The string can also support ISO 8601 representation.
 
-    Formats accepted (T, Z, -, :) are optional:
-    YYYY-mm-dd
-    YYYY-mm-ddTHHZ
-    YYYY-mm-ddTHH:MMZ
-    YYYY-mm-ddTHH:MM:SSZ
+    Formats accepted (`T`, `Z`, `-`, `:`) are optional:
+    `YYYY-mm-dd`
+    `YYYY-mm-ddTHHZ`
+    `YYYY-mm-ddTHH:MMZ`
+    `YYYY-mm-ddTHH:MM:SSZ`
 
     Parameters
     ----------
@@ -57,13 +55,11 @@ def to_datetime(dtstr: str) -> datetime.datetime:
 
 def to_timedelta(tdstr: str) -> datetime.timedelta:
     """
-    Description
-    -----------
     Translate a string into a timedelta object in a generic way
 
     Formats accepted (<sign>, T, Z) are optional:
-    <sign><dd>dT<hh>H<mm>M<ss>SZ
-    <sign><dd>day(s), hh:mm:ss
+    `<sign><dd>dT<hh>H<mm>M<ss>SZ`
+    `<sign><dd>day(s), hh:mm:ss`
 
     <sign> can be +/-, default is +
     <dd> can be any integer, default is 0
@@ -108,8 +104,6 @@ def to_timedelta(tdstr: str) -> datetime.timedelta:
 
 def datetime_to_YMDH(dt: datetime.datetime) -> str:
     """
-    Description
-    -----------
     Translate a datetime object to 'YYYYmmddHH' format.
 
     Parameters
@@ -130,8 +124,6 @@ def datetime_to_YMDH(dt: datetime.datetime) -> str:
 
 def datetime_to_YMD(dt: datetime.datetime) -> str:
     """
-    Description
-    -----------
     Translate a datetime object to 'YYYYmmdd' format.
 
     Parameters
@@ -152,8 +144,6 @@ def datetime_to_YMD(dt: datetime.datetime) -> str:
 
 def datetime_to_JDAY(dt: datetime.datetime) -> str:
     """
-    Description
-    -----------
     Translate a datetime object to 'YYYYDOY' format.
 
 
@@ -175,8 +165,6 @@ def datetime_to_JDAY(dt: datetime.datetime) -> str:
 
 def timedelta_to_HMS(td: datetime.timedelta) -> str:
     """
-    Description
-    -----------
     Translate a timedelta object to 'HH:MM:SS' format.
 
     Parameters
@@ -209,8 +197,6 @@ def strftime(dt: datetime.datetime, fmt: str) -> str:
 
 def strptime(dtstr: str, fmt: str) -> datetime.datetime:
     """
-    Description
-    -----------
     Translate a formatted string into datetime object.
 
     Parameters
@@ -233,8 +219,6 @@ def strptime(dtstr: str, fmt: str) -> datetime.datetime:
 
 def to_isotime(dt: datetime.datetime) -> str:
     """
-    Description
-    -----------
     Return a ISO formatted '%Y-%m-%dT%H:%M:%SZ' string from a datetime object.
 
     Parameters
@@ -252,8 +236,6 @@ def to_isotime(dt: datetime.datetime) -> str:
 
 def to_fv3time(dt: datetime.datetime) -> str:
     """
-    Description
-    -----------
     Return a FV3 formatted string from a datetime object.
 
     Parameters
@@ -271,8 +253,6 @@ def to_fv3time(dt: datetime.datetime) -> str:
 
 def add_to_datetime(dt: datetime.datetime, td: datetime.timedelta) -> datetime.datetime:
     """
-    Description
-    -----------
     Adds a timedelta to a datetime object.
 
     Parameters
@@ -291,8 +271,6 @@ def add_to_datetime(dt: datetime.datetime, td: datetime.timedelta) -> datetime.d
 
 def add_to_timedelta(td1, td2):
     """
-    Description
-    -----------
     Adds two timedelta objects.
 
     Parameters

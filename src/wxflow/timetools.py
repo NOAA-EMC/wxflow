@@ -30,10 +30,10 @@ def to_datetime(dtstr: str) -> datetime.datetime:
     The string can also support ISO 8601 representation.
 
     Formats accepted (`T`, `Z`, `-`, `:`) are optional:
-    `YYYY-mm-dd`
-    `YYYY-mm-ddTHHZ`
-    `YYYY-mm-ddTHH:MMZ`
-    `YYYY-mm-ddTHH:MM:SSZ`
+    - `YYYY-mm-dd` : something
+    - `YYYY-mm-ddTHHZ` : something else
+    - `YYYY-mm-ddTHH:MMZ`
+    - `YYYY-mm-ddTHH:MM:SSZ`
 
     Parameters
     ----------
@@ -104,7 +104,7 @@ def to_timedelta(tdstr: str) -> datetime.timedelta:
 
 def datetime_to_YMDH(dt: datetime.datetime) -> str:
     """
-    Translate a datetime object to 'YYYYmmddHH' format.
+    Translate a datetime object to `YYYYmmddHH` format.
 
     Parameters
     ----------

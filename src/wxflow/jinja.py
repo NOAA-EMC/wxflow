@@ -1,7 +1,7 @@
 import os
 import sys
 from pathlib import Path
-from typing import Dict, List
+from typing import Union, Dict, List
 
 import jinja2
 from markupsafe import Markup
@@ -50,7 +50,7 @@ class Jinja:
     def __init__(self, template_path_or_string: str,
                  data: Dict,
                  allow_missing: bool = True,
-                 searchpath: str | List = '/') -> None:
+                 searchpath: Union[str, List] = '/') -> None:
         """
         Description
         -----------

@@ -3,7 +3,7 @@ import json
 import os
 import re
 import sys
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 import yaml
 
@@ -156,7 +156,7 @@ def vanilla_yaml(ctx):
         return ctx
 
 
-def parse_j2yaml(path: str, data: Dict, searchpath: str | List = '/') -> Dict[str, Any]:
+def parse_j2yaml(path: str, data: Dict, searchpath: Union[str, List] = '/') -> Dict[str, Any]:
     """
     Description
     -----------

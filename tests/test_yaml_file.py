@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pytest
 
-from wxflow import (YAMLFile, parse_j2yaml, save_as_yaml)
+from wxflow import YAMLFile, parse_j2yaml, save_as_yaml
 
 host_yaml = """
 host:

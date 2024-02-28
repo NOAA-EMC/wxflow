@@ -1,8 +1,8 @@
 import datetime
 import json
 import os
-import sys
 import re
+import sys
 from typing import Any, Dict, List
 
 import yaml

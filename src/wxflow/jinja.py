@@ -1,7 +1,7 @@
 import os
 import sys
 from pathlib import Path
-from typing import Union, Dict, List
+from typing import Dict, List, Union
 
 import jinja2
 from markupsafe import Markup

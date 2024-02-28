@@ -606,7 +606,7 @@ class Schema(object):
                         return_schema["allOf"] = all_of_values
                 elif flavor == COMPARABLE:
                     return_schema["const"] = _to_json_type(s)
-                elif flavor == VALIDATOR and type(s) == Regex:
+                elif flavor == VALIDATOR and type(s) is Regex:
                     return_schema["type"] = "string"
                     return_schema["pattern"] = s.pattern_str
                 else:

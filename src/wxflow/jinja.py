@@ -68,7 +68,7 @@ class Jinja:
         allow_missing : bool
             If True, allow for missing or undefined variables
         searchpath: str | list
-            Additional search paths for templates
+            Additional search paths for templates (default '/')
         """
 
         self.jinja2_version = jinja2.__version__
@@ -76,6 +76,9 @@ class Jinja:
         self.data = data
         self.undefined = SilentUndefined if allow_missing else jinja2.StrictUndefined
         self.template_searchpath = searchpath if isinstance(searchpath, list) else [searchpath]
+        # Add a default search path if the user has not provided one
+        if '/' not in self.template_searchpath:
+            self.template_searchpath.insert(0, '/')
 
         if os.path.isfile(template_path_or_string):
             self.template_type = 'file'

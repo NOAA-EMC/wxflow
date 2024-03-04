@@ -81,7 +81,7 @@ class AttrDict(dict):
     def __missing__(self, name):
         if object.__getattribute__(self, '__frozen'):
             raise KeyError(name)
-        return self.__class__(__parent=self, __key=name)
+        raise KeyError(name)
 
     def __delattr__(self, name):
         del self[name]

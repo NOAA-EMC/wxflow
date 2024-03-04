@@ -7,10 +7,12 @@ jobs:
     name: Check Python coding norms
 
     steps:
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - name: Install (upgrade) python dependencies (pycodestyle)
         run: |
           pip install --upgrade pip
           pip install pycodestyle
-      - uses: actions/checkout@v3
-      - uses: pre-commit/action@v3.0.0
+      - uses: actions/checkout@v4
+      - uses: pre-commit/action@v3.0.1

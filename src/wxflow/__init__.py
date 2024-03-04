@@ -15,7 +15,7 @@ from .task import Task
 from .template import Template, TemplateConstants
 from .timetools import *
 from .yaml_file import (YAMLFile, dump_as_yaml, parse_j2yaml, parse_yaml,
-                        parse_yamltmpl, save_as_yaml, vanilla_yaml)
+                        save_as_yaml, vanilla_yaml)
 
 __docformat__ = "restructuredtext"
 __version__ = "0.1.0"

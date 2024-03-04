@@ -2,15 +2,15 @@ import datetime
 import json
 import os
 import re
-from typing import Any, Dict
+import sys
+from typing import Any, Dict, List, Union
 
 import yaml
 
 from .attrdict import AttrDict
 from .jinja import Jinja
-from .template import Template, TemplateConstants
 
-__all__ = ['YAMLFile', 'parse_yaml', 'parse_yamltmpl', 'parse_j2yaml',
+__all__ = ['YAMLFile', 'parse_yaml', 'parse_j2yaml',
            'save_as_yaml', 'dump_as_yaml', 'vanilla_yaml']
 
 
@@ -39,9 +39,11 @@ class YAMLFile(AttrDict):
     def save(self, target):
         save_as_yaml(self, target)
 
+    @property
     def dump(self):
         return dump_as_yaml(self)
 
+    @property
     def as_dict(self):
         return vanilla_yaml(self)
 
@@ -54,7 +56,7 @@ def save_as_yaml(data, target):
 
 
 def dump_as_yaml(data):
-    return yaml.dump(vanilla_yaml(data),
+    return yaml.dump(vanilla_yaml(data), sys.stdout, encoding='utf-8',
                      width=100000, sort_keys=False)
 
 
@@ -154,57 +156,25 @@ def vanilla_yaml(ctx):
         return ctx
 
 
-def parse_j2yaml(path: str, data: Dict) -> Dict[str, Any]:
+def parse_j2yaml(path: str, data: Dict, searchpath: Union[str, List] = '/') -> Dict[str, Any]:
     """
     Description
     -----------
     Load a compound jinja2-templated yaml file and resolve any templated variables.
     The jinja2 templates are first resolved and then the rendered template is parsed as a yaml.
-    Finally, any remaining $( ... ) templates are resolved
 
     Parameters
     ----------
     path : str
-        the path to the yaml file
+        the path to the jinja2 templated yaml file
     data : Dict[str, Any], optional
         the context for jinja2 templating
+    searchpath: str | List
+        additional search paths for included jinja2 templates
     Returns
     -------
     Dict[str, Any]
         the dict configuration
     """
-    jenv = Jinja(path, data)
-    yaml_file = jenv.render
-    yaml_dict = YAMLFile(data=yaml_file)
-    yaml_dict = Template.substitute_structure(
-        yaml_dict, TemplateConstants.DOLLAR_PARENTHESES, data.get)
 
-    # If the input yaml file included other yamls with jinja2 templates, then we need to re-parse the jinja2 templates in them
-    jenv2 = Jinja(json.dumps(yaml_dict, indent=4), data)
-    yaml_file2 = jenv2.render
-    yaml_dict = YAMLFile(data=yaml_file2)
-
-    return yaml_dict
-
-
-def parse_yamltmpl(path: str, data: Dict = None) -> Dict[str, Any]:
-    """
-    Description
-    -----------
-    Load a simple templated yaml file and then resolve any templated variables defined as $( ... )
-    Parameters
-    ----------
-    path : str
-        the path to the yaml file
-    data : Dict[str, Any], optional
-        the context for wxflow.Template templating
-    Returns
-    -------
-    Dict[str, Any]
-        the dict configuration
-    """
-    yaml_dict = YAMLFile(path=path)
-    if data is not None:
-        yaml_dict = Template.substitute_structure(yaml_dict, TemplateConstants.DOLLAR_PARENTHESES, data.get)
-
-    return yaml_dict
+    return YAMLFile(data=Jinja(path, data, searchpath=searchpath).render)

@@ -60,6 +60,14 @@ def test_remove_column(db):
     assert not column_exists(db, "test_table", column_name)
 
 
+def test_remove_column_raises_error_when_column_not_exists(db):
+    table_name = "test_table"
+    column_name = "vacation address"
+
+    with pytest.raises(ValueError, match=f"Column '{column_name}' does not exist in table '{table_name}'"):
+        db.remove_column("test_table", column_name)
+
+
 def test_insert_data(db):
     # Insert test data into the table
     values = [2, "Bob", 35]

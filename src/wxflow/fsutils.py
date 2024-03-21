@@ -2,9 +2,11 @@ import contextlib
 import errno
 import os
 import shutil
+import pathlib
+import grp
+from .executable import Executable, which
 
-__all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp']
-
+__all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp', 'get_gid']
 
 def mkdir_p(path):
     try:
@@ -85,3 +87,31 @@ def cp(source: str, target: str) -> None:
         raise OSError(f"unable to copy {source} to {target}")
     except Exception as exc:
         raise Exception(exc)
+
+
+# Group ID number for a given group name
+def get_gid(group_name: str):
+    try:
+        group_id = grp.getgrnam(group_name)
+    except KeyError:
+        raise KeyError(f"{group_name} is not a valid group name.")
+
+    return group_id
+
+
+# Determine if a path (dir, file, link) belongs to the rstprod group
+def is_rstprod(path: str) -> bool:
+    try:
+        rstprod_gid = get_gid("rstprod")
+    except KeyError:
+        # The rstprod group does not exist
+        return False
+
+    if not os.path.exists(path):
+        print(f"WARNING '{path}' does not exist!")
+        return False
+
+    if os.stat(path).st_gid == rstprod_gid:
+        return True
+
+    return False

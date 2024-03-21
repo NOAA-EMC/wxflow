@@ -3,7 +3,7 @@ from .executable import Executable, which
 
 from .fsutils import cp, mkdir, is_rstprod
 
-__all__ = ['hsi']
+__all__ = ['Hsi']
 
 logger = getLogger(__name__.split('.')[-1])
 
@@ -12,7 +12,8 @@ class Hsi:
 
     """
 
-    def hsi(self, *args) -> None:
+    @staticmethod
+    def hsi(*args) -> None:
         """Direct command builder function for hsi based on the input arguments.
 
         `args` should consist of a set of string arguments to send to hsi
@@ -29,7 +30,8 @@ class Hsi:
         cmd()
 
 
-    def get(self, source: str, target: str = "", hsi_flags: str = "") -> None:
+    @classmethod
+    def get(cls, source: str, target: str = "", hsi_flags: str = "") -> None:
         """ Function to get a file from HPSS via hsi
 
         Parameters
@@ -49,17 +51,18 @@ class Hsi:
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args = args + self._parse_hsi_flags(hsi_flags)
+            args = args + cls._parse_hsi_flags(hsi_flags)
 
         args = ("get",)
         if len(target) == 0:
             args = args + (source,)
         else:
             args = args + (target + " : " + source,)
-        self.hsi(*args)
+        cls.hsi(*args)
 
 
-    def put(self, source: str, target: str, hsi_flags: str = "", listing_file : str = None) -> None:
+    @classmethod
+    def put(cls, source: str, target: str, hsi_flags: str = "", listing_file : str = None) -> None:
         """ Function to put a file onto HPSS via hsi
 
         Parameters
@@ -78,14 +81,15 @@ class Hsi:
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args = args + self._parse_hsi_flags(hsi_flags)
+            args = args + cls._parse_hsi_flags(hsi_flags)
 
         args = args + ("put",)
         args = args + (source + " : " + target,)
-        self.hsi(*args)
+        cls.hsi(*args)
 
 
-    def chmod(self, mod: str, target: str, hsi_flags: str = "", flags: str = "") -> None:
+    @classmethod
+    def chmod(cls, mod: str, target: str, hsi_flags: str = "", flags: str = "") -> None:
         """ Function to change the permissions of a file or directory on HPSS
 
         Parameters
@@ -109,20 +113,21 @@ class Hsi:
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args = args + self._parse_hsi_flags(hsi_flags)
+            args = args + cls._parse_hsi_flags(hsi_flags)
 
         args = args + ("chmod",)
 
         if len(flags) > 0:
             valid_flags = ["d", "h", "H", "R", "f"]
-            args = args + self._parse_flags(flags, valid_flags)
+            args = args + cls._parse_flags(flags, valid_flags)
 
         args = args + (mod,)
         args = args + (target,)
-        self.hsi(*args)
+        cls.hsi(*args)
 
 
-    def chgrp(self, group_name: str, target: str, hsi_flags: str = "", flags: str = "") -> None:
+    @classmethod
+    def chgrp(cls, group_name: str, target: str, hsi_flags: str = "", flags: str = "") -> None:
         """ Function to change the group of a file or directory on HPSS
 
         Parameters
@@ -146,20 +151,21 @@ class Hsi:
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args = args + self._parse_hsi_flags(hsi_flags)
+            args = args + cls._parse_hsi_flags(hsi_flags)
 
         args = args + ("chgrp",)
 
         if len(flags) > 0:
             valid_flags = ["R", "h", "L", "H"]
-            args = args + self._parse_flags(flags, valid_flags)
+            args = args + cls._parse_flags(flags, valid_flags)
 
         args = args + (group_name,)
         args = args + (target,)
-        self.hsi(*args)
+        cls.hsi(*args)
 
 
-    def rm(self, target: str, hsi_flags: str = "", flags: str = "") -> None:
+    @classmethod
+    def rm(cls, target: str, hsi_flags: str = "", flags: str = "") -> None:
         """ Function to delete a file or directory on HPSS via hsi
 
         Parameters
@@ -179,19 +185,20 @@ class Hsi:
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args = args + self._parse_hsi_flags(hsi_flags)
+            args = args + cls._parse_hsi_flags(hsi_flags)
 
         args = args + ("rm",)
 
         if len(flags) > 0:
             valid_flags = ['R']
-            args = args + self._parse_flags(flags, valid_flags)
+            args = args + cls._parse_flags(flags, valid_flags)
 
         args = args + (target,)
-        self.hsi(*args)
+        cls.hsi(*args)
 
 
-    def _parse_flags(self, flags: str, valid_flags: list, valid_flags_with_arg: list = []) -> tuple:
+    @staticmethod
+    def _parse_flags(flags: str, valid_flags: list, valid_flags_with_arg: list = []) -> tuple:
         """Expands the input flags into a tuple
 
         Inputs:
@@ -244,35 +251,14 @@ class Hsi:
         return expanded_flags
 
 
-    def _parse_hsi_flags(self, flags: str) -> tuple:
+    @classmethod
+    def _parse_hsi_flags(cls, flags: str) -> tuple:
         """Expands the input flags into a tuple
 
         Inputs:
             flags: str
-                String of flags to send to hsi.  Valid flags (from hsi -?):
----------------------------------------------------------------------------
-    Parameters:
-    -a acct_id | acct_name - specifies the HPSS account ID or account name to set
-                             after login completes. This will be used for all new file creations
-    -A authmethod   - authentication method. Case-insensitive legal method names are:
-                      "combo","keytab","ident","gsi","local"
-    -c krb_cred_file  - pathname to use for Kerberos credentials cache file
-    -d debug_level - debug message level (0-5) default is 0
-    -e             - command echo flag. Echos lines read from <IN> file(s) to the listable output file
-    -h host - specifies host name or IP address of the HPSS server, and optionally,
-              the port on which to connect
-    -k keytabfile - specifies pathname to DCE keytab file
-    -l loginname - specifies login name to use.
-                   For kerberos, this is usually of the form "name@realm"
-    -O listingFile - specifies filename to contain all listable output, error messages,etc
-                     This option is intended for use by programs that run hsi as a child process
-                     and internally disables verbose (-v) mode, and sets quiet (-q) mode. (This can
-                     be overridden by specifying the -v or -q parameters after the -O parameter)
-    -q - specifies "quiet" mode. Suppresses login message,file transfer progress messages, etc.
-    -s site - specifies the site name to connect to at startup.  This name must match one of
-     the stanza names in either the global hsirc file, or in the user's private .hsirc file
-    -v - specifies "verbose" mode for listable output 
--------------------------------------------------------------------------------------
+                String of flags to send to hsi.  Valid flags are -a, -A, -c,
+                -d, -e, -h, -k, -l, -O, -q, -s, and -v.  See hsi -q for details.
 
         Return:
             Tuple of input flags
@@ -284,71 +270,4 @@ class Hsi:
         valid_flags = ["e", "p", "q", "v"]
         valid_flags_with_arg = ["a", "A", "c", "d", "h", "k", "l", "O", "s"]
 
-        return self._parse_flags(flags, valid_flags, valid_flags_with_arg)
-
-class Htar:
-    """Class providing a set of functions to interact with the htar utility.
-
-    """
-
-    def create(target: str, fileset: list, flags: str = None, ignore_missing: bool = False) -> None:
-        """ Build and execute the command
-            htar <flags> -cf <target> <file_list.split()>
-
-        Parameters:
-        -----------
-            target : str
-                    Path to the tarball to be created on HPSS
-            fileset: list
-                    List of files to be added to <target>
-
-        Keyword Argument:
-        -----------------
-            flags : str
-                    Optional flags to add to the htar command
-                    Each flag must be separated by a " " and start with a "-".
-                    (-c and -f are assumed)
-                    Invalid flags will raise a ValueError
-
-            ignore_missing: bool
-                    Flag specifying whether missing files are allowed.  Warnings
-                    will be printed instead.
-
-        # Will raise a CommandNotFoundError if htar is not in $PATH
-        # Will raise a FileNotFoundError if an input file is not found
-        # Will raise a ValueError if an invalid flag is sent in
-        """
-        cmd = which("htar", required=True)
-
-        if flags is not None:
-            valid_flags = ['-v', '-h', '-q', '-V', '-v']
-            ignore_flags = ['-c', '-f']
-            for flag in flags.split(" "):
-                if flag in ignore_flags:
-                    continue
-                if flag not in valid_flags:
-                    raise ValueError(f"The input flags '{flags}' contains an invalid flag '{flag}'.")
-                cmd.add_default_arg(flag)
-
-        cmd.add_default_arg("-c")
-        cmd.add_default_arg("-f")
-
-        cmd.add_default_arg(target)
-
-        has_rstprod = False
-
-        # Check files for existence and rstprod
-        for file in fileset:
-            if not os.path.exists(file):
-                if ignore_missing:
-                    print(f"WARNING input file '{file}' does not exist")
-                else:
-                    raise FileNotFoundError(f"The input file '{file}' was not found")
-
-            if not has_rstprod:
-                has_rstprod = is_rstprod(file)
-
-            cmd.add_default_arg(file)
-
-        if has_rstprod:
-            cmd()
+        return cls._parse_flags(flags, valid_flags, valid_flags_with_arg)

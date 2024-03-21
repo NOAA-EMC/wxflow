@@ -2,7 +2,6 @@ import contextlib
 import errno
 import os
 import shutil
-import pathlib
 import grp
 from .executable import Executable, which
 

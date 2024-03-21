@@ -1,6 +1,6 @@
 from logging import getLogger
 
-from .fsutils import cp, mkdir, hsi_put, hsi_get, hsi_chmod, hsi_chgrp
+from .fsutils import cp, mkdir
 
 __all__ = ['FileHandler']
 

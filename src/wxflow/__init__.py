@@ -7,8 +7,9 @@ from .exceptions import WorkflowException, msg_except_handle
 from .executable import CommandNotFoundError, Executable, which
 from .factory import Factory
 from .file_utils import FileHandler
-from .archive_utils import Hsi
-from .fsutils import chdir, cp, mkdir, mkdir_p, rm_p, rmdir
+from .hsi import Hsi
+from .htar import Htar
+from .fsutils import chdir, cp, mkdir, mkdir_p, rm_p, rmdir, get_gid
 from .jinja import Jinja
 from .logger import Logger, logit
 from .sqlitedb import SQLiteDB, SQLiteDBError

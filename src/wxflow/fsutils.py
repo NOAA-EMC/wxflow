@@ -96,21 +96,3 @@ def get_gid(group_name: str):
         raise KeyError(f"{group_name} is not a valid group name.")
 
     return group_id
-
-
-# Determine if a path (dir, file, link) belongs to the rstprod group
-def is_rstprod(path: str) -> bool:
-    try:
-        rstprod_gid = get_gid("rstprod")
-    except KeyError:
-        # The rstprod group does not exist
-        return False
-
-    if not os.path.exists(path):
-        print(f"WARNING '{path}' does not exist!")
-        return False
-
-    if os.stat(path).st_gid == rstprod_gid:
-        return True
-
-    return False

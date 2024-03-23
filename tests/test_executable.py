@@ -66,6 +66,8 @@ def test_stderr(tmp_path):
     Tests the `stderr` attribute of the `Executable` class
     """
 
+    os.environ["PATH"] = "/usr/bin:/bin"
+
     cmd = which("ls", required=True)
 
     stdout_file = tmp_path / 'stdout'

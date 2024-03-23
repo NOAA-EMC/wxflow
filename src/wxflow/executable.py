@@ -4,7 +4,7 @@ import subprocess
 import sys
 from typing import Any, List, Optional, Union
 
-__all__ = ["Executable", "which", "CommandNotFoundError"]
+__all__ = ["Executable", "which", "CommandNotFoundError", "ProcessError"]
 
 
 class Executable:

@@ -4,7 +4,7 @@ from .attrdict import AttrDict
 from .configuration import (Configuration, cast_as_dtype,
                             cast_strdict_as_dtypedict)
 from .exceptions import WorkflowException, msg_except_handle
-from .executable import CommandNotFoundError, Executable, which
+from .executable import CommandNotFoundError, Executable, ProcessError, which
 from .factory import Factory
 from .file_utils import FileHandler
 from .fsutils import chdir, cp, mkdir, mkdir_p, rm_p, rmdir

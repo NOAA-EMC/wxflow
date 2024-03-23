@@ -61,19 +61,16 @@ def test_which(tmpdir):
         assert exe.path == path
 
 
-@pytest.mark.skip(reason="test passes locally, but fails in GH runner")
 def test_stderr(tmp_path):
     """
     Tests the `stderr` attribute of the `Executable` class
-    TODO: This test fails in the GH runner, but passes locally. Investigate why.
     """
 
     cmd = which("ls", required=True)
 
     stdout_file = tmp_path / 'stdout'
     stderr_file = tmp_path / 'stderr'
-    with pytest.raises(ProcessError):
-        cmd("--help", output=str(stdout_file), error=str(stderr_file))
+    cmd("--myopt", output=str(stdout_file), error=str(stderr_file), fail_on_error=False)
 
     # Assert there is no stdout
     with open(str(stdout_file)) as fh:
@@ -83,7 +80,8 @@ def test_stderr(tmp_path):
     with open(str(stderr_file)) as fh:
         stderr = fh.read()
         assert stderr != ''
+        print(stderr)
         # Depending on the OS, the error message may vary
         # This was seen on macOS
-        # assert stderr == "ls: unrecognized option `--help'" + '\n' + \
+        # assert stderr == "ls: unrecognized option `--myopt'" + '\n' + \
         # "usage: ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,] [--color=when] [-D format] [file ...]" + '\n'

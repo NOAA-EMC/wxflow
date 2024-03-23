@@ -60,6 +60,7 @@ def test_which(tmpdir):
         assert exe is not None
         assert exe.path == path
 
+
 @pytest.mark.skip(reason="test passes locally, but fails in GH runner")
 def test_stderr(tmp_path):
     """

@@ -65,21 +65,26 @@ def test_stderr(tmp_path):
     """
     Tests the `stderr` attribute of the `Executable` class
     """
-    cmd = which("which", required=True)
+
+    # Put "/usr/bin" and "/bin" in the PATH
+    os.environ["PATH"] = "/usr/bin:/bin"
+
+    cmd = which("ls", required=True)
 
     stdout_file = tmp_path / 'stdout'
     stderr_file = tmp_path / 'stderr'
     with pytest.raises(ProcessError):
-        cmd("-h", output=str(stdout_file), error=str(stderr_file))
+        cmd("--help", output=str(stdout_file), error=str(stderr_file))
 
     # Assert there is no stdout
     with open(str(stdout_file)) as fh:
         assert fh.read() == ''
 
-    # Assert stderr is not empty, '-h' is a bad option for `which`
+    # Assert stderr is not empty, '--help' is an unrecognized option
     with open(str(stderr_file)) as fh:
         stderr = fh.read()
         assert stderr != ''
         # Depending on the OS, the error message may vary
         # This was seen on macOS
-        # assert stderr == "/usr/bin/which: illegal option -- h" + '\n' + "usage: which [-as] program ..." + '\n'
+        # assert stderr == "ls: unrecognized option `--help'" + '\n' + \
+        # "usage: ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,] [--color=when] [-D format] [file ...]" + '\n'

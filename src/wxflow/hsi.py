@@ -100,9 +100,8 @@ def chmod(mod: str, target: str, hsi_flags: str = "", chmod_flags: str = "") -> 
     hsi_flags : str
             String of flags to send to hsi.
 
-    flags : str
-            Flags to send to chmod.  Valid flags are -d, -f, -h, -H, and -R.  See
-            "hsi chmod -?" for more details.
+    chmod_flags : str
+            Flags to send to chmod. See "hsi chmod -?" for more details.
     """
 
     args = []
@@ -113,7 +112,7 @@ def chmod(mod: str, target: str, hsi_flags: str = "", chmod_flags: str = "") -> 
 
     args.append("chmod")
 
-    if len(flags) > 0:
+    if len(chmod_flags) > 0:
         args.extend(chmod_flags.split(" "))
 
     args.append(mod)
@@ -137,9 +136,8 @@ def chgrp(group_name: str, target: str, hsi_flags: str = "", chgrp_flags: str = 
     hsi_flags : str
             String of flags to send to hsi.
 
-    flags : str
-            Flags to send to chmod.  Valid flags are -h, -L, -H, and -R.  See
-            "chgrp --help" for more details.
+    chgrp_flags : str
+            Flags to send to chgrp.  See "hsi chgrp -?" for more details.
     """
 
     args = []
@@ -150,7 +148,7 @@ def chgrp(group_name: str, target: str, hsi_flags: str = "", chgrp_flags: str = 
 
     args.append("chgrp")
 
-    if len(flags) > 0:
+    if len(chgrp_flags) > 0:
         args.extend(chgrp_flags.split(" "))
 
     args.append(group_name)
@@ -171,8 +169,8 @@ def rm(target: str, hsi_flags: str = "", rm_flags: str = "") -> str:
     hsi_flags : str
             String of flags to send to hsi.
 
-    flags : str
-            Flags to send to chmod.  The only valid flag is -R (recursive).
+    rm_flags : str
+            Flags to send to rm.  See "hsi rm -?" for more details.
     """
 
     args = []
@@ -183,7 +181,7 @@ def rm(target: str, hsi_flags: str = "", rm_flags: str = "") -> str:
 
     args.append("rm")
 
-    if len(flags) > 0:
+    if len(rm_flags) > 0:
         args.extend(rm_flags.split(" "))
 
     args.append(target)
@@ -203,8 +201,8 @@ def ls(target: str, hsi_flags: str = "", ls_flags: str = "") -> str:
     hsi_flags : str
             String of flags to send to hsi.
 
-    flags : str
-            Flags to send to ls.
+    ls_flags : str
+            Flags to send to ls.  See "hsi ls -?" for more details.
     """
 
     args = []
@@ -216,7 +214,7 @@ def ls(target: str, hsi_flags: str = "", ls_flags: str = "") -> str:
     args.append("ls")
 
     if len(ls_flags) > 0:
-        args.extend(flags.split(" "))
+        args.extend(ls_flags.split(" "))
 
     args.append(target)
     output = hsi(*args)
@@ -238,7 +236,7 @@ def file_exists(target: str) -> bool:
 
     cmd = which("hsi", required = True)
 
-    for arg in ["ls", "target"]:
+    for arg in ["ls", target]:
         cmd.add_default_arg(arg)
 
     # Do not exit if the file is not found; do not pipe output to stdout
@@ -247,7 +245,7 @@ def file_exists(target: str) -> bool:
     if "HPSS_ENOENT" in output:
         return False
     # Catch wildcards
-    elif f"Warning: No matching names located for '{target}'" in target
+    elif f"Warning: No matching names located for '{target}'" in output:
         return False
     else:
         return True

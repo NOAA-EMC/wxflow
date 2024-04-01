@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from wxflow import CommandNotFoundError, Executable, which
+from wxflow import CommandNotFoundError, Executable, ProcessError, which
 
 script = """#!/bin/bash
 echo ${USER}
@@ -59,3 +59,31 @@ def test_which(tmpdir):
         exe = which("test.x")
         assert exe is not None
         assert exe.path == path
+
+
+def test_stderr(tmp_path):
+    """
+    Tests the `stderr` attribute of the `Executable` class
+    """
+
+    os.environ["PATH"] = "/usr/bin:/bin"
+
+    cmd = which("ls", required=True)
+
+    stdout_file = tmp_path / 'stdout'
+    stderr_file = tmp_path / 'stderr'
+    cmd("--myopt", output=str(stdout_file), error=str(stderr_file), fail_on_error=False)
+
+    # Assert there is no stdout
+    with open(str(stdout_file)) as fh:
+        assert fh.read() == ''
+
+    # Assert stderr is not empty, '--help' is an unrecognized option
+    with open(str(stderr_file)) as fh:
+        stderr = fh.read()
+        assert stderr != ''
+        print(stderr)
+        # Depending on the OS, the error message may vary
+        # This was seen on macOS
+        # assert stderr == "ls: unrecognized option `--myopt'" + '\n' + \
+        # "usage: ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,] [--color=when] [-D format] [file ...]" + '\n'

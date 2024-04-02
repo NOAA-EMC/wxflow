@@ -8,5 +8,7 @@ API
   timetools
   jinja
   logger
+  hsi
+  htar
 
 

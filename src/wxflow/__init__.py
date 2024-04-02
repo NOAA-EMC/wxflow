@@ -1,5 +1,6 @@
 import os
 
+from . import hsi, htar
 from .attrdict import AttrDict
 from .configuration import (Configuration, cast_as_dtype,
                             cast_strdict_as_dtypedict)
@@ -8,7 +9,6 @@ from .executable import CommandNotFoundError, Executable, ProcessError, which
 from .factory import Factory
 from .file_utils import FileHandler
 from .fsutils import chdir, cp, mkdir, mkdir_p, rm_p, rmdir, get_gid, chgrp
-from . import hsi, htar
 from .jinja import Jinja
 from .logger import Logger, logit
 from .sqlitedb import SQLiteDB, SQLiteDBError

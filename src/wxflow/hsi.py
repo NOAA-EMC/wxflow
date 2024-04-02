@@ -1,9 +1,7 @@
-from logging import getLogger
 from .executable import Executable, which
 
-__all__ = ['hsi', 'get', 'put', 'ls', 'chmod', 'chgrp', 'rm', 'mkdir', 'file_exists']
-
-logger = getLogger(__name__.split('.')[-1])
+__all__ = ['hsi', 'get', 'put', 'ls', 'chmod', 'chgrp', 'rm',
+           'mkdir', 'file_exists']
 
 
 def hsi(*args) -> str:
@@ -17,12 +15,12 @@ def hsi(*args) -> str:
         Concatenated output and error of the hsi command.
     """
 
-    cmd = which("hsi", required = True)
+    cmd = which("hsi", required=True)
 
     for arg in args:
         cmd.add_default_arg(arg)
 
-    output = cmd(output = str.split, error = str.split)
+    output = cmd(output=str.split, error=str.split)
 
     return output
 
@@ -59,7 +57,8 @@ def get(source: str, target: str = "", hsi_flags: str = "") -> str:
     return output
 
 
-def put(source: str, target: str, hsi_flags: str = "", listing_file : str = None) -> str:
+def put(source: str, target: str, hsi_flags: str = "",
+        listing_file: str = None) -> str:
     """ Function to put a file onto HPSS via hsi
 
     Parameters
@@ -86,13 +85,15 @@ def put(source: str, target: str, hsi_flags: str = "", listing_file : str = None
     return output
 
 
-def chmod(mod: str, target: str, hsi_flags: str = "", chmod_flags: str = "") -> str:
+def chmod(mod: str, target: str, hsi_flags: str = "",
+          chmod_flags: str = "") -> str:
     """ Function to change the permissions of a file or directory on HPSS
 
     Parameters
     ----------
     mod : str
-            Permissions to set for the file or directory, e.g. "640", "o+r", etc.
+            Permissions to set for the file or directory,
+            e.g. "640", "o+r", etc.
 
     target : str
             Full path of the target location of the file on HPSS.
@@ -122,7 +123,8 @@ def chmod(mod: str, target: str, hsi_flags: str = "", chmod_flags: str = "") -> 
     return output
 
 
-def chgrp(group_name: str, target: str, hsi_flags: str = "", chgrp_flags: str = "") -> str:
+def chgrp(group_name: str, target: str, hsi_flags: str = "",
+          chgrp_flags: str = "") -> str:
     """ Function to change the group of a file or directory on HPSS
 
     Parameters
@@ -202,7 +204,8 @@ def mkdir(target: str, hsi_flags: str = "", mkdir_flags: str = "") -> str:
             String of flags to send to hsi.
 
     mkdir_flags : str
-            Flags to send to mkdir (-p is assumed).  See "hsi mkdir -?" for more details.
+            Flags to send to mkdir (-p is assumed).
+            See "hsi mkdir -?" for more details.
     """
 
     args = []
@@ -266,13 +269,13 @@ def exists(target: str) -> bool:
             True if the target exists on HPSS.
     """
 
-    cmd = which("hsi", required = True)
+    cmd = which("hsi", required=True)
 
     for arg in ["ls", target]:
         cmd.add_default_arg(arg)
 
     # Do not exit if the file is not found; do not pipe output to stdout
-    output = cmd(output = str, error = str, ignore_errors=[64])
+    output = cmd(output=str, error=str, ignore_errors=[64])
 
     if "HPSS_ENOENT" in output:
         return False

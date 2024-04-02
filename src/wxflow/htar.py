@@ -1,25 +1,21 @@
-from logging import getLogger
 from .executable import Executable, which
 
-__all__ = ['Htar']
+__all__ = ['htar', 'create', 'cvf', 'extract', 'xvf', 'tell']
 
-logger = getLogger(__name__.split('.')[-1])
-
-
-"""Class providing a set of functions to interact with the htar utility.
-
-"""
 
 def htar(*args) -> None:
-    """Direct command builder function for htar based on the input arguments.
+    """
+    Direct command builder function for htar based on the input arguments.
 
     `args` should consist of a set of string arguments to send to htar
-    For example, Htar.htar("-cvf","/path/to/hpss/archive.tar", "<string list of files>") will execute
+    For example,
+    htar.htar("-cvf","/path/to/hpss/archive.tar", "<string list of files>")
+    will execute
     htar -cvf /path/to/hpss/archive.tar <string list of files>
 
     """
 
-    cmd = which("htar", required = True)
+    cmd = which("htar", required=True)
 
     for arg in args:
         cmd.add_default_arg(arg)
@@ -63,7 +59,7 @@ def cvf(tarball: str, fileset: list) -> None:
     fileset : list
             List containing filenames, patterns, or directories to archive
     """
-    create(tarball, fileset, flags = "-v")
+    create(tarball, fileset, flags="-v")
 
 
 def extract(tarball: str, fileset: list = [], flags: str = "") -> None:
@@ -107,7 +103,7 @@ def xvf(tarball: str = "", fileset: list = []) -> None:
             List containing filenames, patterns, or directories to extract from
             the archive.  If empty, then all files will be extracted.
     """
-    extract(tarball, fileset, flags = "-v")
+    extract(tarball, fileset, flags="-v")
 
 
 def tell(tarball: str, flags: str = "", fileset: list = []) -> None:

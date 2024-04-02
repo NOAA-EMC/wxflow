@@ -1,10 +1,12 @@
 import contextlib
 import errno
+import grp
 import os
 import shutil
-import grp
 
-__all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp', 'get_gid', 'chgrp']
+__all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp',
+           'get_gid', 'chgrp']
+
 
 def mkdir_p(path):
     try:
@@ -99,7 +101,7 @@ def get_gid(group_name: str):
 
 # Change the group of a target file or directory
 def chgrp(target, group_name, recursive=False):
-    #TODO add recursive option
+    # TODO add recursive option
     gid = get_gid(group_name)
     uid = os.stat(target).st_uid
     os.chown(target, uid, gid)

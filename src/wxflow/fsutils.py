@@ -3,7 +3,6 @@ import errno
 import os
 import shutil
 import grp
-from .executable import Executable, which
 
 __all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp', 'get_gid', 'chgrp']
 

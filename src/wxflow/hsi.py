@@ -1,7 +1,7 @@
 from logging import getLogger
 from .executable import Executable, which
 
-__all__ = ['hsi', 'get', 'put', 'ls', 'chmod', 'chgrp', 'rm', 'file_exists']
+__all__ = ['hsi', 'get', 'put', 'ls', 'chmod', 'chgrp', 'rm', 'mkdir', 'file_exists']
 
 logger = getLogger(__name__.split('.')[-1])
 
@@ -190,6 +190,38 @@ def rm(target: str, hsi_flags: str = "", rm_flags: str = "") -> str:
     return output
 
 
+def mkdir(target: str, hsi_flags: str = "", mkdir_flags: str = "") -> str:
+    """ Function to delete a file or directory on HPSS via hsi
+
+    Parameters
+    ----------
+    target : str
+            Full path of the target location of the file on HPSS.
+
+    hsi_flags : str
+            String of flags to send to hsi.
+
+    mkdir_flags : str
+            Flags to send to mkdir (-p is assumed).  See "hsi mkdir -?" for more details.
+    """
+
+    args = []
+
+    # Parse any hsi flags
+    if len(hsi_flags) > 0:
+        args.extend(hsi_flags.split(" "))
+
+    args.extend(["mkdir", "-p"])
+
+    if len(mkdir_flags) > 0:
+        args.extend(mkdir_flags.split(" "))
+
+    args.append(target)
+    output = hsi(*args)
+
+    return output
+
+
 def ls(target: str, hsi_flags: str = "", ls_flags: str = "") -> str:
     """ Function to list files/directories on HPSS via hsi
 
@@ -222,8 +254,8 @@ def ls(target: str, hsi_flags: str = "", ls_flags: str = "") -> str:
     return output
 
 
-def file_exists(target: str) -> bool:
-    """ Function to list files/directories on HPSS via hsi
+def exists(target: str) -> bool:
+    """ Function to test the existence of a file/directory/glob on HPSS
 
     Parameters
     ----------
@@ -231,7 +263,7 @@ def file_exists(target: str) -> bool:
             Full path of the target location on HPSS.
 
     Return: bool
-            True if the file exists on HPSS.
+            True if the target exists on HPSS.
     """
 
     cmd = which("hsi", required = True)

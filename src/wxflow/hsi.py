@@ -230,12 +230,14 @@ class Hsi:
             args.extend(rm_flags.split(" "))
 
         args.append(target)
-        output = self.hsi(args)
+
+        # Ignore missing files
+        output = self.hsi(args, ignore_errors=[72])
 
         return output
 
     def rmdir(self, target: str, hsi_flags: str = "-q -e", rmdir_flags: str = "") -> str:
-        """ Method to delete a file or directory on HPSS via hsi
+        """ Method to delete a directory on HPSS via hsi
 
         Parameters
         ----------

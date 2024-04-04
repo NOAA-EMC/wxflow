@@ -17,7 +17,7 @@ class Hsi:
     >>> output = hsi.chgrp("rstprod", "/HPSS/pth/to/some_file") # Change the group to rstprod
     """
 
-    def __init__(self, def_hsi_args="-q -e"):
+    def __init__(self, def_hsi_args: list = ["-q", "-e"]):
         """Instantiate the hsi command
 
         def_hsi_args: str
@@ -28,13 +28,13 @@ class Hsi:
 
         self.exe = which("hsi", required=True)
 
-        for arg in def_hsi_args.split(" "):
+        for arg in def_hsi_args:
             self.exe.add_default_arg(arg)
 
-    def _hsi(self, args: list, silent: bool = False, ignore_errors: list = []) -> str:
+    def _hsi(self, arg_list: list, silent: bool = False, ignore_errors: list = []) -> str:
         """Direct command builder function for hsi based on the input arguments.
 
-        args: list
+        arg_list: list
             A list of arguments to sent to hsi
 
         silent: bool
@@ -55,10 +55,10 @@ class Hsi:
         """
 
         if silent:
-            output = self.exe(*args, output=str, error=str,
+            output = self.exe(*arg_list, output=str, error=str,
                               ignore_errors=ignore_errors)
         else:
-            output = self.exe(*args, output=str.split, error=str.split,
+            output = self.exe(*arg_list, output=str.split, error=str.split,
                               ignore_errors=ignore_errors)
 
         return output
@@ -79,7 +79,7 @@ class Hsi:
                 String of flags to send to hsi. By default, suppress login info and
                 echo the get command.
         """
-        args = []
+        arg_list = []
 
         # Convert to str to handle Path objects
         target = str(target)
@@ -87,15 +87,15 @@ class Hsi:
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args.extend(hsi_flags.split(" "))
+            arg_list.extend(hsi_flags.split(" "))
 
-        args.append("get")
+        arg_list.append("get")
         if len(target) == 0:
-            args.append(source)
+            arg_list.append(source)
         else:
-            args.append(target + " : " + source)
+            arg_list.append(target + " : " + source)
 
-        output = self._hsi(args)
+        output = self._hsi(arg_list)
 
         return output
 
@@ -115,7 +115,7 @@ class Hsi:
                 String of flags to send to hsi. By default, suppress login info
                 and echo the put command.
         """
-        args = []
+        arg_list = []
 
         # Convert to str to handle Path objects
         target = str(target)
@@ -123,11 +123,11 @@ class Hsi:
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args.extend(hsi_flags.split(" "))
+            arg_list.extend(hsi_flags.split(" "))
 
-        args.append("put")
-        args.append(source + " : " + target)
-        output = self._hsi(args)
+        arg_list.append("put")
+        arg_list.append(source + " : " + target)
+        output = self._hsi(arg_list)
 
         return output
 
@@ -151,20 +151,20 @@ class Hsi:
                 Flags to send to chmod. See "hsi chmod -?" for more details.
         """
 
-        args = []
+        arg_list = []
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args.extend(hsi_flags.split(" "))
+            arg_list.extend(hsi_flags.split(" "))
 
-        args.append("chmod")
+        arg_list.append("chmod")
 
         if len(chmod_flags) > 0:
-            args.extend(chmod_flags.split(" "))
+            arg_list.extend(chmod_flags.split(" "))
 
-        args.append(mod)
-        args.append(target)
-        output = self._hsi(args)
+        arg_list.append(mod)
+        arg_list.append(target)
+        output = self._hsi(arg_list)
 
         return output
 
@@ -187,20 +187,20 @@ class Hsi:
                 Flags to send to chgrp.  See "hsi chgrp -?" for more details.
         """
 
-        args = []
+        arg_list = []
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args.extend(hsi_flags.split(" "))
+            arg_list.extend(hsi_flags.split(" "))
 
-        args.append("chgrp")
+        arg_list.append("chgrp")
 
         if len(chgrp_flags) > 0:
-            args.extend(chgrp_flags.split(" "))
+            arg_list.extend(chgrp_flags.split(" "))
 
-        args.append(group_name)
-        args.append(target)
-        output = self._hsi(args)
+        arg_list.append(group_name)
+        arg_list.append(target)
+        output = self._hsi(arg_list)
 
         return output
 
@@ -226,21 +226,21 @@ class Hsi:
             output = self.rmdir(target, hsi_flags, rmdir_flags)
             return output
 
-        args = []
+        arg_list = []
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args.extend(hsi_flags.split(" "))
+            arg_list.extend(hsi_flags.split(" "))
 
-        args.append("rm")
+        arg_list.append("rm")
 
         if len(rm_flags) > 0:
-            args.extend(rm_flags.split(" "))
+            arg_list.extend(rm_flags.split(" "))
 
-        args.append(target)
+        arg_list.append(target)
 
         # Ignore missing files
-        output = self._hsi(args, ignore_errors=[72])
+        output = self._hsi(arg_list, ignore_errors=[72])
 
         return output
 
@@ -260,19 +260,19 @@ class Hsi:
                 Flags to send to rmdir.  See "hsi rmdir -?" for more details.
         """
 
-        args = []
+        arg_list = []
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args.extend(hsi_flags.split(" "))
+            arg_list.extend(hsi_flags.split(" "))
 
-        args.append("rmdir")
+        arg_list.append("rmdir")
 
         if len(rmdir_flags) > 0:
-            args.extend(rmdir_flags.split(" "))
+            arg_list.extend(rmdir_flags.split(" "))
 
-        args.append(target)
-        output = self._hsi(args)
+        arg_list.append(target)
+        output = self._hsi(arg_list)
 
         return output
 
@@ -289,20 +289,20 @@ class Hsi:
                 and echo the mkdir command.
         """
 
-        args = []
+        arg_list = []
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args.extend(hsi_flags.split(" "))
+            arg_list.extend(hsi_flags.split(" "))
 
         # The only flag available for mkdir is -p, which we will use.
-        args.extend(["mkdir", "-p"])
+        arg_list.extend(["mkdir", "-p"])
 
         if len(mkdir_flags) > 0:
-            args.extend(mkdir_flags.split(" "))
+            arg_list.extend(mkdir_flags.split(" "))
 
-        args.append(target)
-        output = self._hsi(args)
+        arg_list.append(target)
+        output = self._hsi(arg_list)
 
         return output
 
@@ -325,7 +325,7 @@ class Hsi:
             Flag to ignore missing files
         """
 
-        args = []
+        arg_list = []
 
         if ignore_missing:
             ignore_errors = [64]
@@ -334,16 +334,16 @@ class Hsi:
 
         # Parse any hsi flags
         if len(hsi_flags) > 0:
-            args.extend(hsi_flags.split(" "))
+            arg_list.extend(hsi_flags.split(" "))
 
-        args.append("ls")
+        arg_list.append("ls")
 
         # Parse any ls flags
         if len(ls_flags) > 0:
-            args.extend(ls_flags.split(" "))
+            arg_list.extend(ls_flags.split(" "))
 
-        args.append(target)
-        output = self._hsi(args, ignore_errors=ignore_errors)
+        arg_list.append(target)
+        output = self._hsi(arg_list, ignore_errors=ignore_errors)
 
         return output
 
@@ -359,10 +359,10 @@ class Hsi:
                 True if the target exists on HPSS.
         """
 
-        args = ["-q", "ls", target]
+        arg_list = ["-q", "ls", target]
 
         # Do not exit if the file is not found; do not pipe output to stdout
-        output = self._hsi(args, silent=True, ignore_errors=[64])
+        output = self._hsi(arg_list, silent=True, ignore_errors=[64])
 
         if "HPSS_ENOENT" in output:
             return False

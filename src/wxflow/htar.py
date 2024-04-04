@@ -18,13 +18,13 @@ class Htar:
     def __init__(self) -> None:
         self.exe = which("htar")
 
-    def _htar(self, args, silent: bool = False) -> str:
+    def _htar(self, arg_list: list, silent: bool = False) -> str:
         """
         Direct command builder function for htar based on the input arguments.
 
         Parameters:
         -----------
-        args: list
+        arg_list: list
             List of string arguments to send to htar
 
         silent: bool
@@ -41,9 +41,9 @@ class Htar:
         """
 
         if silent:
-            output = self.exe(*args, output=str, error=str)
+            output = self.exe(*arg_list, output=str, error=str)
         else:
-            output = self.exe(*args, output=str.split, error=str.split)
+            output = self.exe(*arg_list, output=str.split, error=str.split)
 
         return output
 
@@ -61,18 +61,18 @@ class Htar:
         fileset : list
                 List containing filenames, patterns, or directories to archive
         """
-        args = ["-c"]
+        arg_list = ["-c"]
 
         # Parse any htar flags
         if len(flags) > 0:
-            args += flags.split(" ")
+            arg_list += flags.split(" ")
 
         if len(fileset) == 0:
             raise ValueError("Input fileset is empty, cannot create archive")
 
-        args += ["-f", tarball, ' '.join(fileset)]
+        arg_list += ["-f", tarball, ' '.join(fileset)]
 
-        output = self._htar(args)
+        output = self._htar(arg_list)
 
         return output
 
@@ -106,18 +106,18 @@ class Htar:
                 List containing filenames, patterns, or directories to extract from
                 the archive.  If empty, then all files will be extracted.
         """
-        args = ["-x"]
+        arg_list = ["-x"]
 
         # Parse any htar flags
         if len(flags) > 0:
-            args += flags.split(" ")
+            arg_list += flags.split(" ")
 
-        args += ["-f", tarball]
+        arg_list += ["-f", tarball]
 
         if len(fileset) > 0:
-            args.append(' '.join(fileset))
+            arg_list.append(' '.join(fileset))
 
-        output = self._htar(args)
+        output = self._htar(arg_list)
 
         return output
 
@@ -152,17 +152,17 @@ class Htar:
                 List containing filenames, patterns, or directories to list.
                 If empty, then all files will be listed.
         """
-        args = ["-t"]
+        arg_list = ["-t"]
 
         # Parse any htar flags
         if len(flags) > 0:
-            args += [flags.split(" ")]
+            arg_list += [flags.split(" ")]
 
-        args += ["-f", tarball]
+        arg_list += ["-f", tarball]
 
         if len(fileset) > 0:
-            args += " ".join(fileset)
+            arg_list += " ".join(fileset)
 
-        output = self._htar(args)
+        output = self._htar(arg_list)
 
         return output

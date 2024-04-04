@@ -17,13 +17,21 @@ class Hsi:
     >>> output = hsi.chgrp("rstprod", "/HPSS/pth/to/some_file") # Change the group to rstprod
     """
 
-    def __init__(self):
+    def __init__(self, def_hsi_args = "-q -e"):
         """Instantiate the hsi command
+
+        def_hsi_args: str
+            List of default arguments to send to hsi.  The defaults are
+            -q: run in quiet mode (do not print login information)
+            -e: echo each command
         """
 
         self.exe = which("hsi", required=True)
 
-    def hsi(self, args: list, silent: bool = False, ignore_errors: list = []) -> str:
+        for arg in def_hsi_args.split(" "):
+            self.exe.add_default_arg(args)
+
+    def _hsi(self, args: list, silent: bool = False, ignore_errors: list = []) -> str:
         """Direct command builder function for hsi based on the input arguments.
 
         args: list
@@ -55,7 +63,7 @@ class Hsi:
 
         return output
 
-    def get(self, source: str, target: str = "", hsi_flags: str = "-q -e") -> str:
+    def get(self, source: str, target: str = "", hsi_flags: str = "") -> str:
         """ Method to get a file from HPSS via hsi
 
         Parameters
@@ -87,11 +95,11 @@ class Hsi:
         else:
             args.append(target + " : " + source)
 
-        output = self.hsi(args)
+        output = self._hsi(args)
 
         return output
 
-    def put(self, source: str, target: str, hsi_flags: str = "-q -e",
+    def put(self, source: str, target: str, hsi_flags: str = "",
             listing_file: str = None) -> str:
         """ Method to put a file onto HPSS via hsi
 
@@ -119,11 +127,11 @@ class Hsi:
 
         args.append("put")
         args.append(source + " : " + target)
-        output = self.hsi(args)
+        output = self._hsi(args)
 
         return output
 
-    def chmod(self, mod: str, target: str, hsi_flags: str = "-q -e",
+    def chmod(self, mod: str, target: str, hsi_flags: str = "",
               chmod_flags: str = "") -> str:
         """ Method to change the permissions of a file or directory on HPSS
 
@@ -156,11 +164,11 @@ class Hsi:
 
         args.append(mod)
         args.append(target)
-        output = self.hsi(args)
+        output = self._hsi(args)
 
         return output
 
-    def chgrp(self, group_name: str, target: str, hsi_flags: str = "-q",
+    def chgrp(self, group_name: str, target: str, hsi_flags: str = "",
               chgrp_flags: str = "") -> str:
         """ Method to change the group of a file or directory on HPSS
 
@@ -192,11 +200,11 @@ class Hsi:
 
         args.append(group_name)
         args.append(target)
-        output = self.hsi(args)
+        output = self._hsi(args)
 
         return output
 
-    def rm(self, target: str, hsi_flags: str = "-q -e", rm_flags: str = "") -> str:
+    def rm(self, target: str, hsi_flags: str = "", rm_flags: str = "") -> str:
         """ Method to delete a file or directory on HPSS via hsi
 
         Parameters
@@ -232,11 +240,11 @@ class Hsi:
         args.append(target)
 
         # Ignore missing files
-        output = self.hsi(args, ignore_errors=[72])
+        output = self._hsi(args, ignore_errors=[72])
 
         return output
 
-    def rmdir(self, target: str, hsi_flags: str = "-q -e", rmdir_flags: str = "") -> str:
+    def rmdir(self, target: str, hsi_flags: str = "", rmdir_flags: str = "") -> str:
         """ Method to delete a directory on HPSS via hsi
 
         Parameters
@@ -264,11 +272,11 @@ class Hsi:
             args.extend(rmdir_flags.split(" "))
 
         args.append(target)
-        output = self.hsi(args)
+        output = self._hsi(args)
 
         return output
 
-    def mkdir(self, target: str, hsi_flags: str = "-q -e", mkdir_flags: str = "") -> str:
+    def mkdir(self, target: str, hsi_flags: str = "", mkdir_flags: str = "") -> str:
         """ Method to delete a file or directory on HPSS via hsi
 
         Parameters
@@ -294,11 +302,11 @@ class Hsi:
             args.extend(mkdir_flags.split(" "))
 
         args.append(target)
-        output = self.hsi(args)
+        output = self._hsi(args)
 
         return output
 
-    def ls(self, target: str, hsi_flags: str = "-q", ls_flags: str = "",
+    def ls(self, target: str, hsi_flags: str = "", ls_flags: str = "",
            ignore_missing: bool = False) -> str:
         """ Method to list files/directories on HPSS via hsi
 
@@ -335,7 +343,7 @@ class Hsi:
             args.extend(ls_flags.split(" "))
 
         args.append(target)
-        output = self.hsi(args, ignore_errors=ignore_errors)
+        output = self._hsi(args, ignore_errors=ignore_errors)
 
         return output
 
@@ -354,7 +362,7 @@ class Hsi:
         args = ["-q", "ls", target]
 
         # Do not exit if the file is not found; do not pipe output to stdout
-        output = self.hsi(args, silent=True, ignore_errors=[64])
+        output = self._hsi(args, silent=True, ignore_errors=[64])
 
         if "HPSS_ENOENT" in output:
             return False

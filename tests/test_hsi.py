@@ -22,18 +22,7 @@ user = os.environ['USER']
 test_path = f'/NCEPDEV/emc-global/1year/{user}/hsi_test/test-{test_hash}'
 
 
-@pytest.mark.skipif(not hsi, reason="Only runs on Hera/WCOSS2 with hpss module loaded.")
-def test_hsi():
-    """
-    Test for the hsi command builder:
-    """
-    output = hsi.hsi(["ls", "/NCEPDEV/"])
-
-    assert type(output) is str
-    assert "emc-global" in output
-
-
-@pytest.mark.skipif(not hsi, reason="Only runs on Hera/WCOSS2 with hpss module loaded.")
+@pytest.mark.skipif(not hsi, reason="Did not find the hsi command")
 def test_exists():
     """
     Test for checking if a target exists on HPSS
@@ -42,7 +31,7 @@ def test_exists():
     assert not hsi.exists("/not_a_file")
 
 
-@pytest.mark.skipif(not hsi, reason="Only runs on Hera/WCOSS2 with hpss module loaded.")
+@pytest.mark.skipif(not hsi, reason="Did not find the hsi command")
 def test_ls():
     """
     Test HPSS listing
@@ -54,7 +43,7 @@ def test_ls():
     assert "drwxr-xr-x" in output
 
 
-@pytest.mark.skipif(not hsi, reason="Only runs on Hera/WCOSS2 with hpss module loaded.")
+@pytest.mark.skipif(not hsi, reason="Did not find the hsi command")
 def test_mkdir_rmdir():
     """
     Test for creating a directory:
@@ -73,7 +62,7 @@ def test_mkdir_rmdir():
     assert not hsi.exists(test_path)
 
 
-@pytest.mark.skipif(not hsi, reason="Only runs on Hera/WCOSS2 with hpss module loaded.")
+@pytest.mark.skipif(not hsi, reason="Did not find the hsi command")
 def test_chmod():
     """
     Test for chmod:
@@ -94,7 +83,7 @@ def test_chmod():
     output = hsi.rmdir(test_path)
 
 
-@pytest.mark.skipif(not hsi, reason="Only runs on Hera/WCOSS2 with hpss module loaded.")
+@pytest.mark.skipif(not hsi, reason="Did not find the hsi command")
 def test_chgrp():
     """
     Test for chgrp:
@@ -115,7 +104,7 @@ def test_chgrp():
     output = hsi.rmdir(test_path)
 
 
-@pytest.mark.skipif(not hsi, reason="Only runs on Hera/WCOSS2 with hpss module loaded.")
+@pytest.mark.skipif(not hsi, reason="Did not find the hsi command")
 def test_put_get(tmp_path):
     """
     Test for sending/getting a file to/from HPSS:

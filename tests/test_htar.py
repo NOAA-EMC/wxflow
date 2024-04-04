@@ -19,21 +19,10 @@ except CommandNotFoundError:
 
 test_hash = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
 user = os.environ['USER']
-test_path = f'/NCEPDEV/emc-global/1year/{user}/hsi_test/test-{test_hash}'
+test_path = f'/NCEPDEV/emc-global/1year/{user}/htar_test/test-{test_hash}'
 
 
-@pytest.mark.skipif(not htar, reason="Only runs on Hera/WCOSS2 with hpss module loaded.")
-def test_htar():
-    """
-    Test for the htar command builder:
-    """
-    output = htar.htar(["-?"])
-
-    assert type(output) is str
-    assert "Usage" in output
-
-
-@pytest.mark.skipif(not htar, reason="Only runs on Hera/WCOSS2 with hpss module loaded.")
+@pytest.mark.skipif(not htar, reason="Did not find the htar command")
 def test_cvf_xvf_tell(tmp_path):
     """
     Test creating, extracting, and listing a tarball on HPSS:

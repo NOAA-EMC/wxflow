@@ -48,7 +48,7 @@ class Htar:
         return output
 
     def create(self, tarball: str, fileset: list, flags: str = "") -> str:
-        """ Function to write an archive to HPSS
+        """ Method to write an archive to HPSS
 
         Parameters
         ----------
@@ -77,7 +77,7 @@ class Htar:
         return output
 
     def cvf(self, tarball: str, fileset: list) -> str:
-        """ Function to write an archive to HPSS verbosely (without flags).
+        """ Method to write an archive to HPSS verbosely (without flags).
 
         Parameters
         ----------
@@ -92,7 +92,7 @@ class Htar:
         return output
 
     def extract(self, tarball: str, fileset: list = [], flags: str = "") -> str:
-        """ Function to extract an archive from HPSS via htar
+        """ Method to extract an archive from HPSS via htar
 
         Parameters
         ----------
@@ -122,7 +122,7 @@ class Htar:
         return output
 
     def xvf(self, tarball: str = "", fileset: list = []) -> str:
-        """ Function to extract an archive from HPSS verbosely (without flags).
+        """ Method to extract an archive from HPSS verbosely (without flags).
 
         Parameters
         ----------
@@ -138,7 +138,7 @@ class Htar:
         return output
 
     def tell(self, tarball: str, flags: str = "", fileset: list = []) -> str:
-        """ Function to list the contents of an archive on HPSS
+        """ Method to list the contents of an archive on HPSS
 
         Parameters
         ----------

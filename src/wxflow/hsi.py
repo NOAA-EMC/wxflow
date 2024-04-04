@@ -56,7 +56,7 @@ class Hsi:
         return output
 
     def get(self, source: str, target: str = "", hsi_flags: str = "-q -e") -> str:
-        """ Function to get a file from HPSS via hsi
+        """ Method to get a file from HPSS via hsi
 
         Parameters
         ----------
@@ -93,7 +93,7 @@ class Hsi:
 
     def put(self, source: str, target: str, hsi_flags: str = "-q -e",
             listing_file: str = None) -> str:
-        """ Function to put a file onto HPSS via hsi
+        """ Method to put a file onto HPSS via hsi
 
         Parameters
         ----------
@@ -125,7 +125,7 @@ class Hsi:
 
     def chmod(self, mod: str, target: str, hsi_flags: str = "-q -e",
               chmod_flags: str = "") -> str:
-        """ Function to change the permissions of a file or directory on HPSS
+        """ Method to change the permissions of a file or directory on HPSS
 
         Parameters
         ----------
@@ -162,7 +162,7 @@ class Hsi:
 
     def chgrp(self, group_name: str, target: str, hsi_flags: str = "-q",
               chgrp_flags: str = "") -> str:
-        """ Function to change the group of a file or directory on HPSS
+        """ Method to change the group of a file or directory on HPSS
 
         Parameters
         ----------
@@ -197,7 +197,7 @@ class Hsi:
         return output
 
     def rm(self, target: str, hsi_flags: str = "-q -e", rm_flags: str = "") -> str:
-        """ Function to delete a file or directory on HPSS via hsi
+        """ Method to delete a file or directory on HPSS via hsi
 
         Parameters
         ----------
@@ -235,7 +235,7 @@ class Hsi:
         return output
 
     def rmdir(self, target: str, hsi_flags: str = "-q -e", rmdir_flags: str = "") -> str:
-        """ Function to delete a file or directory on HPSS via hsi
+        """ Method to delete a file or directory on HPSS via hsi
 
         Parameters
         ----------
@@ -267,7 +267,7 @@ class Hsi:
         return output
 
     def mkdir(self, target: str, hsi_flags: str = "-q -e", mkdir_flags: str = "") -> str:
-        """ Function to delete a file or directory on HPSS via hsi
+        """ Method to delete a file or directory on HPSS via hsi
 
         Parameters
         ----------
@@ -298,7 +298,7 @@ class Hsi:
 
     def ls(self, target: str, hsi_flags: str = "-q", ls_flags: str = "",
            ignore_missing: bool = False) -> str:
-        """ Function to list files/directories on HPSS via hsi
+        """ Method to list files/directories on HPSS via hsi
 
         Parameters
         ----------
@@ -338,7 +338,7 @@ class Hsi:
         return output
 
     def exists(self, target: str) -> bool:
-        """ Function to test the existence of a file/directory/glob on HPSS
+        """ Method to test the existence of a file/directory/glob on HPSS
 
         Parameters
         ----------

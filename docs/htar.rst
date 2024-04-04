@@ -1,8 +1,4 @@
-.. currentmodule:: wxflow.htar
+.. currentmodule:: wxflow
 
-.. autofunction:: htar
-.. autofunction:: create
-.. autofunction:: extract
-.. autofunction:: xvf
-.. autofunction:: cvf
-.. autofunction:: tell
+.. autoclass:: Htar
+    :members:

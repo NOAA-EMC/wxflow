@@ -1,135 +1,168 @@
-from .executable import Executable, which
+from .executable import which
 
-__all__ = ['htar', 'create', 'cvf', 'extract', 'xvf', 'tell']
+__all__ = ['Htar']
 
 
-def htar(*args) -> None:
+class Htar:
     """
-    Direct command builder function for htar based on the input arguments.
+    Class offering an interface to HPSS via the htar utility.
 
-    `args` should consist of a set of string arguments to send to htar
-    For example,
-    htar.htar("-cvf","/path/to/hpss/archive.tar", "<string list of files>")
-    will execute
-    htar -cvf /path/to/hpss/archive.tar <string list of files>
+    Examples:
+    --------
 
+    >>> from wxflow import Htar
+    >>> htar = Htar()  # Generates an Executable object of "htar"
+    >>> output = htar.cvf("/HPSS/path/to/archive.tar", "file1 file2") # Create an HPSS archive from two local files
+    >>> output = htar.tell("/HPSS/path/to/archive.tar") # List the contents of an archive
     """
+    def __init__(self) -> None:
+        self.exe = which("htar")
 
-    cmd = which("htar", required=True)
+    def htar(self, args, silent: bool = False) -> str:
+        """
+        Direct command builder function for htar based on the input arguments.
 
-    for arg in args:
-        cmd.add_default_arg(arg)
+        Parameters:
+        -----------
+        args: list
+            List of string arguments to send to htar
 
-    cmd()
+        silent: bool
+            Flag to suppress output to stdout
 
+        Return: str
+            Output from the htar command
 
-def create(tarball: str, fileset: list, flags: str = "") -> None:
-    """ Function to write an archive to HPSS
+        Examples:
+        ---------
+        >>> htar = Htar()
+        >>> # Run `htar -cvf /path/to/hpss/archive.tar file1 file2 file-*
+        >>> htar.htar("-cvf", "/path/to/hpss/archive.tar", "file1 file2 file-*")
+        """
 
-    Parameters
-    ----------
-    flags : str
-            String of flags to send to htar.
+        if silent:
+            output = self.exe(*args, output=str, error=str)
+        else:
+            output = self.exe(*args, output=str.split, error=str.split)
 
-    tarball : str
-            Full path location on HPSS to create the archive.
+        return output
 
-    fileset : list
-            List containing filenames, patterns, or directories to archive
-    """
-    args = ("-c",)
+    def create(self, tarball: str, fileset: list, flags: str = "") -> str:
+        """ Function to write an archive to HPSS
 
-    # Parse any htar flags
-    if len(flags) > 0:
-        args += tuple(flags.split(" "))
+        Parameters
+        ----------
+        flags : str
+                String of flags to send to htar.
 
-    args += ("-f", tarball,) + tuple(fileset)
+        tarball : str
+                Full path location on HPSS to create the archive.
 
-    htar(*args)
+        fileset : list
+                List containing filenames, patterns, or directories to archive
+        """
+        args = ["-c"]
 
+        # Parse any htar flags
+        if len(flags) > 0:
+            args += flags.split(" ")
 
-def cvf(tarball: str, fileset: list) -> None:
-    """ Function to write an archive to HPSS verbosely (without flags).
+        if len(fileset) == 0:
+            raise ValueError("Input fileset is empty, cannot create archive")
 
-    Parameters
-    ----------
-    tarball : str
-            Full path location on HPSS to create the archive.
+        args += ["-f", tarball, ' '.join(fileset)]
 
-    fileset : list
-            List containing filenames, patterns, or directories to archive
-    """
-    create(tarball, fileset, flags="-v")
+        output = self.htar(args)
 
+        return output
 
-def extract(tarball: str, fileset: list = [], flags: str = "") -> None:
-    """ Function to extract an archive from HPSS via htar
+    def cvf(self, tarball: str, fileset: list) -> str:
+        """ Function to write an archive to HPSS verbosely (without flags).
 
-    Parameters
-    ----------
-    flags : str
-            String of flags to send to htar.
+        Parameters
+        ----------
+        tarball : str
+                Full path location on HPSS to create the archive.
 
-    tarball : str
-            Full path location of an archive on HPSS to extract from.
+        fileset : list
+                List containing filenames, patterns, or directories to archive
+        """
+        output = self.create(tarball, fileset, flags="-v -P")
 
-    fileset : list
-            List containing filenames, patterns, or directories to extract from
-            the archive.  If empty, then all files will be extracted.
-    """
-    args = ("-x",)
+        return output
 
-    # Parse any htar flags
-    if len(flags) > 0:
-        args += tuple(flags.split(" "))
+    def extract(self, tarball: str, fileset: list = [], flags: str = "") -> str:
+        """ Function to extract an archive from HPSS via htar
 
-    args += ("-f", tarball,)
+        Parameters
+        ----------
+        flags : str
+                String of flags to send to htar.
 
-    if len(fileset) > 0:
-        args += tuple(fileset)
+        tarball : str
+                Full path location of an archive on HPSS to extract from.
 
-    htar(*args)
+        fileset : list
+                List containing filenames, patterns, or directories to extract from
+                the archive.  If empty, then all files will be extracted.
+        """
+        args = ["-x"]
 
+        # Parse any htar flags
+        if len(flags) > 0:
+            args += flags.split(" ")
 
-def xvf(tarball: str = "", fileset: list = []) -> None:
-    """ Function to extract an archive from HPSS verbosely (without flags).
+        args += ["-f", tarball]
 
-    Parameters
-    ----------
-    tarball : str
-            Full path location of an archive on HPSS to extract from.
+        if len(fileset) > 0:
+            args.append(' '.join(fileset))
 
-    fileset : list
-            List containing filenames, patterns, or directories to extract from
-            the archive.  If empty, then all files will be extracted.
-    """
-    extract(tarball, fileset, flags="-v")
+        output = self.htar(args)
 
+        return output
 
-def tell(tarball: str, flags: str = "", fileset: list = []) -> None:
-    """ Function to list the contents of an archive on HPSS
+    def xvf(self, tarball: str = "", fileset: list = []) -> str:
+        """ Function to extract an archive from HPSS verbosely (without flags).
 
-    Parameters
-    ----------
-    flags : str
-            String of flags to send to htar.
+        Parameters
+        ----------
+        tarball : str
+                Full path location of an archive on HPSS to extract from.
 
-    tarball : str
-            Full path location on HPSS to list the contents of.
+        fileset : list
+                List containing filenames, patterns, or directories to extract from
+                the archive.  If empty, then all files will be extracted.
+        """
+        output = self.extract(tarball, fileset, flags="-v")
 
-    fileset : list
-            List containing filenames, patterns, or directories to list.
-            If empty, then all files will be listed.
-    """
-    args = ("-t",)
+        return output
 
-    # Parse any htar flags
-    if len(flags) > 0:
-        args += tuple(flags.split(" "))
+    def tell(self, tarball: str, flags: str = "", fileset: list = []) -> str:
+        """ Function to list the contents of an archive on HPSS
 
-    args += ("-f", tarball,)
+        Parameters
+        ----------
+        flags : str
+                String of flags to send to htar.
 
-    if len(fileset) > 0:
-        args += tuple(fileset)
+        tarball : str
+                Full path location on HPSS to list the contents of.
 
-    htar(*args)
+        fileset : list
+                List containing filenames, patterns, or directories to list.
+                If empty, then all files will be listed.
+        """
+        args = ["-t"]
+
+        # Parse any htar flags
+        if len(flags) > 0:
+            args += [flags.split(" ")]
+
+        args += ["-f", tarball]
+
+        if len(fileset) > 0:
+            args += " ".join(fileset)
+
+        output = self.htar(args)
+
+        return output

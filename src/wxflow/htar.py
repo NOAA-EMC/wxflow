@@ -18,7 +18,7 @@ class Htar:
     def __init__(self) -> None:
         self.exe = which("htar")
 
-    def htar(self, args, silent: bool = False) -> str:
+    def _htar(self, args, silent: bool = False) -> str:
         """
         Direct command builder function for htar based on the input arguments.
 
@@ -72,7 +72,7 @@ class Htar:
 
         args += ["-f", tarball, ' '.join(fileset)]
 
-        output = self.htar(args)
+        output = self._htar(args)
 
         return output
 
@@ -117,7 +117,7 @@ class Htar:
         if len(fileset) > 0:
             args.append(' '.join(fileset))
 
-        output = self.htar(args)
+        output = self._htar(args)
 
         return output
 
@@ -163,6 +163,6 @@ class Htar:
         if len(fileset) > 0:
             args += " ".join(fileset)
 
-        output = self.htar(args)
+        output = self._htar(args)
 
         return output

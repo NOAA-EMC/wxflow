@@ -17,7 +17,7 @@ class Hsi:
     >>> output = hsi.chgrp("rstprod", "/HPSS/pth/to/some_file") # Change the group to rstprod
     """
 
-    def __init__(self, def_hsi_args = "-q -e"):
+    def __init__(self, def_hsi_args="-q -e"):
         """Instantiate the hsi command
 
         def_hsi_args: str

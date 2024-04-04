@@ -1,14 +1,11 @@
 import os
-
+import random
+import string
 from pathlib import Path
 
 import pytest
 
-import random
-
-import string
-
-from wxflow import Hsi, CommandNotFoundError
+from wxflow import CommandNotFoundError, Hsi
 
 # These tests do not run on the GH runner as they it is not connected to HPSS.
 # It is intended that these tests should only be run on Hera or WCOSS2.

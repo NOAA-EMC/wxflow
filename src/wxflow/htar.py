@@ -47,7 +47,7 @@ class Htar:
 
         return output
 
-    def create(self, tarball: str, fileset: list, flags: str = "") -> str:
+    def create(self, tarball: str, fileset: list, flags: str = "-P") -> str:
         """ Method to write an archive to HPSS
 
         Parameters

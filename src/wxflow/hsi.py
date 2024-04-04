@@ -29,7 +29,7 @@ class Hsi:
         self.exe = which("hsi", required=True)
 
         for arg in def_hsi_args.split(" "):
-            self.exe.add_default_arg(args)
+            self.exe.add_default_arg(arg)
 
     def _hsi(self, args: list, silent: bool = False, ignore_errors: list = []) -> str:
         """Direct command builder function for hsi based on the input arguments.

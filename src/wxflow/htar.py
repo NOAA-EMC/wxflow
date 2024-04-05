@@ -70,7 +70,10 @@ class Htar:
         if len(fileset) == 0:
             raise ValueError("Input fileset is empty, cannot create archive")
 
-        arg_list += ["-f", tarball, ' '.join(fileset)]
+        arg_list += ["-f", tarball]
+
+        # Convert filenames in fileset to strings to handle Path objects
+        arg_list.extend([str(filename) for filename in fileset])
 
         output = self._htar(arg_list)
 
@@ -115,7 +118,7 @@ class Htar:
         arg_list += ["-f", tarball]
 
         if len(fileset) > 0:
-            arg_list.append(' '.join(fileset))
+            arg_list.extend([str(filename) for filename in fileset])
 
         output = self._htar(arg_list)
 

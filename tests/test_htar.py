@@ -34,23 +34,22 @@ def test_cvf_xvf_tell(tmp_path):
     # Create temporary directories
     input_dir_path = tmp_path / 'my_input_dir'
     input_dir_path.mkdir()
-    # Create an empty file to send
-    in_tmp_file = input_dir_path / 'a.txt'
-    in_tmp_file.touch()
-    in_tmp_file.write_text("Contents of a.txt")
+    # Create files to send
+    in_tmp_files = [input_dir_path / 'a.txt', input_dir_path / 'b.txt']
+    for f in in_tmp_files:
+        f.touch()
+        f.write_text("Some contents")
 
     test_tarball = test_path + "/test.tar"
 
     # Create the archive file
-    output = htar.cvf(test_tarball, [str(in_tmp_file)])
-    print("output::")
-    print(output)
+    output = htar.cvf(test_tarball, in_tmp_files)
 
     assert "a.txt" in output
     assert hsi.exists(test_tarball)
 
     # Extract the test archive
-    output = htar.xvf(test_tarball)
+    output = htar.xvf(test_tarball, in_tmp_files)
 
     assert "a.txt" in output
 

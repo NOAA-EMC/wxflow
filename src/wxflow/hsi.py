@@ -19,7 +19,7 @@ class Hsi:
     >>> output = hsi.chgrp("rstprod", "/HPSS/pth/to/some_file") # Change the group to rstprod
     """
 
-    def __init__(self, quiet: bool = True, echo_commands:bool = True, opts: Union[str, List] = []):
+    def __init__(self, quiet: bool = True, echo_commands: bool = True, opts: Union[str, List] = []):
         """Instantiate the hsi command
 
         Parameters:
@@ -85,7 +85,7 @@ class Hsi:
 
         return output
 
-    def get(self, source: str, target = None, opts: Union[List, str] = []) -> str:
+    def get(self, source: str, target=None, opts: Union[List, str] = []) -> str:
         """ Method to get a file from HPSS via hsi
 
         Parameters
@@ -260,7 +260,7 @@ class Hsi:
         # Call rmdir if recursive (-r) flag present
         # NOTE this will ONLY remove empty directories
         if "-r" in rm_opts:
-            rmdir_opts = [ opt for opts in Hsi._split_opts(rm_opts) if opt != "-r" ]
+            rmdir_opts = [opt for opts in Hsi._split_opts(rm_opts) if opt != "-r"]
             output = self.rmdir(target, hsi_opts, rmdir_opts)
             return output
 

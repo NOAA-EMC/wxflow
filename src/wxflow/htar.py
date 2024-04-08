@@ -1,6 +1,6 @@
-from .executable import which
+from typing import List, Union
 
-from typing import Union, List
+from .executable import which
 
 __all__ = ['Htar']
 

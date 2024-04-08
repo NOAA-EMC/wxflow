@@ -92,7 +92,7 @@ def cp(source: str, target: str) -> None:
 # Group ID number for a given group name
 def get_gid(group_name: str):
     try:
-        group_id = grp.getgrnam(group_name)
+        group_id = grp.getgrnam(group_name).gr_gid
     except KeyError:
         raise KeyError(f"{group_name} is not a valid group name.")
 
@@ -100,7 +100,7 @@ def get_gid(group_name: str):
 
 
 # Change the group of a target file or directory
-def chgrp(target, group_name, recursive=False):
+def chgrp(group_name, target, recursive=False):
     # TODO add recursive option
     gid = get_gid(group_name)
     uid = os.stat(target).st_uid

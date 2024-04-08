@@ -237,7 +237,7 @@ class Hsi:
 
         return output
 
-    def rm(self, target: str, hsi_opts: str = "", rm_opts: str = "") -> str:
+    def rm(self, target: str, recursive: bool = False, hsi_opts: str = "", rm_opts: str = "") -> str:
         """ Method to delete a file or directory on HPSS via hsi
 
         Parameters
@@ -251,16 +251,18 @@ class Hsi:
         rm_opts : str
                 Options to send to rm.  See "hsi rm -?" for more details.
 
+        recursive : bool
+                Flag to indicate a call to rmdir.
+
         Returns
         -------
         output : str
                 Concatenated output and error of the hsi rm command.
         """
 
-        # Call rmdir if recursive (-r) flag present
+        # Call rmdir if recursive is set
         # NOTE this will ONLY remove empty directories
-        if "-r" in rm_opts:
-            rmdir_opts = [opt for opts in Hsi._split_opts(rm_opts) if opt != "-r"]
+        if recursive:
             output = self.rmdir(target, hsi_opts, rmdir_opts)
             return output
 

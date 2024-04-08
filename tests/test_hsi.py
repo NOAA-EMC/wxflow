@@ -39,7 +39,7 @@ def test_ls():
     output = hsi.ls("/NCEPDEV/")
     assert "emc-global" in output
 
-    output = hsi.ls("/NCEPDEV/", ls_flags="-l")
+    output = hsi.ls("/NCEPDEV/", ls_opts="-l")
     assert "drwxr-xr-x" in output
 
 
@@ -72,10 +72,10 @@ def test_chmod():
     output = hsi.mkdir(test_path)
 
     # Change the mode of the test path
-    output = hsi.chmod("750", test_path, chmod_flags="-R")
+    output = hsi.chmod("750", test_path, chmod_opts="-R")
 
     # Check that the mode was changed
-    output = hsi.ls(test_path, ls_flags="-d -l")
+    output = hsi.ls(test_path, ls_opts="-d -l")
 
     assert "drwxr-x---" in output
 
@@ -93,10 +93,10 @@ def test_chgrp():
     output = hsi.mkdir(test_path)
 
     # Change the group of the test path
-    output = hsi.chgrp("rstprod", test_path, chgrp_flags="-R")
+    output = hsi.chgrp("rstprod", test_path, chgrp_opts="-R")
 
     # Check that the group was changed
-    output = hsi.ls(test_path, ls_flags="-d -l")
+    output = hsi.ls(test_path, ls_opts="-d -l")
 
     assert "rstprod" in output
 

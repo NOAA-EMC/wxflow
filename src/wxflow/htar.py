@@ -1,5 +1,7 @@
 from .executable import which
 
+from typing import Union, List
+
 __all__ = ['Htar']
 
 
@@ -24,21 +26,26 @@ class Htar:
 
         Parameters:
         -----------
-        arg_list: list
-            List of string arguments to send to htar
+        arg_list : list
+                List of string arguments to send to htar
 
-        silent: bool
-            Flag to suppress output to stdout
+        silent : bool
+                Flag to suppress output to stdout
 
-        Return: str
-            Output from the htar command
+        Returns
+        -------
+        output : str
+                Concatenated output and error from the htar command
 
         Examples:
         ---------
         >>> htar = Htar()
-        >>> # Run `htar -cvf /path/to/hpss/archive.tar file1 file2 file-*
-        >>> htar.htar("-cvf", "/path/to/hpss/archive.tar", "file1 file2 file-*")
+        >>> # Run `htar -cvPf /path/to/hpss/archive.tar file1 file2 file-*
+        >>> htar._htar("-cvPf", "/path/to/hpss/archive.tar", "file1 file2 file-*")
         """
+
+        # Remove any empty arguments which can cause issues for htar
+        arg_list = [arg for arg in arg_list if arg != ""]
 
         if silent:
             output = self.exe(*arg_list, output=str, error=str)
@@ -47,85 +54,98 @@ class Htar:
 
         return output
 
-    def create(self, tarball: str, fileset: list, flags: str = "-P") -> str:
+    def create(self, tarball: str, fileset: Union[List, str], opts: Union[List, str] = "-P") -> str:
         """ Method to write an archive to HPSS
 
         Parameters
         ----------
-        flags : str
-                String of flags to send to htar.
+        opts : str | list
+                Options to send to htar.  By default, "-P" (create parent directories).
 
         tarball : str
                 Full path location on HPSS to create the archive.
 
-        fileset : list
+        fileset : list | str
                 List containing filenames, patterns, or directories to archive
+
+        Returns
+        -------
+        output : str
+                Concatenated output and error of the htar command.
         """
         arg_list = ["-c"]
 
-        # Parse any htar flags
-        if len(flags) > 0:
-            arg_list += flags.split(" ")
+        # Parse any htar options
+        arg_list.extend(Htar._split_opts(opts))
 
         if len(fileset) == 0:
             raise ValueError("Input fileset is empty, cannot create archive")
 
-        arg_list += ["-f", tarball]
+        arg_list.extend(["-f", tarball])
 
         # Convert filenames in fileset to strings to handle Path objects
-        arg_list.extend([str(filename) for filename in fileset])
+        arg_list.extend([str(filename) for filename in Htar._split_opts(fileset)])
 
         output = self._htar(arg_list)
 
         return output
 
-    def cvf(self, tarball: str, fileset: list) -> str:
-        """ Method to write an archive to HPSS verbosely (without flags).
+    def cvf(self, tarball: str, fileset: Union[List, str]) -> str:
+        """ Method to write an archive to HPSS verbosely (without options).
 
         Parameters
         ----------
         tarball : str
                 Full path location on HPSS to create the archive.
 
-        fileset : list
+        fileset : list | str
                 List containing filenames, patterns, or directories to archive
+
+        Returns
+        -------
+        output : str
+                Concatenated output and error from the htar command
         """
-        output = self.create(tarball, fileset, flags="-v -P")
+        output = self.create(tarball, fileset, opts="-v -P")
 
         return output
 
-    def extract(self, tarball: str, fileset: list = [], flags: str = "") -> str:
+    def extract(self, tarball: str, fileset: Union[List, str] = [], opts: Union[List, str] = "") -> str:
         """ Method to extract an archive from HPSS via htar
 
         Parameters
         ----------
-        flags : str
-                String of flags to send to htar.
+        opts : str
+                String of options to send to htar.
 
         tarball : str
                 Full path location of an archive on HPSS to extract from.
 
-        fileset : list
-                List containing filenames, patterns, or directories to extract from
+        fileset : list | str
+                Filenames, patterns, or directories to extract from
                 the archive.  If empty, then all files will be extracted.
+
+        Returns
+        -------
+        output : str
+                Concatenated output and error from the htar command
         """
         arg_list = ["-x"]
 
-        # Parse any htar flags
-        if len(flags) > 0:
-            arg_list += flags.split(" ")
+        # Parse any htar options
+        arg_list.extend(Htar._split_opts(opts))
 
         arg_list += ["-f", tarball]
 
-        if len(fileset) > 0:
-            arg_list.extend([str(filename) for filename in fileset])
+        # Convert filename(s) to str to handle Path objects
+        arg_list.extend([str(filename) for filename in Htar._split_opts(fileset)])
 
         output = self._htar(arg_list)
 
         return output
 
     def xvf(self, tarball: str = "", fileset: list = []) -> str:
-        """ Method to extract an archive from HPSS verbosely (without flags).
+        """ Method to extract an archive from HPSS verbosely (without options).
 
         Parameters
         ----------
@@ -135,37 +155,66 @@ class Htar:
         fileset : list
                 List containing filenames, patterns, or directories to extract from
                 the archive.  If empty, then all files will be extracted.
+
+        Returns
+        -------
+        output : str
+                Concatenated output and error from the htar command
         """
-        output = self.extract(tarball, fileset, flags="-v")
+        output = self.extract(tarball, fileset, opts="-v")
 
         return output
 
-    def tell(self, tarball: str, flags: str = "", fileset: list = []) -> str:
+    def tell(self, tarball: str, opts: Union[List, str] = "", fileset: Union[List, str] = []) -> str:
         """ Method to list the contents of an archive on HPSS
 
         Parameters
         ----------
-        flags : str
-                String of flags to send to htar.
+        opts : str
+                String of options to send to htar.
 
         tarball : str
                 Full path location on HPSS to list the contents of.
 
-        fileset : list
-                List containing filenames, patterns, or directories to list.
-                If empty, then all files will be listed.
+        fileset : list | str
+                Filenames, patterns, or directories to list from
+                the archive.  If empty, then all files will be listed.
+
+        Returns
+        -------
+        output : str
+                Concatenated output and error from the htar command
         """
+        print("enter")
         arg_list = ["-t"]
 
-        # Parse any htar flags
-        if len(flags) > 0:
-            arg_list += [flags.split(" ")]
+        # Parse any htar options
+        arg_list.extend(Htar._split_opts(opts))
 
-        arg_list += ["-f", tarball]
+        arg_list.extend(["-f", tarball])
 
-        if len(fileset) > 0:
-            arg_list += " ".join(fileset)
+        # Convert filename(s) to str to handle Path objects
+        arg_list.extend([str(filename) for filename in Htar._split_opts(fileset)])
 
         output = self._htar(arg_list)
 
         return output
+
+    @staticmethod
+    def _split_opts(opts: Union[List, str] = "") -> list:
+        """ Method to split input list or string of htar options
+
+        Parameters
+        ----------
+        opts : list | str
+                Input list or string of options to send to htar
+
+        Returns
+        -------
+        split_opts : list
+                List of options to send to htar
+        """
+
+        split_opts = opts.split(" ") if isinstance(opts, str) else opts
+
+        return split_opts

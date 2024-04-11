@@ -2,7 +2,6 @@ import os
 
 from wxflow import FileHandler
 
-
 def test_mkdir(tmp_path):
     """
     Test for creating directories:
@@ -65,3 +64,50 @@ def test_copy(tmp_path):
     # Check if files were indeed copied
     for ff in dest_files:
         assert os.path.isfile(ff)
+
+
+def test_sed_replace(tmp_path):
+    """
+    Test for copying files:
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    """
+
+    input_dir_path = tmp_path / 'my_input_dir'
+
+    # Create the input directory
+    config = {'mkdir': [input_dir_path]}
+    FileHandler(config).sync()
+
+    # Put empty files in input_dir_path
+    src_files = [input_dir_path / 'a.txt', input_dir_path / 'b.txt']
+    for ff in src_files:
+        ff.touch()
+        ff.write_text("Search text")
+
+    # Create output_dir_path and expected file names
+    output_dir_path = tmp_path / 'my_output_dir'
+    config = {'mkdir': [output_dir_path]}
+    FileHandler(config).sync()
+    # Create one new file and replace in place for the second
+    dest_files = [output_dir_path / 'a.txt', input_dir_path / 'b.txt']
+
+    sed_list = []
+    pattern = "s/Search text/Text found and replaced/"
+    for src, dest in zip(src_files, dest_files):
+        sed_list.append([pattern, str(src), str(dest)])
+
+    # Create config object for FileHandler
+    config = {'sed_replace': sed_list}
+
+    # Copy input files to output files
+    FileHandler(config).sync()
+
+    # Check if files were indeed copied
+    for ff in dest_files:
+        assert os.path.isfile(ff)
+        with open(ff) as f:
+            lines = f.readlines()
+            assert len(lines) == 1
+            assert "Text found and replaced" in lines[0]

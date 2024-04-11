@@ -1,5 +1,6 @@
 from logging import getLogger
 
+from .executable import which
 from .fsutils import cp, mkdir
 
 __all__ = ['FileHandler']
@@ -17,8 +18,8 @@ class FileHandler:
 
     NOTE
     ----
-    "action" can be one of mkdir", "copy", etc.
-    Corresponding "act" would be ['dir1', 'dir2'], [['src1', 'dest1'], ['src2', 'dest2']]
+    "action" can be one of "mkdir", "copy", "sed_replace", etc.
+    Corresponding "act" would be ['dir1', 'dir2'], [['src1', 'dest1'], ['src2', 'dest2']], [['s/search_term/replace_term/<g>', 'src', 'dest']]
 
     Attributes
     ----------
@@ -37,6 +38,7 @@ class FileHandler:
         sync_factory = {
             'copy': self._copy_files,
             'mkdir': self._make_dirs,
+            'sed_replace': self._sed_replace_files
         }
         # loop through the configuration keys
         for action, files in self.config.items():
@@ -75,3 +77,38 @@ class FileHandler:
         for dd in dirlist:
             mkdir(dd)
             logger.info(f'Created {dd}')
+
+    @staticmethod
+    def _sed_replace_files(sedlist):
+        """Function to run sed search and replace on a set of files
+
+        `sedlist` should be in the form:
+        - [s/search/replace/<g>, src, dest]
+
+        Parameters
+        ----------
+        filelist : list
+                List of lists of [pattern, src, dest]
+        """
+
+        sed = which("sed")
+
+        for sublist in sedlist:
+            if len(sublist) != 3:
+                raise Exception(
+                    f"List must be of the form ['pattern', 'src', 'dest'], not {sublist}")
+
+            pattern = sublist[0]
+            src = sublist[1]
+            dest = sublist[2]
+
+            # Check for in-place search/replace
+            if src == dest:
+                arg_list = ["-i", pattern, src]
+                print(arg_list)
+                sed(*arg_list, output=str.split, error=str.split)
+                logger.info(f'Performed sed -i {pattern} {src}')
+            else:
+                arg_list = [pattern, src]
+                output = sed(*arg_list, output=dest, error=str.split)
+                logger.info(f'Performed sed {pattern} {src} > {dest}')

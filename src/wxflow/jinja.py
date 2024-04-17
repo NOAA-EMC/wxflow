@@ -106,6 +106,7 @@ class Jinja:
         to_YMD: convert a datetime object to a YYYYMMDD string
         to_julian: convert a datetime object to a julian day
         to_f90bool: convert a boolean to a fortran boolean
+        relpath: convert a full path to a relative path based on an input root_path
         getenv: read variable from environment if defined, else UNDEFINED
 
         Parameters
@@ -129,6 +130,7 @@ class Jinja:
         env.filters["to_julian"] = lambda dt: to_julian(dt) if not isinstance(dt, SilentUndefined) else dt
         env.filters["to_f90bool"] = lambda bool: ".true." if bool else ".false."
         env.filters['getenv'] = lambda name, default='UNDEFINED': os.environ.get(name, default)
+        env.filters["relpath"] = lambda pathname, start=os.curdir: os.path.relpath(pathname,start)
 
         # Add any additional filters
         if filters is not None:

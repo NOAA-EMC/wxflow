@@ -177,4 +177,7 @@ def parse_j2yaml(path: str, data: Dict, searchpath: Union[str, List] = '/') -> D
         the dict configuration
     """
 
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Input j2yaml file {path} does not exist!")
+
     return YAMLFile(data=Jinja(path, data, searchpath=searchpath).render)

@@ -15,12 +15,12 @@ class Executable:
     --------
 
     >>> from wxflow.executable import Executable
-    >>> cmd = Executable('srun')  # Lets say we need to run command e.g. "srun"
-    >>> cmd.add_default_arg('my_exec.x')  # Lets say we need to run the executable "my_exec.x"
-    >>> cmd.add_default_arg('my_arg.yaml')  # Lets say we need to pass an argument to this executable e.g. "my_arg.yaml"
-    >>> cmd.add_default_env('OMP_NUM_THREADS', 4)  # Lets say we want to run w/ 4 threads in the environment
-    >>> cmd(output='stdout', error='stderr')  # Run the command and capture the stdout and stderr in files named similarly.
-
+    >>> cmd = Executable('srun')  # Let's say we need to run command e.g. "srun"
+    >>> arg_list = ['my_exec.x']  # Let's say we need to run the executable "my_exec.x"
+    >>> arg_list.append('my_arg.yaml')  # Let's say we need to pass an argument to this executable e.g. "my_arg.yaml"
+    >>> env = os.environ.copy(); env['OMP_NUM_THREADS'] = 4  # Let's say we want to run w/ 4 threads in the environment
+    >>> # Run the command with the arguments and environment and capture the stdout and stderr in files named similarly.
+    >>> cmd(*arg_list, env = env, output='stdout', error='stderr')
     `cmd` line above will translate to:
 
     $ export OMP_NUM_THREADS=4

@@ -54,7 +54,8 @@ class Htar:
 
         return output
 
-    def create(self, tarball: str, fileset: Union[List, str], opts: Union[List, str] = "-P") -> str:
+    def create(self, tarball: str, fileset: Union[List, str],
+               dereference: bool = False, opts: Union[List, str] = "-P") -> str:
         """ Method to write an archive to HPSS
 
         Parameters
@@ -68,12 +69,18 @@ class Htar:
         fileset : list | str
                 List containing filenames, patterns, or directories to archive
 
+        dereference : bool
+                Whether to dereference symbolic links (archive the pointed-to files instead).
+
         Returns
         -------
         output : str
                 Concatenated output and error of the htar command.
         """
         arg_list = ["-c"]
+
+        if dereference:
+            arg_list.append("-h")
 
         # Parse any htar options
         arg_list.extend(Htar._split_opts(opts))
@@ -90,7 +97,7 @@ class Htar:
 
         return output
 
-    def cvf(self, tarball: str, fileset: Union[List, str]) -> str:
+    def cvf(self, tarball: str, fileset: Union[List, str], dereference: bool = False) -> str:
         """ Method to write an archive to HPSS verbosely (without options).
 
         Parameters
@@ -101,12 +108,15 @@ class Htar:
         fileset : list | str
                 List containing filenames, patterns, or directories to archive
 
+        dereference : bool
+                Whether to dereference symbolic links (archive the pointed-to files instead).
+
         Returns
         -------
         output : str
                 Concatenated output and error from the htar command
         """
-        output = self.create(tarball, fileset, opts="-v -P")
+        output = self.create(tarball, fileset, dereference = dereference, opts="-v -P")
 
         return output
 

@@ -116,7 +116,7 @@ class Htar:
         output : str
                 Concatenated output and error from the htar command
         """
-        output = self.create(tarball, fileset, dereference = dereference, opts="-v -P")
+        output = self.create(tarball, fileset, dereference=dereference, opts="-v -P")
 
         return output
 

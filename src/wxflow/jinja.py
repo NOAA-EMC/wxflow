@@ -130,7 +130,7 @@ class Jinja:
         env.filters["to_julian"] = lambda dt: to_julian(dt) if not isinstance(dt, SilentUndefined) else dt
         env.filters["to_f90bool"] = lambda bool: ".true." if bool else ".false."
         env.filters['getenv'] = lambda name, default='UNDEFINED': os.environ.get(name, default)
-        env.filters["relpath"] = lambda pathname, start=os.curdir: os.path.relpath(pathname,start)
+        env.filters["relpath"] = lambda pathname, start=os.curdir: os.path.relpath(pathname, start)
 
         # Add any additional filters
         if filters is not None:

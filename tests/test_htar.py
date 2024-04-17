@@ -40,10 +40,14 @@ def test_cvf_xvf_tell(tmp_path):
         f.touch()
         f.write_text("Some contents")
 
+    # Create a symlink, add it to tmp_files
+    os.symlink("a.txt", input_dir_path / "ln_a.txt")
+    in_tmp_files.append(input_dir_path / "ln_a.txt")
+
     test_tarball = test_path + "/test.tar"
 
     # Create the archive file
-    output = htar.cvf(test_tarball, in_tmp_files)
+    output = htar.cvf(test_tarball, in_tmp_files, dereference=True)
 
     assert "a.txt" in output
     assert hsi.exists(test_tarball)
@@ -52,6 +56,7 @@ def test_cvf_xvf_tell(tmp_path):
     output = htar.xvf(test_tarball, in_tmp_files)
 
     assert "a.txt" in output
+    assert "ln_a.txt" in output
 
     # List the contents of the test archive
     output = htar.tell(test_tarball)

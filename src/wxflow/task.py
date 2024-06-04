@@ -1,5 +1,5 @@
 import logging
-from typing import Dict
+from typing import Dict, Union
 
 from .attrdict import AttrDict
 from .timetools import add_to_datetime, to_timedelta
@@ -97,8 +97,8 @@ class Task:
         """
         pass
 
-    def extend_task_config(self, local_dict: Dict) -> None:
-        """ 
+    def extend_task_config(self, local_dict: Union[Dict, AttrDict]) -> None:
+        """
         Extend task_config attribute-dictionary with another dictionary
         """
 
@@ -109,7 +109,4 @@ class Task:
         Pass dictionary, created by parsing Jinja2-templated YAML, to file handler
         """
 
-        file_dict = parse_j2yaml(path, self.task_config)
-        FileHandler(file_dict).sync()
-
-        
+        FileHandler(parse_j2yaml(path, self.task_config)).sync()

@@ -3,6 +3,8 @@ from typing import Dict
 
 from .attrdict import AttrDict
 from .timetools import add_to_datetime, to_timedelta
+from .yaml_file import parse_j2yaml
+from .file_utils import FileHandler
 
 logger = logging.getLogger(__name__.split('.')[-1])
 
@@ -60,6 +62,9 @@ class Task:
         self.runtime_config['previous_cycle'] = add_to_datetime(self.runtime_config.current_cycle, -to_timedelta(f"{self.config['assim_freq']}H"))
         logger.debug(f"previous cycle: {self.runtime_config['previous_cycle']}")
 
+        # Combine config and runtime_config into single task_config attribute-dictionary
+        self.task_config = AttrDict(**self.config, **self.runtime_config)
+
         pass
 
     def initialize(self):
@@ -91,3 +96,20 @@ class Task:
         Methods to clean after execution and finalization prior to closing out a task
         """
         pass
+
+    def extend_task_config(self, local_dict: Dict) -> None:
+        """ 
+        Extend task_config attribute-dictionary with another dictionary
+        """
+
+        self.task_config = AttrDict(**self.task_config, **local_dict)
+
+    def j2yaml_to_filehandler(self, path: str) -> None:
+        """
+        Pass dictionary, created by parsing Jinja2-templated YAML, to file handler
+        """
+
+        file_dict = parse_j2yaml(path, self.task_config)
+        FileHandler(file_dict).sync()
+
+        

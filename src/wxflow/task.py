@@ -2,9 +2,9 @@ import logging
 from typing import Dict, Union
 
 from .attrdict import AttrDict
+from .file_utils import FileHandler
 from .timetools import add_to_datetime, to_timedelta
 from .yaml_file import parse_j2yaml
-from .file_utils import FileHandler
 
 logger = logging.getLogger(__name__.split('.')[-1])
 

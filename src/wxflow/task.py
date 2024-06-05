@@ -104,7 +104,7 @@ class Task:
 
         self.task_config = AttrDict(**self.task_config, **local_dict)
 
-    def j2yaml_to_filehandler(self, path: str) -> None:
+    def stage_files(self, path: str) -> None:
         """
         Pass dictionary, created by parsing Jinja2-templated YAML, to file handler
         """

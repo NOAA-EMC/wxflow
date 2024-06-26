@@ -57,7 +57,8 @@ file0_dict = {
     'SOME_BOOL3': True,
     'SOME_BOOL4': False,
     'SOME_BOOL5': False,
-    'SOME_BOOL6': False
+    'SOME_BOOL6': False,
+    'EXPDIR': "SOME_VALUE_FOR_EXPDIR"
 }
 
 file1_dict = {

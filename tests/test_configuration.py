@@ -27,8 +27,6 @@ export SOME_BOOL3=.T.
 export SOME_BOOL4=NO
 export SOME_BOOL5=.false.
 export SOME_BOOL6=.F.
-export EXPDIR="SOME_VALUE_FOR_EXPDIR"
-export USER="wxflowuser"
 """
 
 file1 = """#!/bin/bash
@@ -58,9 +56,7 @@ file0_dict = {
     'SOME_BOOL3': True,
     'SOME_BOOL4': False,
     'SOME_BOOL5': False,
-    'SOME_BOOL6': False,
-    'EXPDIR': "SOME_VALUE_FOR_EXPDIR",
-    'USER': "wxflowuser"
+    'SOME_BOOL6': False
 }
 
 file1_dict = {

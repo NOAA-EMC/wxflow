@@ -1,6 +1,7 @@
 import glob
 import os
 import random
+import shutil
 import subprocess
 from pathlib import Path
 from pprint import pprint
@@ -107,8 +108,9 @@ class Configuration:
         runme = ''.join([f'source {s} ; ' for s in scripts])
         magic = f'--- ENVIRONMENT BEGIN {random.randint(0,64**5)} ---'
         runme += f'/bin/echo -n "{magic}" ; /usr/bin/env -0'
+        bash_path = shutil.which('bash')
         with open('/dev/null', 'w') as null:
-            env = subprocess.Popen(runme, shell=True, stdin=null.fileno(),
+            env = subprocess.Popen(runme, shell=True, executable=bash_path, stdin=null.fileno(),
                                    stdout=subprocess.PIPE)
             (out, err) = env.communicate()
         out = out.decode()

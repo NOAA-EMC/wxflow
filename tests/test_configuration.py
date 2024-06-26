@@ -27,6 +27,7 @@ export SOME_BOOL3=.T.
 export SOME_BOOL4=NO
 export SOME_BOOL5=.false.
 export SOME_BOOL6=.F.
+export EXPDIR="SOME_VALUE_FOR_EXPDIR"
 """
 
 file1 = """#!/bin/bash
@@ -144,7 +145,6 @@ def test_configuration_config_dir(tmp_path, create_configs):
     assert cfg.config_dir == tmp_path
 
 
-@pytest.mark.skip(reason="fails in GH runner, passes on localhost")
 def test_configuration_config_files(tmp_path, create_configs):
     cfg = Configuration(tmp_path)
     config_files = [str(tmp_path / 'config.file0'), str(tmp_path / 'config.file1')]
@@ -157,14 +157,12 @@ def test_find_config(tmp_path, create_configs):
     assert str(tmp_path / 'config.file0') == file0
 
 
-@pytest.mark.skip(reason="fails in GH runner, passes on localhost")
 def test_parse_config1(tmp_path, create_configs):
     cfg = Configuration(tmp_path)
     f0 = cfg.parse_config('config.file0')
     assert file0_dict == f0
 
 
-@pytest.mark.skip(reason="fails in GH runner, passes on localhost")
 def test_parse_config2(tmp_path, create_configs):
     cfg = Configuration(tmp_path)
     ff = cfg.parse_config(['config.file0', 'config.file1'])

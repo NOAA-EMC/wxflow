@@ -9,6 +9,80 @@ script = """#!/bin/bash
 echo ${USER}
 """
 
+script_with_args="""#!/bin/bash
+
+# Initialize variables
+opt_o_args=()
+opt_c_args=()
+opt_e_args=()
+
+# Function to display usage
+usage() {
+  echo "Usage: $0 [-o <arg1> <arg2> ...] [-c <arg1> <arg2> ...] [-e <arg1> <arg2> ...]"
+  exit 1
+}
+
+# Parse options
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -o)
+      shift
+      while [[ $# -gt 0 && $1 != -* ]]; do
+        opt_o_args+=("$1")
+        shift
+      done
+      ;;
+    -c)
+      shift
+      while [[ $# -gt 0 && $1 != -* ]]; do
+        opt_c_args+=("$1")
+        shift
+      done
+      ;;
+    -e)
+      shift
+      while [[ $# -gt 0 && $1 != -* ]]; do
+        opt_e_args+=("$1")
+        shift
+      done
+      ;;
+    -*)
+      echo "Invalid option: $1" >&2
+      usage
+      ;;
+    *)
+      echo "Invalid argument: $1" >&2
+      usage
+      ;;
+  esac
+done
+
+user_call="${BASH_SOURCE[0]}"
+# Print the optional arguments for each option
+if [ ${#opt_o_args[@]} -gt 0 ]; then
+  user_call="${user_call} -o"
+  for arg in "${opt_o_args[@]}"; do
+    user_call="${user_call} $arg"
+  done
+fi
+
+if [ ${#opt_c_args[@]} -gt 0 ]; then
+  user_call="${user_call} -c"
+  for arg in "${opt_c_args[@]}"; do
+    user_call="${user_call} $arg"
+  done
+fi
+
+if [ ${#opt_e_args[@]} -gt 0 ]; then
+  user_call="${user_call} -e"
+  for arg in "${opt_e_args[@]}"; do
+    user_call="${user_call} $arg"
+  done
+fi
+
+echo "${user_call}"
+"""
+
 
 def test_executable(tmp_path):
     """
@@ -87,3 +161,21 @@ def test_stderr(tmp_path):
         # This was seen on macOS
         # assert stderr == "ls: unrecognized option `--myopt'" + '\n' + \
         # "usage: ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,] [--color=when] [-D format] [file ...]" + '\n'
+
+
+def test_executable_arg(tmp_path):
+    test_file = tmp_path / 'exec_args.x'
+    Path(test_file).touch(mode=0o755)
+    with open(test_file, 'w') as fh:
+        fh.write(script_with_args)
+
+    cmd = Executable(str(test_file))
+    args_list = ['-c', 'a.cfg', 'b.cfg', '-e', 'e.env']
+    cmd(*args_list)
+
+    stdout_file = tmp_path / 'stdout.arg'
+    stderr_file = tmp_path / 'stderr.arg'
+    cmd(*args_list, output=str(stdout_file), error=str(stderr_file))
+    truth = f"{str(test_file)} {' '.join(args_list)}"
+    with open(str(stdout_file)) as fh:
+        assert fh.read() == truth + '\n'

@@ -9,7 +9,7 @@ script = """#!/bin/bash
 echo ${USER}
 """
 
-script_with_args="""#!/bin/bash
+script_with_args = """#!/bin/bash
 
 # Initialize variables
 opt_o_args=()

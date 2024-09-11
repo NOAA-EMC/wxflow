@@ -65,3 +65,18 @@ def test_copy(tmp_path):
     # Check if files were indeed copied
     for ff in dest_files:
         assert os.path.isfile(ff)
+
+    # Create a config object for copying optional non-existent files (c.txt does not exist)
+    copy_list.append([input_dir_path / 'c.txt', output_dir_path / 'c.txt'])
+    config = {'copy_opt': copy_list}
+
+    # Copy input files to output files
+    FileHandler(config).sync()
+
+    # Create a config object for copying required non-existent files (c.txt does not exist)
+    config = {'copy_req': copy_list}
+    try:
+        FileHandler(config).sync()
+    except FileNotFoundError as e:
+        c_file = input_dir_path / 'c.txt'
+        assert f"Source file '{c_file}' does not exist" in str(e)

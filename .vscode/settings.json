@@ -4,5 +4,5 @@
     "python.testing.autoTestDiscoverOnSaveEnabled": true,
     "python.testing.promptToConfigure": true,
     "python.testing.pytestArgs": ["-v", "--color=yes", "--no-cov"],
-    "python.testing.cwd": "./tests",
+    "python.testing.cwd": "./tests"
 }

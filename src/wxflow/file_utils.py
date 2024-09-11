@@ -27,6 +27,11 @@ class FileHandler:
     ----------
     config : dict
             Dictionary of files to manipulate
+
+    NOTE
+    ----
+    `copy` will be deprecated in the future in favor of `copy_req` and `copy_opt`
+    Users are encouraged to use `copy_req` and `copy_opt` instead of `copy`
     """
 
     def __init__(self, config):

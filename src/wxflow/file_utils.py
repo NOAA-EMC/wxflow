@@ -21,7 +21,7 @@ class FileHandler:
     "action" can be one of "mkdir", "copy", "copy_req", "copy_opt", etc.
     Corresponding "act" would be ['dir1', 'dir2'], [['src1', 'dest1'], ['src2', 'dest2']]
     "copy_req" will raise an error if the source file does not exist
-    "copy_opt" will not raise an error if the source file does not exist
+    "copy_opt" will not raise an error if the source file does not exist but will present a warning
 
     Attributes
     ----------

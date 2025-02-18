@@ -156,5 +156,4 @@ def test_link_files(tmp_path):
 
     # Follow the bad link to the file and check this is a dead link to a file that does not exist
     pp = os.path.realpath(output_dir_path / 'bad_link.txt')
-    with pytest.raises(AssertionError):
-        assert os.path.isfile(pp)
+    assert not os.path.isfile(pp)

@@ -104,3 +104,57 @@ def test_copy(tmp_path):
     c_file = input_dir_path / 'c.txt'
     with pytest.raises(FileNotFoundError, match=f"Source file '{c_file}' does not exist"):
         FileHandler(config).sync()
+
+
+def test_link_files(tmp_path):
+    """
+    Test for linking files:
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    """
+
+    # Test 1 (nominal operation) - Creating a directory and linking files to it
+    input_dir_path = tmp_path / 'my_input_dir'
+
+    # Create the input directory
+    config = {'mkdir': [input_dir_path]}
+    FileHandler(config).sync()
+
+    # Put empty files in input_dir_path
+    src_files = [input_dir_path / 'a.txt', input_dir_path / 'b.txt']
+    for ff in src_files:
+        ff.touch()
+
+    # Create output_dir_path and expected link names
+    output_dir_path = tmp_path / 'my_output_dir'
+    config = {'mkdir': [output_dir_path]}
+    FileHandler(config).sync()
+    link_files = [output_dir_path / 'a_link.txt', output_dir_path / 'b_link.txt']
+
+    link_list = []
+    for src, link in zip(src_files, link_files):
+        link_list.append([link, src])
+
+    # Create config dictionary for FileHandler
+    config = {'link': link_list}
+
+    # Link input files to output links
+    FileHandler(config).sync()
+
+    # Check if links were indeed created
+    for link in link_files:
+        assert os.path.islink(link)
+        assert os.readlink(link) == str(src_files[link_files.index(link)])
+
+    # Test 2 - Attempt to link to a non-existent target (this will only throw a warning via logger)
+    bad_link_list = [[output_dir_path / 'bad_link.txt', input_dir_path / 'non_existent.txt']]
+
+    # Create a config dictionary for FileHandler
+    bad_config = {'link': bad_link_list}
+    FileHandler(bad_config).sync()
+
+    # Follow the bad link to the file and check this is a dead link to a file that does not exist
+    pp = os.path.realpath(output_dir_path / 'bad_link.txt')
+    with pytest.raises(AssertionError):
+        assert os.path.isfile(pp)

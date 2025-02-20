@@ -133,7 +133,6 @@ class FileHandler:
             link_name = sublist[1]
             if os.path.isdir(link_name):
                 link_name = os.path.join(link_name, os.path.basename(target))
-            logger.info(f"Linking {link_name} to {target}")
             if not os.path.exists(target):
                 logger.warning(f"WARNING: Target file '{target}' does not exist, will result in dead link!")
             Path(link_name).symlink_to(target)

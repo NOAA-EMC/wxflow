@@ -106,15 +106,15 @@ def test_copy(tmp_path):
         FileHandler(config).sync()
 
 
-def test_link_files(tmp_path):
+@pytest.fixture
+def create_dirs_and_files_for_test_link(tmp_path):
     """
-    Test for linking files:
+    Create directories and files for testing linking files:
     Parameters
     ----------
     tmp_path - pytest fixture
     """
 
-    # Test 1 (nominal operation) - Creating a directory and linking files to it
     input_dir_path = tmp_path / 'my_input_dir'
 
     # Create the input directory
@@ -126,15 +126,33 @@ def test_link_files(tmp_path):
     for ff in src_files:
         ff.touch()
 
-    # Create output_dir_path and expected link names
-    output_dir_path = tmp_path / 'my_output_dir'
-    config = {'mkdir': [output_dir_path]}
+    # Create output_dir_path for this test
+    output_dir_path1 = tmp_path / 'my_output_dir1'
+    output_dir_path2 = tmp_path / 'my_output_dir2'
+    config = {'mkdir': [output_dir_path1, output_dir_path2]}
     FileHandler(config).sync()
+
+
+def test_link_file_files(tmp_path, create_dirs_and_files_for_test_link):
+    """
+    Test for linking files:
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    create_dirs_and_files_for_test_link - pytest fixture
+    """
+
+    input_dir_path = tmp_path / 'my_input_dir'
+    output_dir_path = tmp_path / 'my_output_dir1'
+
+    src_files = [input_dir_path / 'a.txt', input_dir_path / 'b.txt']
     link_files = [output_dir_path / 'a_link.txt', output_dir_path / 'b_link.txt']
 
     link_list = []
     for src, link in zip(src_files, link_files):
-        link_list.append([link, src])
+        link_list.append([src, link])
+        if os.path.exists(link):
+            os.unlink(link)
 
     # Create config dictionary for FileHandler
     config = {'link': link_list}
@@ -147,8 +165,54 @@ def test_link_files(tmp_path):
         assert os.path.islink(link)
         assert os.readlink(link) == str(src_files[link_files.index(link)])
 
-    # Test 2 - Attempt to link to a non-existent target (this will only throw a warning via logger)
-    bad_link_list = [[output_dir_path / 'bad_link.txt', input_dir_path / 'non_existent.txt']]
+
+def test_link_file_dir(tmp_path, create_dirs_and_files_for_test_link):
+    """
+    Test for linking files:
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    create_dirs_and_files_for_test_link - pytest fixture
+    """
+
+    input_dir_path = tmp_path / 'my_input_dir'
+    output_dir_path = tmp_path / 'my_output_dir2'
+
+    src_files = [input_dir_path / 'a.txt', input_dir_path / 'b.txt']
+    link_files = [str(output_dir_path) + '/', str(output_dir_path) + '/']
+
+    link_list = []
+    for src, link in zip(src_files, link_files):
+        link_list.append([src, link])
+        link_name = os.path.join(link, os.path.basename(src))
+        if os.path.exists(link_name):
+            os.unlink(link_name)
+
+    # Create config dictionary for FileHandler
+    config = {'link': link_list}
+
+    # Link input files to output links
+    FileHandler(config).sync()
+
+    # Check if links were indeed created
+    for src, link in zip(src_files, link_files):
+        link_name = os.path.join(link, os.path.basename(src))
+        assert os.path.islink(link_name)
+
+
+def test_link_file_bad(tmp_path, create_dirs_and_files_for_test_link):
+    """
+    Test for linking files:
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    create_dirs_and_files_for_test_link - pytest fixture
+    """
+
+    input_dir_path = tmp_path / 'my_input_dir'
+    output_dir_path = tmp_path / 'my_output_dir1'
+
+    bad_link_list = [[input_dir_path / 'non_existent.txt', output_dir_path / 'bad_link.txt']]
 
     # Create a config dictionary for FileHandler
     bad_config = {'link': bad_link_list}

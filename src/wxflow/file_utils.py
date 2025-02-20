@@ -118,21 +118,23 @@ class FileHandler:
         """Function to link all files specified in the list
 
         `filelist` should be in the form:
-        - [link name, target]
+        - [target, link name]
 
         Parameters
         ----------
         filelist : list
-                List of lists of [link name, target]
+                List of lists of [target, link name]
         """
         for sublist in filelist:
             if len(sublist) != 2:
                 raise IndexError(
-                    f"List must be of the form ['link name', 'target'], not {sublist}")
-            link_name = sublist[0]
-            target = sublist[1]
+                    f"List must be of the form ['target', 'link name'], not {sublist}")
+            target = sublist[0]
+            link_name = sublist[1]
+            if os.path.isdir(link_name):
+                link_name = os.path.join(link_name, os.path.basename(target))
             logger.info(f"Linking {link_name} to {target}")
             if not os.path.exists(target):
-                logger.warning(f"WARNING: Target file '{target}' does not exist!")
+                logger.warning(f"WARNING: Target file '{target}' does not exist, will result in dead link!")
             Path(link_name).symlink_to(target)
-            logger.info(f'Linked {link_name} to {target}')
+            logger.info(f'Linked {target} to {link_name}')

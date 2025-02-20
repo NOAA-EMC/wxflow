@@ -133,6 +133,26 @@ def create_dirs_and_files_for_test_link(tmp_path):
     FileHandler(config).sync()
 
 
+def test_link_file_invalid_config(tmp_path, create_dirs_and_files_for_test_link):
+    """
+    Test for linking files:
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    create_dirs_and_files_for_test_link - pytest fixture
+    """
+
+    input_dir_path = tmp_path / 'my_input_dir'
+    output_dir_path = tmp_path / 'my_output_dir1'
+
+    # Create config dictionary for FileHandler
+    bad_config = {'link': [[input_dir_path / 'a.txt'], [input_dir_path / 'b.txt', output_dir_path / 'b_link.txt']]}
+
+    # Attempt to link
+    with pytest.raises(IndexError):
+        FileHandler(bad_config).sync()
+
+
 def test_link_file_files(tmp_path, create_dirs_and_files_for_test_link):
     """
     Test for linking files:

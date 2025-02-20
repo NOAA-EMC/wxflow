@@ -1,5 +1,6 @@
 import os
 from logging import getLogger
+from pathlib import Path
 
 from .fsutils import cp, mkdir
 
@@ -47,6 +48,7 @@ class FileHandler:
             'copy_req': self.copy_req,
             'copy_opt': self.copy_opt,
             'mkdir': self._make_dirs,
+            'link': self._link_files,
         }
         # loop through the configuration keys
         for action, files in self.config.items():
@@ -110,3 +112,28 @@ class FileHandler:
             except Exception as ee:
                 logger.exception(f"Error creating directory {dd}")
                 raise ee
+
+    @staticmethod
+    def _link_files(filelist):
+        """Function to link all files specified in the list
+
+        `filelist` should be in the form:
+        - [target, link name]
+
+        Parameters
+        ----------
+        filelist : list
+                List of lists of [target, link name]
+        """
+        for sublist in filelist:
+            if len(sublist) != 2:
+                raise IndexError(
+                    f"List must be of the form ['target', 'link name'], not {sublist}")
+            target = sublist[0]
+            link_name = sublist[1]
+            if os.path.isdir(link_name):
+                link_name = os.path.join(link_name, os.path.basename(target))
+            if not os.path.exists(target):
+                logger.warning(f"WARNING: Target file '{target}' does not exist, will result in dead link!")
+            Path(link_name).symlink_to(target)
+            logger.info(f'Linked {target} to {link_name}')

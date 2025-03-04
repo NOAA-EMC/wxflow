@@ -135,5 +135,9 @@ class FileHandler:
                 link_name = os.path.join(link_name, os.path.basename(target))
             if not os.path.exists(target):
                 logger.warning(f"WARNING: Target file '{target}' does not exist, will result in dead link!")
-            Path(link_name).symlink_to(target)
-            logger.info(f'Linked {target} to {link_name}')
+            link_path = Path(link_name)
+            if link_path.is_symlink():
+                logger.warning(f"WARNING: Link to '{target}' exists at '{link_name}', removing!")
+                os.remove(link_name)
+            link_path.symlink_to(target)
+            logger.info(f"Linked '{target}' to '{link_name}'")

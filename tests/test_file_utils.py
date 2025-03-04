@@ -185,6 +185,10 @@ def test_link_file_files(tmp_path, create_dirs_and_files_for_test_link):
         assert os.path.islink(link)
         assert os.readlink(link) == str(src_files[link_files.index(link)])
 
+    # Creat Link input files to output links again to ensure removal of existing link
+    FileHandler(config).sync()
+
+
 
 def test_link_file_dir(tmp_path, create_dirs_and_files_for_test_link):
     """

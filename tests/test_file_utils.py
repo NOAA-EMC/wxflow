@@ -37,9 +37,9 @@ def test_bad_mkdir():
 
 def test_empty_mkdir():
     # Attempt to create a directory in an unwritable parent directory
-    with pytest.raises(IndexError):
+    with pytest.raises(ValueError):
         FileHandler({'mkdir': None}).sync()
-    with pytest.raises(IndexError):
+    with pytest.raises(ValueError):
         FileHandler({'mkdir': []}).sync()
 
 

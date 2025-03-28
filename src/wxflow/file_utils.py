@@ -53,7 +53,7 @@ class FileHandler:
         # loop through the configuration keys
         for action, files in self.config.items():
             if files is None or len(files) == 0:
-                raise IndexError(f"No files/directories were included for {action} command")
+                raise ValueError(f"No files/directories were included for {action} command")
             sync_factory[action](files)
 
     @staticmethod

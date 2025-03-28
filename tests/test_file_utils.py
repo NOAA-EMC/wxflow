@@ -35,6 +35,14 @@ def test_bad_mkdir():
         FileHandler({'mkdir': ["/dev/null/foo"]}).sync()
 
 
+def test_empty_mkdir():
+    # Attempt to create a directory in an unwritable parent directory
+    with pytest.raises(IndexError):
+        FileHandler({'mkdir': None}).sync()
+    with pytest.raises(IndexError):
+        FileHandler({'mkdir': []}).sync()
+
+
 def test_copy(tmp_path):
     """
     Test for copying files:

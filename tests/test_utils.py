@@ -54,3 +54,17 @@ def test_find_upward_from_root(temp_dir_structure):
     # Test starting from the root directory
     result = find_upward("target.txt", start_path=temp_dir_structure["root_dir"])
     assert result == temp_dir_structure["target_file"]
+
+
+def test_find_upward_start_path_none(mocker):
+    # Mock os.getcwd to return a specific directory
+    mock_getcwd = mocker.patch("os.getcwd", return_value="/mocked/current/directory")
+
+    # Call the function with start_path as None
+    result = find_upward("some_target", start_path=None)
+
+    # Assert that os.getcwd was called
+    mock_getcwd.assert_called_once()
+
+    # Assert the result is None since the mocked directory does not contain the target
+    assert result is None

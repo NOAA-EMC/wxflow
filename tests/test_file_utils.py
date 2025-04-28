@@ -257,3 +257,8 @@ def test_link_file_bad(tmp_path, create_dirs_and_files_for_test_link):
     # Follow the bad link to the file and check this is a dead link to a file that does not exist
     pp = os.path.realpath(output_dir_path / 'bad_link.txt')
     assert not os.path.isfile(pp)
+
+    # Attempt to link a non-existent file that is required
+    bad_config = {'link_req': bad_link_list}
+    with pytest.raises(FileNotFoundError):
+        FileHandler(bad_config).sync()

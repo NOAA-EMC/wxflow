@@ -8,7 +8,7 @@ def find_upward(target_name, start_path=None):
     Walks up the directory tree from the given start_path (or current dir)
     in search of a file or directory with the specified name.
 
-    Args:
+    Parameters:
         target_name (str): The name of the file or directory to search for.
         start_path (str, optional): The path to start searching from.
             Defaults to the current working directory.

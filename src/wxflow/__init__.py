@@ -16,6 +16,7 @@ from .sqlitedb import SQLiteDB, SQLiteDBError
 from .task import Task
 from .template import Template, TemplateConstants
 from .timetools import *
+from .utils import find_upward
 from .yaml_file import (YAMLFile, dump_as_yaml, parse_j2yaml, parse_yaml,
                         save_as_yaml, vanilla_yaml)
 

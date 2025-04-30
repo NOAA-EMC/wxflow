@@ -73,7 +73,7 @@ def test_find_upward_handles_symlinks(temp_dir_structure):
 
 def test_find_upward_with_absolute_start_path(temp_dir_structure):
     # Test finding the target with an absolute start path
-    result = find_upward("target.txt", start_path=temp_dir_structure["sub_dir"])
+    result = find_upward("target.txt", start_path=os.path.abspath(temp_dir_structure["sub_dir"]))
     assert result == temp_dir_structure["root_dir"]
 
 

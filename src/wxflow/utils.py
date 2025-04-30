@@ -14,7 +14,7 @@ def find_upward(target_name, start_path=None):
             Defaults to the current working directory.
 
     Returns:
-        str or None: The absolute path to the found target, or None if not found.
+        str or None: Absolute path to the directory of the found target, or None if not found.
     """
     if start_path is None:
         current_path = os.getcwd()

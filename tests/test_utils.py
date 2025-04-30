@@ -32,28 +32,10 @@ def temp_dir_structure():
     temp_dir.cleanup()
 
 
-def test_find_upward_file(temp_dir_structure):
-    # Test finding a file
-    result = find_upward("target.txt", start_path=temp_dir_structure["sub_dir"])
-    assert result == temp_dir_structure["target_file"]
-
-
-def test_find_upward_directory(temp_dir_structure):
-    # Test finding a directory
-    result = find_upward("target_dir", start_path=temp_dir_structure["sub_dir"])
-    assert result == temp_dir_structure["target_dir"]
-
-
 def test_find_upward_not_found(temp_dir_structure):
     # Test when the target is not found
     result = find_upward("nonexistent.txt", start_path=temp_dir_structure["sub_dir"])
     assert result is None
-
-
-def test_find_upward_from_root(temp_dir_structure):
-    # Test starting from the root directory
-    result = find_upward("target.txt", start_path=temp_dir_structure["root_dir"])
-    assert result == temp_dir_structure["target_file"]
 
 
 def test_find_upward_start_path_none(mocker):
@@ -67,4 +49,35 @@ def test_find_upward_start_path_none(mocker):
     mock_getcwd.assert_called_once()
 
     # Assert the result is None since the mocked directory does not contain the target
+    assert result is None
+
+
+def test_find_upward_returns_correct_path(temp_dir_structure):
+    # Test that the function returns the correct path to the target
+    result = find_upward("target.txt", start_path=temp_dir_structure["sub_dir"])
+    assert result == temp_dir_structure["root_dir"]
+
+
+def test_find_upward_handles_symlinks(temp_dir_structure):
+    # Create a symlink to the target file
+    symlink_path = os.path.join(temp_dir_structure["sub_dir"], "symlink_to_target.txt")
+    os.symlink(temp_dir_structure["target_file"], symlink_path)
+
+    # Test finding the symlink
+    result = find_upward("symlink_to_target.txt", start_path=temp_dir_structure["sub_dir"])
+    assert result == temp_dir_structure["sub_dir"]
+
+    # Clean up the symlink
+    os.remove(symlink_path)
+
+
+def test_find_upward_with_absolute_start_path(temp_dir_structure):
+    # Test finding the target with an absolute start path
+    result = find_upward("target.txt", start_path=os.path.abspath(temp_dir_structure["sub_dir"]))
+    assert result == temp_dir_structure["root_dir"]
+
+
+def test_find_upward_with_nonexistent_start_path():
+    # Test with a nonexistent start path
+    result = find_upward("target.txt", start_path="/nonexistent/path")
     assert result is None

@@ -24,7 +24,7 @@ def find_upward(target_name, start_path=None):
     while True:
         candidate_path = os.path.join(current_path, target_name)
         if os.path.exists(candidate_path):
-            return os.path.abspath(candidate_path)
+            return os.path.abspath(current_path)
 
         parent_path = os.path.dirname(current_path)
         if parent_path == current_path:

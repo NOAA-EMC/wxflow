@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
 import os
+from datetime import datetime, timedelta
 
 import jinja2
 import pytest

@@ -103,7 +103,6 @@ def test_jinja_filters(tmp_path, create_template):
     assert env.filters["relpath"](file_path, tmp_path) == "template.j2"
 
     # Test add_to_datetime filter
-    delta = {"days": 1, "hours": 2}
     delta = timedelta(days=1, hours=2)
     assert env.filters["add_to_datetime"](dt, delta) == datetime(2025, 5, 6, 14, 30, 45)
 

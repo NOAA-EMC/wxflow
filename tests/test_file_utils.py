@@ -1,3 +1,4 @@
+import logging
 import os
 
 import pytest
@@ -35,12 +36,12 @@ def test_bad_mkdir():
         FileHandler({'mkdir': ["/dev/null/foo"]}).sync()
 
 
-def test_empty_mkdir():
-    # Attempt to create a directory in an unwritable parent directory
-    with pytest.raises(ValueError):
-        FileHandler({'mkdir': None}).sync()
-    with pytest.raises(ValueError):
-        FileHandler({'mkdir': []}).sync()
+def test_empty_lists(caplog):
+    caplog.set_level(logging.INFO)
+    FileHandler({'mkdir': None}).sync()
+    assert 'WARNING: No files/directories were included for mkdir command' in caplog.text
+    FileHandler({'copy': []}).sync()
+    assert 'WARNING: No files/directories were included for copy command' in caplog.text
 
 
 def test_copy(tmp_path):

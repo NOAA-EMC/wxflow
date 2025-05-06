@@ -60,7 +60,8 @@ class FileHandler:
         # loop through the configuration keys
         for action, files in self.config.items():
             if files is None or len(files) == 0:
-                raise ValueError(f"No files/directories were included for {action} command")
+                logger.warning(f"WARNING: No files/directories were included for {action} command")
+                continue
             sync_factory[action](files)
 
     @staticmethod

@@ -21,5 +21,5 @@ from .yaml_file import (YAMLFile, dump_as_yaml, parse_j2yaml, parse_yaml,
                         save_as_yaml, vanilla_yaml)
 
 __docformat__ = "restructuredtext"
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 wxflow_directory = os.path.dirname(__file__)

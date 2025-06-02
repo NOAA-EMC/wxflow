@@ -1,5 +1,6 @@
 import os
 from typing import List
+
 from .scheduler import Scheduler
 
 __all__ = ['PBS']
@@ -170,6 +171,7 @@ class PBS(Scheduler):
                 strings.append(f"-l {item}")
 
         return strings
+
 
 # Register PBS as a builder in the scheduler_factory
 Scheduler.scheduler_factory.register('PBS', PBS)

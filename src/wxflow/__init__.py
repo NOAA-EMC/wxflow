@@ -12,11 +12,11 @@ from .hsi import Hsi
 from .htar import Htar
 from .jinja import Jinja
 from .logger import Logger, logit
-from .sqlitedb import SQLiteDB, SQLiteDBError
-from .scheduler.scheduler import Scheduler
 from .scheduler.no_scheduler import NoScheduler
 from .scheduler.pbs import PBS
+from .scheduler.scheduler import Scheduler
 from .scheduler.slurm import Slurm
+from .sqlitedb import SQLiteDB, SQLiteDBError
 from .task import Task
 from .template import Template, TemplateConstants
 from .timetools import *

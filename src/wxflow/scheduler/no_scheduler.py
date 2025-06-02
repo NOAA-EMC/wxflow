@@ -14,5 +14,6 @@ class NoScheduler(Scheduler):
         """
         super().__init__(config, *args, **kwargs)
 
+
 # Register NoScheduler as a builder in the scheduler_factory
 Scheduler.scheduler_factory.register('NoScheduler', NoScheduler)

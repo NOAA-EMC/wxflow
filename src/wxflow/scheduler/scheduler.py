@@ -1,9 +1,10 @@
 from datetime import timedelta
-from typing import Dict, Any, Optional, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from ..attrdict import AttrDict
 from ..factory import Factory
 from ..timetools import timedelta_to_HMS, to_timedelta
+
 
 class Scheduler:
 

@@ -127,10 +127,7 @@ def datetime_to_YMDH(dt: datetime.datetime) -> str:
     str: str
         Formatted string in 'YYYYmmddHH' format.
     """
-    try:
-        return dt.strftime('%Y%m%d%H')
-    except Exception:
-        raise ValueError(f"Bad datetime: '{dt}'")
+    return dt.strftime('%Y%m%d%H')
 
 
 def datetime_to_YMD(dt: datetime.datetime) -> str:
@@ -149,10 +146,7 @@ def datetime_to_YMD(dt: datetime.datetime) -> str:
     str: str
         Formatted string in 'YYYYmmdd' format.
     """
-    try:
-        return dt.strftime('%Y%m%d')
-    except Exception:
-        raise ValueError(f"Bad datetime: '{dt}'")
+    return dt.strftime('%Y%m%d')
 
 
 def datetime_to_JDAY(dt: datetime.datetime) -> str:
@@ -172,10 +166,7 @@ def datetime_to_JDAY(dt: datetime.datetime) -> str:
     str: str
         Formatted string in 'YYYYDOY' format.
     """
-    try:
-        return dt.strftime('%Y%j')
-    except Exception:
-        raise ValueError(f"Bad datetime: '{dt}'")
+    return dt.strftime('%Y%j')
 
 
 def timedelta_to_HMS(td: datetime.timedelta) -> str:

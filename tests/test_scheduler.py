@@ -1,7 +1,8 @@
-import os
-import pytest
 from datetime import timedelta
-from wxflow import Scheduler, PBS, Slurm
+
+import pytest
+
+from wxflow import PBS, Scheduler, Slurm
 
 
 def test_scheduler_memory_in_bytes():
@@ -48,7 +49,9 @@ def test_pbs_batch_card_basic():
     assert '#PBS -A myacct' in card
     assert '#PBS -o out.log' in card or '#PBS -e err.log' in card
     assert '#PBS -l walltime=01:00:00' in card
-    assert '#PBS -l select=2:mpiprocs=4:mem=2048M' in card or '#PBS -l select=2:mpiprocs=4:mem=2048M:ompthreads=' in card or '#PBS -l select=2:mpiprocs=4:mem=2048M:ncpus=' in card
+    assert '#PBS -l select=2:mpiprocs=4:mem=2048M' in card or \
+           '#PBS -l select=2:mpiprocs=4:mem=2048M:ompthreads=' in card or \
+           '#PBS -l select=2:mpiprocs=4:mem=2048M:ncpus=' in card
     assert '#PBS -V' in card
     assert '#PBS -l other=foo' in card
 

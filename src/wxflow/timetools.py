@@ -49,10 +49,14 @@ def to_datetime(dtstr: str) -> datetime.datetime:
     """
 
     mm = _DATETIME_RE.match(dtstr)
-    if mm:
+
+    # Check if the match is made
+    all_none = all(vv is None for vv in mm.groupdict().values())
+
+    if not all_none:  # If the match is not empty
         return datetime.datetime(**{kk: int(vv) for kk, vv in mm.groupdict().items() if vv})
-    else:
-        raise Exception(f"Bad datetime string: '{dtstr}'")
+
+    raise ValueError(f"Bad datetime string: '{dtstr}'")
 
 
 def to_timedelta(tdstr: str) -> datetime.timedelta:
@@ -93,7 +97,10 @@ def to_timedelta(tdstr: str) -> datetime.timedelta:
     else:
         mm = _TIMEDELTA_HOURS_RE.match(tdstr)  # ISO 8601 representation
 
-    if mm:
+    # Check if the match is made
+    all_none = all(vv is None for vv in mm.groupdict().values())
+
+    if not all_none:  # If the match is not empty
         nmm = {kk: vv if vv is not None else time_dict[kk]
                for kk, vv in mm.groupdict().items()}
         del nmm['sign']
@@ -102,8 +109,9 @@ def to_timedelta(tdstr: str) -> datetime.timedelta:
         if mm.group('sign') is not None and mm.group('sign') == '-':
             dt = -dt
         return dt
-    else:
-        raise Exception(f"Bad timedelta string: '{tdstr}'")
+
+    # All attempts failed
+    raise ValueError(f"Bad timedelta string: '{tdstr}'")
 
 
 def datetime_to_YMDH(dt: datetime.datetime) -> str:
@@ -125,7 +133,7 @@ def datetime_to_YMDH(dt: datetime.datetime) -> str:
     try:
         return dt.strftime('%Y%m%d%H')
     except Exception:
-        raise Exception(f"Bad datetime: '{dt}'")
+        raise ValueError(f"Bad datetime: '{dt}'")
 
 
 def datetime_to_YMD(dt: datetime.datetime) -> str:
@@ -147,7 +155,7 @@ def datetime_to_YMD(dt: datetime.datetime) -> str:
     try:
         return dt.strftime('%Y%m%d')
     except Exception:
-        raise Exception(f"Bad datetime: '{dt}'")
+        raise ValueError(f"Bad datetime: '{dt}'")
 
 
 def datetime_to_JDAY(dt: datetime.datetime) -> str:
@@ -170,7 +178,7 @@ def datetime_to_JDAY(dt: datetime.datetime) -> str:
     try:
         return dt.strftime('%Y%j')
     except Exception:
-        raise Exception(f"Bad datetime: '{dt}'")
+        raise ValueError(f"Bad datetime: '{dt}'")
 
 
 def timedelta_to_HMS(td: datetime.timedelta) -> str:
@@ -190,11 +198,12 @@ def timedelta_to_HMS(td: datetime.timedelta) -> str:
         Formatted string in 'HH:MM:SS' format.
     """
     try:
-        hours, remainder = divmod(int(td.total_seconds()), 3600)
+        days = td.days
+        hours, remainder = divmod(td.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
-        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+        return f"{days*24 + hours:02d}:{minutes:02d}:{seconds:02d}"
     except Exception:
-        raise Exception(f"Bad timedelta: '{td}'")
+        raise ValueError(f"Bad timedelta: '{td}'")
 
 
 def strftime(dt: datetime.datetime, fmt: str) -> str:
@@ -204,7 +213,7 @@ def strftime(dt: datetime.datetime, fmt: str) -> str:
     try:
         return dt.strftime(fmt)
     except Exception:
-        raise Exception(f"Bad datetime (format): '{dt} ({fmt})'")
+        raise ValueError(f"Bad datetime (format): '{dt} ({fmt})'")
 
 
 def strptime(dtstr: str, fmt: str) -> datetime.datetime:
@@ -228,7 +237,7 @@ def strptime(dtstr: str, fmt: str) -> datetime.datetime:
     try:
         return datetime.datetime.strptime(dtstr, fmt)
     except Exception:
-        raise Exception(f"Bad datetime string (format): '{dtstr} ({fmt})'")
+        raise ValueError(f"Bad datetime string (format): '{dtstr} ({fmt})'")
 
 
 def to_isotime(dt: datetime.datetime) -> str:

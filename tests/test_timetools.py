@@ -1,6 +1,9 @@
 from datetime import datetime, timedelta
+import pytest
 
-from wxflow import *
+from wxflow import (to_datetime, to_timedelta, datetime_to_YMDH, datetime_to_YMD,
+    timedelta_to_HMS, strftime, strptime, to_isotime, to_fv3time, to_julian,
+    add_to_timedelta, add_to_datetime)
 
 current_date = datetime.now()
 
@@ -22,6 +25,8 @@ def test_to_timedelta():
     assert to_timedelta('-3H15M') == timedelta(hours=-3, minutes=-15)
     assert to_timedelta('1:30:45') == timedelta(hours=1, minutes=30, seconds=45)
     assert to_timedelta('5 days, 12:30:15') == timedelta(days=5, hours=12, minutes=30, seconds=15)
+    with pytest.raises(ValueError):
+        to_timedelta('not_a_time')
 
 
 def test_datetime_to_ymdh():

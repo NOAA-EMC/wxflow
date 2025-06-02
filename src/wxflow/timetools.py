@@ -50,10 +50,7 @@ def to_datetime(dtstr: str) -> datetime.datetime:
 
     mm = _DATETIME_RE.match(dtstr)
 
-    # Check if the match is made
-    all_none = all(vv is None for vv in mm.groupdict().values())
-
-    if not all_none:  # If the match is not empty
+    if mm:  # If the match is not empty
         return datetime.datetime(**{kk: int(vv) for kk, vv in mm.groupdict().items() if vv})
 
     raise ValueError(f"Bad datetime string: '{dtstr}'")

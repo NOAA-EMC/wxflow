@@ -159,7 +159,7 @@ class Scheduler:
             multiplier = 1024 ** scale[memory[-1]]
             memory = memory[:-1]
 
-        return float(memory) * multiplier
+        return int(memory) * multiplier
 
     @classmethod
     def memory_in_megabytes(cls, memory: str) -> int:

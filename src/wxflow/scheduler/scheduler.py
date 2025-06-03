@@ -164,8 +164,8 @@ class Scheduler:
 
         return strings
 
-    @classmethod
-    def memory_in_bytes(cls, memory: str) -> float:
+    @staticmethod
+    def memory_in_bytes(memory: str) -> float:
         """
         Converts bytes, k, M, G, T (case-insensitive) to number of bytes
         Default units of input memory string is bytes
@@ -189,8 +189,8 @@ class Scheduler:
 
         return int(memory) * multiplier
 
-    @classmethod
-    def memory_in_megabytes(cls, memory: str) -> int:
+    @staticmethod
+    def memory_in_megabytes(memory: str) -> int:
         """
         Converts input memory in bytes into Megabytes
         1 MB = 1048576 Bytes
@@ -198,8 +198,8 @@ class Scheduler:
 
         return int(Scheduler.memory_in_bytes(memory) / 1048576.0)
 
-    @classmethod
-    def walltime_in_string(cls, walltime: Union[str, timedelta]) -> str:
+    @staticmethod
+    def walltime_in_string(walltime: Union[str, timedelta]) -> str:
 
         if isinstance(walltime, timedelta):
             return timedelta_to_HMS(walltime)

@@ -177,3 +177,5 @@ class Scheduler:
             return timedelta_to_HMS(walltime)
         elif isinstance(walltime, str):
             return timedelta_to_HMS(to_timedelta(walltime))
+        else:
+            raise ValueError(f"Invalid walltime format: {walltime}. Expected a string or timedelta.")

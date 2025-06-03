@@ -28,49 +28,39 @@ class Scheduler:
         # Cache incoming config
         self._config = AttrDict(config)
 
-        self.specs = self._config_to_specs
+        self._config_to_specs()
         self.batch_card = []
 
-    @property
-    def _config_to_specs(self) -> AttrDict:
+    def _config_to_specs(self) -> None:
         """
-        Converts the internal configuration dictionary to a standardized specification format.
-
-        This method processes the internal `_config` attribute and returns a deep copy with the following transformations:
+        Deep copies and converts the internal configuration dictionary to a standardized specification format.
+        This method processes the internal `_config` attribute and assigns the self.specs attribute with the following transformations:
           - Converts the 'memory' field to a string in megabytes (e.g., '1024M').
           - Converts the 'walltime' field to a string in HH:MM:SS format.
           - Ensures the 'env' field (environment variables) is a list.
           - Ensures the 'native' field (native scheduler directives) is a list.
-
-            A deep-copied and normalized configuration dictionary with updated fields for memory, walltime,
-            environment variables, and native scheduler directives.
-
-        Returns
-        -------
-        specs: Dict
-            A deep-copied and normalized configuration dictionary with updated fields for memory, walltime, etc.
         """
-        specs = self._config.deepcopy()
+        self.specs = self._config.deepcopy()
 
         # Convert 'memory' to MB
         if 'memory' in self._config:
-            specs.memory = str(self.memory_in_megabytes(self._config.memory)) + 'M'
+            self.specs.memory = str(self.memory_in_megabytes(self._config.memory)) + 'M'
 
         # Convert 'walltime' to HH:MM:SS format
         if 'walltime' in self._config:
-            specs.walltime = self.walltime_in_string(self._config.walltime)
+            self.specs.walltime = self.walltime_in_string(self._config.walltime)
 
         # Ensure environment variables are a list
         if 'env' in self._config:
             if not isinstance(self._config.env, (list, tuple)):
-                specs.env = [self._config.env]
+                self.specs.env = [self._config.env]
 
         # Ensure native scheduler directives are a list
         if 'native' in self._config:
             if not isinstance(self._config.native, (list, tuple)):
-                specs.native = [self._config.native]
+                self.specs.native = [self._config.native]
 
-        return specs
+        return
 
     def dump(self, filename: Optional[str] = None) -> None:
         """
@@ -99,7 +89,7 @@ class Scheduler:
                     for item in self.batch_card:
                         fh.write(f"{item}\n")
             except Exception as e:
-                raise f"Unknown exception in writing scheduler directives to {filename} as {e}"
+                raise f"Unknown exception in writing scheduler directives to {filename} from {e}"
         else:
             print(self.get_batch_card)
 

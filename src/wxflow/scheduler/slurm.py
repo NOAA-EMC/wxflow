@@ -43,7 +43,7 @@ class Slurm(Scheduler):
         batch_card += self.get_native
         batch_card += self.get_env
 
-        # Add the directive to the batch card
+        # Add the directives to the batch card.  Each directive is an item in a list.
         self.batch_card = [f"{self.DIRECTIVE} {item}" for item in batch_card]
 
     @property

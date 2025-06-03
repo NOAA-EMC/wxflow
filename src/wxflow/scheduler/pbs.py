@@ -108,7 +108,7 @@ class PBS(Scheduler):
         """
         strings = []
         if 'env' in self.specs:
-            if any(item.upper() in 'ALL' for item in self.specs.env):
+            if any(item.upper() == 'ALL' for item in self.specs.env):
                 strings.append(f"-V")
             else:
                 env_list = []

@@ -92,7 +92,8 @@ def test_config_to_specs_memory_and_walltime_and_env_and_native():
         'native': '--foo=bar'
     }
     s = Scheduler(config)
-    specs = s._config_to_specs
+    s._config_to_specs()
+    specs = s.specs
     assert specs.memory == '2048M'
     assert specs.walltime == '01:23:45'
     assert isinstance(specs.env, list)

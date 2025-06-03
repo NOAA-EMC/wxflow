@@ -30,6 +30,7 @@ def test_scheduler_walltime_in_string():
 
 def test_pbs_batch_card_basic():
     config = {
+        'scheduler': 'PBS',
         'jobname': 'testjob',
         'queue': 'batch',
         'account': 'myacct',
@@ -42,7 +43,8 @@ def test_pbs_batch_card_basic():
         'env': ['ALL'],
         'native': ['other=foo']
     }
-    pbs = PBS(config)
+    sched = Scheduler(config)
+    pbs = sched.scheduler_factory.create(config['scheduler'], config)
     card = pbs.get_batch_card
     assert '#PBS -N testjob' in card
     assert '#PBS -q batch' in card
@@ -58,6 +60,7 @@ def test_pbs_batch_card_basic():
 
 def test_slurm_batch_card_basic():
     config = {
+        'scheduler': 'Slurm',
         'jobname': 'testjob',
         'queue': 'batch',
         'account': 'myacct',
@@ -71,6 +74,8 @@ def test_slurm_batch_card_basic():
         'native': ['--other=foo']
     }
     slurm = Slurm(config)
+    sched = Scheduler(config)
+    slurm = sched.scheduler_factory.create(config['scheduler'], config)
     card = slurm.get_batch_card
     assert '#SBATCH --job-name=testjob' in card
     assert '#SBATCH --qos=batch' in card

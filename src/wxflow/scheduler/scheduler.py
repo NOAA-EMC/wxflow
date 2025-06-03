@@ -17,7 +17,28 @@ class Scheduler:
         Parameters
         ----------
         config : Dict
-            Configuration dictionary for the scheduler.
+            Configuration dictionary for the scheduler. The expected keys and their usage are:
+                - 'scheduler_type' (str, required): Specifies the type of scheduler to use.
+                    Accepted values are 'slurm' or 'pbs'.
+                - 'job_name' (str, required): Name of the job. Used in both Slurm and PBS.
+                - 'partition' (str, optional): Partition or queue to submit the job to.
+                    Used in Slurm as 'partition', in PBS as 'queue'.
+                - 'nodes' (int, optional): Number of nodes to request. Used in both Slurm and PBS.
+                - 'ntasks' (int, optional): Number of tasks. Used in Slurm.
+                - 'ppn' (int, optional): Processors per node. Used in PBS.
+                - 'time' (str, optional): Walltime limit for the job (e.g., '01:00:00'). Used in both.
+                - 'output' (str, optional): Path for standard output file. Used in both.
+                - 'error' (str, optional): Path for standard error file. Used in both.
+                - 'account' (str, optional): Account to charge for resources. Used in both.
+                - 'mail_user' (str, optional): Email address for notifications. Used in both.
+                - 'mail_type' (str, optional): Type of email notifications. Used in both.
+                - 'native' (str, optional): Any additional scheduler-specific options can be included as needed.
+        Notes
+        -----
+        - Required keys: 'scheduler_type', 'job_name'
+        - Optional keys: All others listed above.
+        - The dictionary may contain other scheduler-specific options as needed.
+
         *args : Any
             Additional positional arguments.
         **kwargs : Any
@@ -30,6 +51,13 @@ class Scheduler:
 
         self._config_to_specs()
         self.batch_card = []
+
+        # Set attributes from the user provided information
+        for arg in args:
+            setattr(self, str(arg), arg)
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def _config_to_specs(self) -> None:
         """

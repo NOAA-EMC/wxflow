@@ -117,7 +117,7 @@ class Scheduler:
                     for item in self.batch_card:
                         fh.write(f"{item}\n")
             except Exception as e:
-                raise f"Unknown exception in writing scheduler directives to {filename} from {e}"
+                raise Exception(f"Unknown exception in writing scheduler directives to {filename} from {e}")
         else:
             print(self.get_batch_card)
 

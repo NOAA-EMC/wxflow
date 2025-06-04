@@ -1,3 +1,5 @@
+from typing import List
+
 from .scheduler import Scheduler
 
 __all__ = ['Slurm']
@@ -109,6 +111,19 @@ class Slurm(Scheduler):
         if 'env' in self.specs:
             for item in self.specs.env:
                 strings.append(f"{self._MAPPING['env']}={item}")
+
+        return strings
+
+    @property
+    def get_native(self) -> List[str]:
+        """
+        Generate the Slurm specific native directives verbatim from the user input.
+        """
+
+        strings = []
+        if 'native' in self.specs:
+            for item in self.specs.native:
+                strings.append(f"--{item}")
 
         return strings
 

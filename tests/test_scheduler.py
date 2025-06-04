@@ -4,6 +4,26 @@ import pytest
 
 from wxflow import PBS, Scheduler, Slurm
 
+# Create a sample configuration dictionary
+config = {
+    'account': 'myacct',
+    'queue': 'batch',
+    'jobname': 'testjob',
+    'join': False,
+    'stdout': 'out.log',
+    'stderr': 'err.log',
+    'walltime': '01:00:00',
+    'nodes': 2,
+    'tasks_per_node': 4,
+    'tasks': 8,
+    'memory': '2G',
+    'env': ['ALL'],
+    'native': ['other=foo'],
+    'debug': True,
+    'exclusive': False,
+    'shell': '/bin/bash'
+}
+
 
 def test_scheduler_memory_in_bytes():
     assert Scheduler.memory_in_bytes('1024') == 1024
@@ -29,53 +49,24 @@ def test_scheduler_walltime_in_string():
 
 
 def test_pbs_batch_card_basic():
-    config = {
-        'scheduler': 'PBS',
-        'jobname': 'testjob',
-        'queue': 'batch',
-        'account': 'myacct',
-        'stdout': 'out.log',
-        'stderr': 'err.log',
-        'walltime': '01:00:00',
-        'nodes': 2,
-        'tasks_per_node': 4,
-        'memory': '2G',
-        'env': ['ALL'],
-        'native': ['other=foo']
-    }
-    sched = Scheduler(config)
-    pbs = sched.scheduler_factory.create(config['scheduler'], config)
+    config_ = config.copy()
+
+    pbs = Scheduler.scheduler_factory.create('PBS', config_)
     card = pbs.get_batch_card
+    assert '#PBS -S /bin/bash' in card
     assert '#PBS -N testjob' in card
     assert '#PBS -q batch' in card
     assert '#PBS -A myacct' in card
     assert '#PBS -o out.log' in card or '#PBS -e err.log' in card
     assert '#PBS -l walltime=01:00:00' in card
-    assert '#PBS -l select=2:mpiprocs=4:mem=2048M' in card or \
-           '#PBS -l select=2:mpiprocs=4:mem=2048M:ompthreads=' in card or \
-           '#PBS -l select=2:mpiprocs=4:mem=2048M:ncpus=' in card
+    assert '#PBS -l select=2:mpiprocs=4:ncpus=8:mem=2048M' in card
     assert '#PBS -V' in card
     assert '#PBS -l other=foo' in card
 
 
 def test_slurm_batch_card_basic():
-    config = {
-        'scheduler': 'Slurm',
-        'jobname': 'testjob',
-        'queue': 'batch',
-        'account': 'myacct',
-        'stdout': 'out.log',
-        'stderr': 'err.log',
-        'walltime': '01:00:00',
-        'nodes': 2,
-        'tasks_per_node': 4,
-        'memory': '2G',
-        'env': ['ALL'],
-        'native': ['--other=foo']
-    }
-    slurm = Slurm(config)
-    sched = Scheduler(config)
-    slurm = sched.scheduler_factory.create(config['scheduler'], config)
+    config_ = config.copy()
+    slurm = Scheduler.scheduler_factory.create('Slurm', config_)
     card = slurm.get_batch_card
     assert '#SBATCH --job-name=testjob' in card
     assert '#SBATCH --qos=batch' in card

@@ -161,9 +161,9 @@ class PBS(Scheduler):
 
     @property
     def get_native(self) -> List[str]:
-        #    """
-        #    Generate the PBS specific native directives verbatim from the user input.
-        #    """
+        """
+        Generate the PBS specific native directives verbatim from the user input.
+        """
 
         strings = []
         if 'native' in self.specs:

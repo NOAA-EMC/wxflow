@@ -1,6 +1,11 @@
 from datetime import datetime, timedelta
 
-from wxflow import *
+import pytest
+
+from wxflow import (add_to_datetime, add_to_timedelta, datetime_to_YMD,
+                    datetime_to_YMDH, strftime, strptime, timedelta_to_HMS,
+                    to_datetime, to_fv3time, to_isotime, to_julian,
+                    to_timedelta)
 
 current_date = datetime.now()
 
@@ -22,6 +27,8 @@ def test_to_timedelta():
     assert to_timedelta('-3H15M') == timedelta(hours=-3, minutes=-15)
     assert to_timedelta('1:30:45') == timedelta(hours=1, minutes=30, seconds=45)
     assert to_timedelta('5 days, 12:30:15') == timedelta(days=5, hours=12, minutes=30, seconds=15)
+    with pytest.raises(ValueError):
+        to_timedelta('not_a_time')
 
 
 def test_datetime_to_ymdh():
@@ -79,3 +86,36 @@ def test_add_to_datetime():
     assert add_to_datetime(dt, td) == datetime(2023, 3, 15, 18, 0, 0)
     assert add_to_datetime(dt, negative_td) == datetime(2023, 3, 13, 6, 0, 0)
     assert add_to_datetime(dt, zero_td) == datetime(2023, 3, 14, 12, 0, 0)
+
+
+def test_to_datetime_invalid():
+    # Should raise ValueError for invalid string
+    with pytest.raises(ValueError):
+        to_datetime('not_a_date')
+    with pytest.raises(ValueError):
+        to_datetime('2022-13-99T99:99:99Z')
+
+
+def test_datetime_to_jday_and_aliases():
+    dt = datetime(2023, 1, 2)
+    # Julian day for Jan 2, 2023 is 002
+    assert to_julian(dt) == dt.strftime('%Y%j')
+    assert to_julian(dt) == to_julian(dt)
+
+
+def test_timedelta_to_hms_invalid():
+    # Should raise ValueError if not a timedelta
+    with pytest.raises(ValueError):
+        timedelta_to_HMS("not_a_timedelta")
+
+
+def test_strftime_invalid():
+    # Should raise ValueError if not a datetime
+    with pytest.raises(ValueError):
+        strftime("not_a_datetime", "%Y%m%d")
+
+
+def test_strptime_invalid():
+    # Should raise ValueError for bad format
+    with pytest.raises(ValueError):
+        strptime("not_a_date", "%Y%m%d")

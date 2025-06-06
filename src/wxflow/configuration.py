@@ -116,7 +116,7 @@ class Configuration:
             runme += '; '.join([f'export {key}={value}' for key, value in envvars.items()])
             runme += '; '
         runme += ''.join([f'source {s}; ' for s in scripts])
-        magic = f'--- ENVIRONMENT BEGIN {random.randint(0,64**5)} ---'
+        magic = f'--- ENVIRONMENT BEGIN {random.randint(0, 64**5)} ---'
         runme += f'/bin/echo -n "{magic}" ; /usr/bin/env -0'
         bash_path = shutil.which('bash')
         with open('/dev/null', 'w') as null:

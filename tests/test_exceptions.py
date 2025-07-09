@@ -15,6 +15,7 @@ class TestWorkflowException(WorkflowException):
 
     """
 
+
 class TestWorkflowKeyError(WorkflowKeyError):
     """
     Description
@@ -24,6 +25,7 @@ class TestWorkflowKeyError(WorkflowKeyError):
     wxflow/errors unit-tests module; it is a sub-class of WorkflowKeyError.
 
     """
+
 
 class TestWorkflowTypeError(WorkflowTypeError):
     """
@@ -53,6 +55,7 @@ def test_workflow_exception() -> None:
 
     assert True
 
+
 def test_workflow_key_error() -> None:
     """
     Description
@@ -69,12 +72,13 @@ def test_workflow_key_error() -> None:
 
     assert True
 
+
 def test_workflow_type_error() -> None:
     """
     Description
     -----------
 
-    TThis function provides a unit test for the WorkflowTypeError class.
+    This function provides a unit test for the WorkflowTypeError class.
 
     """
 

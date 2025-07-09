@@ -39,6 +39,7 @@ class TestWorkflowTypeError(WorkflowTypeError):
 
 # ----
 
+
 def test_workflow_exception() -> None:
     """
     Description

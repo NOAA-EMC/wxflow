@@ -8,7 +8,7 @@ from .logger import Logger, logit
 
 logger = Logger(level="error", colored_log=True)
 
-__all__ = ["WorkflowException", "msg_except_handle"]
+__all__ = ["WorkflowException", "WorkflowKeyError", "WorkflowTypeError", "msg_except_handle"]
 
 
 class WorkflowException(Exception):
@@ -43,6 +43,69 @@ class WorkflowException(Exception):
         logger.error(msg=msg)
         super().__init__()
 
+class WorkflowKeyError(KeyError):
+    """
+    Description
+    -----------
+
+    This is the workflow class for KeyError exceptions; it is a sub-class of
+    KeyError.
+
+    Parameters
+    ----------
+
+    msg: str
+
+        A Python string containing a message to accompany the
+        exception.
+
+    """
+
+    @logit(logger)
+    def __init__(self: Exception, msg: str):
+        """
+        Description
+        -----------
+
+        Creates a new WorkflowKeyError object.
+
+        """
+
+        # Define the base-class attributes.
+        logger.error(msg=msg)
+        super().__init__()
+
+class WorkflowTypeError(TypeError):
+    """
+    Description
+    -----------
+
+    This is the workflow class for TypeError exceptions; it is a sub-class of
+    TypeError.
+
+    Parameters
+    ----------
+
+    msg: str
+
+        A Python string containing a message to accompany the
+        exception.
+
+    """
+
+    @logit(logger)
+    def __init__(self: Exception, msg: str):
+        """
+        Description
+        -----------
+
+        Creates a new WorkflowTypeError object.
+
+        """
+
+        # Define the base-class attributes.
+        logger.error(msg=msg)
+        super().__init__()
 
 # ----
 

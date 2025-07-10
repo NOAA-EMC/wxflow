@@ -2,44 +2,6 @@ import pytest
 
 from wxflow import WorkflowException, WorkflowKeyError, WorkflowTypeError
 
-# ----
-
-
-class TestWorkflowException(WorkflowException):
-    """
-    Description
-    -----------
-
-    This is the base-class for generic exceptions encountered within the
-    wxflow/errors unit-tests module; it is a sub-class of WorkflowException.
-
-    """
-
-
-class TestWorkflowKeyError(WorkflowKeyError):
-    """
-    Description
-    -----------
-
-    This is the base-class for KeyError exceptions encountered within the
-    wxflow/errors unit-tests module; it is a sub-class of WorkflowKeyError.
-
-    """
-
-
-class TestWorkflowTypeError(WorkflowTypeError):
-    """
-    Description
-    -----------
-
-    This is the base-class for TypeError exceptions encountered within the
-    wxflow/errors unit-tests module; it is a sub-class of WorkflowTypeError.
-
-    """
-
-# ----
-
-
 def test_workflow_exception() -> None:
     """
     Description
@@ -50,9 +12,9 @@ def test_workflow_exception() -> None:
     """
 
     # Raise the base-class exception.
-    with pytest.raises(TestWorkflowException):
+    with pytest.raises(WorkflowException):
         msg = "Testing WorkflowException raise."
-        raise TestWorkflowException(msg=msg)
+        raise WorkflowException(msg=msg)
 
     assert True
 
@@ -67,9 +29,9 @@ def test_workflow_key_error() -> None:
     """
 
     # Raise the base-class exception.
-    with pytest.raises(TestWorkflowKeyError):
+    with pytest.raises(WorkflowKeyError):
         msg = "Testing WorkflowKeyError raise."
-        raise TestWorkflowKeyError(msg=msg)
+        raise WorkflowKeyError(msg=msg)
 
     assert True
 
@@ -84,8 +46,8 @@ def test_workflow_type_error() -> None:
     """
 
     # Raise the base-class exception.
-    with pytest.raises(TestWorkflowTypeError):
+    with pytest.raises(WorkflowTypeError):
         msg = "Testing WorkflowTypeError raise."
-        raise TestWorkflowTypeError(msg=msg)
+        raise WorkflowTypeError(msg=msg)
 
     assert True

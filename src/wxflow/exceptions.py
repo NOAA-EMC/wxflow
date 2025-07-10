@@ -29,7 +29,6 @@ class WorkflowException(Exception):
 
     """
 
-    @logit(logger)
     def __init__(self: Exception, msg: str):
         """
         Description
@@ -62,7 +61,6 @@ class WorkflowKeyError(KeyError):
 
     """
 
-    @logit(logger)
     def __init__(self: Exception, msg: str):
         """
         Description
@@ -95,7 +93,6 @@ class WorkflowTypeError(TypeError):
 
     """
 
-    @logit(logger)
     def __init__(self: Exception, msg: str):
         """
         Description

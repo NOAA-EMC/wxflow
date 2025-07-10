@@ -2,6 +2,7 @@ import pytest
 
 from wxflow import WorkflowException, WorkflowKeyError, WorkflowTypeError
 
+
 def test_workflow_exception() -> None:
     """
     Description

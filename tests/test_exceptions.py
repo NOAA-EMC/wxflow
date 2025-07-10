@@ -50,7 +50,7 @@ def test_workflow_exception() -> None:
     """
 
     # Raise the base-class exception.
-    with pytest.raises(Exception):
+    with pytest.raises(TestWorkflowException):
         msg = "Testing WorkflowException raise."
         raise TestWorkflowException(msg=msg)
 
@@ -62,12 +62,12 @@ def test_workflow_key_error() -> None:
     Description
     -----------
 
-    TThis function provides a unit test for the WorkflowKeyError class.
+    This function provides a unit test for the WorkflowKeyError class.
 
     """
 
     # Raise the base-class exception.
-    with pytest.raises(Exception):
+    with pytest.raises(TestWorkflowKeyError):
         msg = "Testing WorkflowKeyError raise."
         raise TestWorkflowKeyError(msg=msg)
 
@@ -84,7 +84,7 @@ def test_workflow_type_error() -> None:
     """
 
     # Raise the base-class exception.
-    with pytest.raises(Exception):
+    with pytest.raises(TestWorkflowTypeError):
         msg = "Testing WorkflowTypeError raise."
         raise TestWorkflowTypeError(msg=msg)
 

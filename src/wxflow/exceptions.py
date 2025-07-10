@@ -41,7 +41,7 @@ class WorkflowException(Exception):
 
         # Define the base-class attributes.
         logger.error(msg=msg)
-        super().__init__()
+        super().__init__(msg)
 
 
 class WorkflowKeyError(KeyError):
@@ -74,7 +74,7 @@ class WorkflowKeyError(KeyError):
 
         # Define the base-class attributes.
         logger.error(msg=msg)
-        super().__init__()
+        super().__init__(msg)
 
 
 class WorkflowTypeError(TypeError):
@@ -107,7 +107,7 @@ class WorkflowTypeError(TypeError):
 
         # Define the base-class attributes.
         logger.error(msg=msg)
-        super().__init__()
+        super().__init__(msg)
 
 # ----
 

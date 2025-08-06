@@ -54,6 +54,7 @@ class Logger:
                  level: str = os.environ.get("LOGGING_LEVEL"),
                  _format: str = DEFAULT_FORMAT,
                  colored_log: bool = False,
+                 stdout: bool = True,
                  logfile_path: Union[str, Path] = None):
         """
         Initialize Logger
@@ -72,6 +73,9 @@ class Logger:
         colored_log  : bool
                        Use colored logging for stdout
                        default: False
+        stdout       : bool
+                       Enable logging to stdout
+                       default : True
         logfile_path : str or Path
                        Path for logging to a file
                        default : None
@@ -87,27 +91,46 @@ class Logger:
                               f"Currently supported log levels are:\n" +
                               f"{' | '.join(Logger.LOG_LEVELS)}")
 
-        # Initialize the root logger if no name is present
-        self._logger = logging.getLogger(name) if name else logging.getLogger()
+        # Check if the root logger or named logger is already initialized
+        logger_keys = logging.Logger.manager.loggerDict.keys()
+        my_keys = ['root'] if self.name is None else ['root', self.name]
+        if any(item in logger_keys for item in my_keys):
+            # If the logger is already initialized, we will not reinitialize it
+            # This is to avoid duplicate logs
+            return
+
+        # Initialize the root logger
+        self._logger = logging.getLogger()
+        if self.name:
+            self._logger.name = self.name
 
         self._logger.setLevel(self.level)
 
+        # Disable propagation to avoid duplicate logs
+        self._logger.propagate = False
+
+        # Remove all existing handlers
+        for handler in self._logger.handlers:
+            self._logger.removeHandler(handler)
+
+        # Create a list of handlers
         _handlers = []
+
         # Add console handler for logger
-        _handler = Logger.add_stream_handler(
-            level=self.level,
-            _format=self.format,
-            colored_log=self.colored_log,
-        )
-        _handlers.append(_handler)
-        self._logger.addHandler(_handler)
+        if stdout:
+            _handler = Logger.add_stream_handler(
+                level=self.level, _format=self.format, colored_log=self.colored_log)
+            _handlers.append(_handler)
 
         # Add file handler for logger
         if logfile_path is not None:
             _handler = Logger.add_file_handler(
                 logfile_path, level=self.level, _format=self.format)
-            self._logger.addHandler(_handler)
             _handlers.append(_handler)
+
+        # Add all handlers to the logger
+        for _handler in _handlers:
+            self._logger.addHandler(_handler)
 
     def __getattr__(self, attribute):
         """

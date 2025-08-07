@@ -14,12 +14,12 @@ Without this, the wxflow.Logger will not be initialized, and the tests will fail
 """
 
 level = 'debug'
-number_of_log_msgs = 5
 reference = {'debug': "Logging test has started",
              'info': "Logging to 'logger.log' in the script dir",
              'warning': "This is my last warning, take heed",
              'error': "This is an error",
              'critical': "He's dead, She's dead.  They are all dead!"}
+number_of_log_msgs = len(reference.keys())
 
 
 def test_logger_init():  # This should be the first test to run (always)

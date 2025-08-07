@@ -1,4 +1,5 @@
 import os
+import sys
 
 import pytest
 
@@ -146,5 +147,8 @@ def test_get_gid():
     with pytest.raises(KeyError):
         get_gid("some-non-existent-group")
 
-    # Now get the root group ID (should be 0)
-    assert get_gid("root") == 0
+    # Now get the group ID for root [0] (admin [80] on macOS)
+    if sys.platform == 'darwin':
+        assert get_gid("admin") == 80
+    else:
+        assert get_gid("root") == 0

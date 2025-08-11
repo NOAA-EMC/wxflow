@@ -7,9 +7,11 @@ import os
 import sys
 from functools import wraps
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
-__all__ = ['Logger', 'logit']
+__all__ = ['Logger', 'logit', 'setup_logging', 'add_stream_logger', 'add_file_logger']
+
+DEFAULT_FORMAT = '%(asctime)s - %(levelname)-8s - %(name)-12s: %(message)s'
 
 
 class ColoredFormatter(logging.Formatter):
@@ -46,12 +48,8 @@ class Logger:
     """
     Improved logging
     """
-    LOG_LEVELS = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
-    DEFAULT_LEVEL = 'INFO'
-    DEFAULT_FORMAT = '%(asctime)s - %(levelname)-8s - %(name)-12s: %(message)s'
-
     def __init__(self, name: str = None,
-                 level: str = os.environ.get("LOGGING_LEVEL"),
+                 level: str = os.environ.get("LOGGING_LEVEL", "INFO"),
                  _format: str = DEFAULT_FORMAT,
                  colored_log: bool = False,
                  stdout: bool = True,
@@ -82,55 +80,21 @@ class Logger:
         """
 
         self.name = name
-        self.level = level.upper() if level else Logger.DEFAULT_LEVEL
-        self.format = _format
+        self.level = level
+        self._format = _format
         self.colored_log = colored_log
+        self.stdout = stdout
+        self.logfile_path = logfile_path
 
-        if self.level not in Logger.LOG_LEVELS:
-            raise LookupError(f"{self.level} is unknown logging level\n" +
-                              f"Currently supported log levels are:\n" +
-                              f"{' | '.join(Logger.LOG_LEVELS)}")
+        setup_logging(level=self.level,
+                      _format=self._format,
+                      colored_log=self.colored_log,
+                      stdout=self.stdout,
+                      logfile_path=self.logfile_path)
 
-        # Check if the root logger or named logger is already initialized
-        logger_keys = logging.Logger.manager.loggerDict.keys()
-        my_keys = ['root'] if self.name is None else ['root', self.name]
-        if any(item in logger_keys for item in my_keys):
-            # If the logger is already initialized, we will not reinitialize it
-            # This is to avoid duplicate logs
-            return
+        self._logger = logging.getLogger(name) if name else logging.getLogger()
 
-        # Initialize the root logger
-        self._logger = logging.getLogger()
-        if self.name:
-            self._logger.name = self.name
-
-        self._logger.setLevel(self.level)
-
-        # Disable propagation to avoid duplicate logs
-        self._logger.propagate = False
-
-        # Remove all existing handlers
-        for handler in self._logger.handlers:
-            self._logger.removeHandler(handler)
-
-        # Create a list of handlers
-        _handlers = []
-
-        # Add console handler for logger
-        if stdout:
-            _handler = Logger.add_stream_handler(
-                level=self.level, _format=self.format, colored_log=self.colored_log)
-            _handlers.append(_handler)
-
-        # Add file handler for logger
-        if logfile_path is not None:
-            _handler = Logger.add_file_handler(
-                logfile_path, level=self.level, _format=self.format)
-            _handlers.append(_handler)
-
-        # Add all handlers to the logger
-        for _handler in _handlers:
-            self._logger.addHandler(_handler)
+        return
 
     def __getattr__(self, attribute):
         """
@@ -157,100 +121,79 @@ class Logger:
         """
         return self._logger
 
-    @classmethod
-    def add_handlers(cls, logger: logging.Logger, handlers: List[logging.Handler]):
-        """
-        Add a list of handlers to a logger
 
-        Parameters
-        ----------
-        logger : logging.Logger
-                 Logger object to add a new handler to
-        handlers: list
-                 A list of handlers to be added to the logger object
+def add_stream_logger(logger: logging.Logger,
+                      level: str = 'INFO',
+                      _format: str = DEFAULT_FORMAT,
+                      colored_log: bool = False):
+    """
+    Log to stdout
+    This method will allow setting a custom stream handler on the logger
 
-        Returns
-        -------
-        logger : Logger object
-        """
-        for handler in handlers:
-            logger.addHandler(handler)
+    Parameters
+    ----------
+    logger : logging.Logger
+             Logger object to add a new handler to
+    level : str
+            logging level
+            default : 'INFO'
+    _format : str
+              logging format
+              default : '%(asctime)s - %(levelname)-8s - %(name)-12s: %(message)s'
+    colored_log : bool
+                  enable colored output for stdout
+                  default : False
 
-        return logger
+    Returns
+    -------
+    None
+    """
 
-    @classmethod
-    def add_stream_handler(cls, level: str = DEFAULT_LEVEL,
-                           _format: str = DEFAULT_FORMAT,
-                           colored_log: bool = False):
-        """
-        Create stream handler
-        This classmethod will allow setting a custom stream handler on children
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(level)
+    _format = ColoredFormatter(
+        _format) if colored_log else logging.Formatter(_format)
+    handler.setFormatter(_format)
+    logger.addHandler(handler)
 
-        Parameters
-        ----------
-        level : str
-                logging level
-                default : 'INFO'
-        _format : str
-                  logging format
-                  default : '%(asctime)s - %(levelname)-8s - %(name)-12s: %(message)s'
-        colored_log : bool
-                      enable colored output for stdout
-                      default : False
 
-        Returns
-        -------
-        handler : logging.Handler
-                  stream handler of a logging object
-        """
+def add_file_logger(logger: logging.Logger,
+                    logfile_path: Union[str, Path],
+                    level: str = os.environ.get("LOGGING_LEVEL", "INFO"),
+                    _format: str = DEFAULT_FORMAT):
+    """
+    Log to a file
+    This method will allow setting custom file handler on the logger
 
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(level)
-        _format = ColoredFormatter(
-            _format) if colored_log else logging.Formatter(_format)
-        handler.setFormatter(_format)
+    Parameters
+    ----------
+    logger : logging.Logger
+             Logger object to add a new handler to
+    logfile_path: str or Path
+                  Path for writing out logfiles from logging
+                  default : None
+    level : str
+            logging level
+            default : 'INFO'
+    _format : str
+              logging format
+              default : '%(asctime)s - %(levelname)-8s - %(name)-12s: %(message)s'
 
-        return handler
+    Returns
+    -------
+    None
+    """
 
-    @classmethod
-    def add_file_handler(cls, logfile_path: Union[str, Path],
-                         level: str = DEFAULT_LEVEL,
-                         _format: str = DEFAULT_FORMAT):
-        """
-        Create file handler.
-        This classmethod will allow setting custom file handler on children
-        Create stream handler
-        This classmethod will allow setting a custom stream handler on children
+    logfile_path = Path(logfile_path)
 
-        Parameters
-        ----------
-        logfile_path: str or Path
-                      Path for writing out logfiles from logging
-                      default : False
-        level : str
-                logging level
-                default : 'INFO'
-        _format : str
-                  logging format
-                  default : '%(asctime)s - %(levelname)-8s - %(name)-12s: %(message)s'
+    # Create the directory containing the logfile_path
+    if not logfile_path.parent.is_dir():
+        logfile_path.mkdir(parents=True, exist_ok=True)
 
-        Returns
-        -------
-        handler : logging.Handler
-                  file handler of a logging object
-        """
-
-        logfile_path = Path(logfile_path)
-
-        # Create the directory containing the logfile_path
-        if not logfile_path.parent.is_dir():
-            logfile_path.mkdir(parents=True, exist_ok=True)
-
-        handler = logging.FileHandler(str(logfile_path))
-        handler.setLevel(level)
-        handler.setFormatter(logging.Formatter(_format))
-
-        return handler
+    handler = logging.FileHandler(str(logfile_path))
+    handler.setLevel(level)
+    handler.setFormatter(logging.Formatter(_format))
+    logger.addHandler(handler)
 
 
 def logit(logger, name=None, message=None):
@@ -298,3 +241,67 @@ def logit(logger, name=None, message=None):
         return wrapper
 
     return decorate
+
+
+def setup_logging(level: str = os.environ.get("LOGGING_LEVEL", "INFO"),
+                  _format: str = DEFAULT_FORMAT,
+                  colored_log: bool = False,
+                  stdout: bool = True,
+                  logfile_path: Union[str, Path] = None):
+    """
+    Setup logging with the given parameters.
+
+    Parameters
+    ----------
+    level        : str
+                   Logging level
+                   default : 'INFO'
+    _format      : str
+                   Logging format
+                   default : '%(asctime)s - %(levelname)-8s - %(name)-12s: %(message)s'
+    colored_log  : bool
+                   Use colored logging for stdout
+                   default: False
+    stdout       : bool
+                   Enable logging to stdout
+                   default : True
+    logfile_path : str or Path
+                   Path for logging to a file
+                   default : None
+
+    Returns
+    -------
+    logger : Logger object
+             Configured logger instance.
+    """
+
+    LOG_LEVELS = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
+
+    print(f"Inputs: {level=}, {_format=}, {colored_log=}, {stdout=}, {logfile_path=}")
+
+    _level = level.upper()
+    _ilevel = getattr(logging, _level, logging.INFO)
+    print(f"Will set up logging with {level=}, {_level=}, {_ilevel=}")
+
+    if _level not in LOG_LEVELS:
+        raise LookupError(f"{level} is unknown logging level\n" +
+                              f"Currently supported log levels are:\n" +
+                              f"{' | '.join(LOG_LEVELS)}")
+
+    logger = logging.getLogger()
+
+    # Remove all existing handlers
+    for handler in logger.handlers:
+        logger.removeHandler(handler)
+
+    logging.basicConfig(level=_ilevel, format=_format)
+    #logger = logging.getLogger()
+    print("Logger initialized with level:", logger.level)
+
+    # Add console handler for logger
+    if stdout:
+        add_stream_logger(logger, level=_level, _format=_format, colored_log=colored_log)
+
+    # Add file handler for logger
+    if logfile_path is not None:
+        add_file_logger(logger, logfile_path, level=_level, _format=format)

@@ -75,7 +75,7 @@ class Logger:
                        default: False
         stdout       : bool
                        Stream to stdout
-                       default: False
+                       default: True
         logfile_path : str or Path
                        Path for logging to a file
                        default : None
@@ -98,9 +98,6 @@ class Logger:
 
         # Initialize logger if no name is present
         self._logger = logging.getLogger(name) if name else self._root_logger
-
-        # If a name is provided, set the parent logger to the root logger
-        self._parent_logger = self._logger.parent if name else self._root_logger
 
         self._logger.setLevel(self.level)
 
@@ -187,7 +184,6 @@ def add_file_logger(logger: logging.Logger,
     """
     Stream output to a logfile
     This method will allow setting custom file handler on children
-    Create stream handler
 
     Parameters
     ----------

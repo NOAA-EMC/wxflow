@@ -51,7 +51,7 @@ class Logger:
     DEFAULT_FORMAT = '%(asctime)s - %(levelname)-8s - %(name)-12s: %(message)s'
 
     def __init__(self, name: str = None,
-                 level: str = os.environ.get("LOGGING_LEVEL"),
+                 level: str = os.environ.get("LOGGING_LEVEL", "INFO"),
                  _format: str = DEFAULT_FORMAT,
                  colored_log: bool = False,
                  stdout: bool = True,
@@ -82,7 +82,7 @@ class Logger:
         """
 
         self.name = name if name else 'root'
-        self.level = level.upper() if level else Logger.DEFAULT_LEVEL
+        self.level = level.upper()
         self.format = _format
         self.colored_log = colored_log
         self.stdout = stdout

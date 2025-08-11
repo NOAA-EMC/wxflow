@@ -7,7 +7,7 @@ import os
 import sys
 from functools import wraps
 from pathlib import Path
-from typing import Union
+from typing import Any, Union
 
 __all__ = ['Logger', 'add_stream_logger', 'add_file_logger', 'logit']
 
@@ -119,7 +119,7 @@ class Logger:
         if self.logfile_path is not None:
             add_file_logger(self._logger, self.logfile_path, level=self.level, _format=self.format)
 
-    def __getattr__(self, attribute):
+    def __getattr__(self, attribute: str) -> Any:
         """
         Allows calling logging module methods directly
 
@@ -145,7 +145,7 @@ class Logger:
         return self._logger
 
 
-def add_stream_logger(logger: Logger,
+def add_stream_logger(logger: logging.Logger,
                       level: str = Logger.DEFAULT_LEVEL,
                       _format: str = Logger.DEFAULT_FORMAT,
                       colored_log: bool = False):
@@ -220,14 +220,14 @@ def add_file_logger(logger: logging.Logger,
     logger.addHandler(handler)
 
 
-def logit(logger, name=None, message=None):
+def logit(logger: logging.Logger, name: str = None, message: str = None):
     """
     Logger decorator to add logging to a function.
     Simply add:
     @logit(logger) before any function
     Parameters
     ----------
-    logger  : Logger
+    logger  : logging.Logger
               Logger object
     name    : str
               Name of the module to be logged

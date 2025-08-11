@@ -73,7 +73,7 @@ def test_logger_file(tmp_path, logger_init):
         f"Expected {number_of_log_msgs} messages, but found {log_msgs_in_logfile}"
 
     # Ensure messages themselves are same
-    for _, line in enumerate(log_msgs):
+    for line in log_msgs:
         lev = line.split('-')[3].strip().lower()
         message = line.split(':')[-1].strip()
         assert reference[lev] == message, \

@@ -150,6 +150,7 @@ class Jinja:
         env.filters["to_timedelta"] = lambda delta_str: to_timedelta(delta_str) if not isinstance(delta_str, SilentUndefined) else delta_str
         env.filters["replace_tmpl"] = lambda string, tmpl_dict: reduce(lambda ss, kk: ss.replace(kk, tmpl_dict[kk]), tmpl_dict, string)
         env.filters["path_exists"] = lambda path: Path(path).exists()
+        env.filters["zip"] = zip
 
         # Add any additional filters
         if filters is not None:

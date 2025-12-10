@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import jinja2
 import pytest
 
-from wxflow import Jinja, to_isotime
+from wxflow import Jinja, parse_j2tmpl, to_isotime
 
 current_date = datetime.now()
 j2tmpl = """Hello {{ name }}! {{ greeting }} It is: {{ current_date | to_isotime }}"""
@@ -118,3 +118,27 @@ def test_jinja_filters(tmp_path, create_template):
     file_path = tmp_path / 'template.j2'
     assert env.filters["path_exists"](file_path) is True
     assert env.filters["path_exists"]("/non/existent/path") is False
+
+
+def test_parse_j2tmpl_return(tmp_path, create_template):
+
+    file_path = tmp_path / 'include_template.j2'
+
+    data = {"my_name": "Jill", "name": "Joe", "greeting": "How are you?", "current_date": current_date}
+
+    filled = parse_j2tmpl(str(file_path), data)
+    assert filled == f"I am Jill. Hello Joe! How are you? It is: {to_isotime(current_date)}"
+
+
+def test_parse_j2tmpl_output(tmp_path, create_template):
+
+    file_path = tmp_path / 'include_template.j2'
+    output_file_path = tmp_path / 'rendered.txt'
+
+    data = {"my_name": "Jill", "name": "Joe", "greeting": "How are you?", "current_date": current_date}
+
+    parse_j2tmpl(str(file_path), data, output_file=str(output_file_path))
+
+    with open(output_file_path, 'r') as fh:
+        lines = fh.read()
+    assert lines == f"I am Jill. Hello Joe! How are you? It is: {to_isotime(current_date)}"

@@ -11,7 +11,7 @@ from .file_utils import FileHandler
 from .fsutils import chdir, chgrp, cp, get_gid, mkdir, mkdir_p, rm_p, rmdir
 from .hsi import Hsi
 from .htar import Htar
-from .jinja import Jinja
+from .jinja import Jinja, parse_j2tmpl
 from .logger import Logger, add_file_logger, add_stream_logger, logit
 from .scheduler.no_scheduler import NoScheduler
 from .scheduler.pbs import PBS

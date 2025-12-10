@@ -10,7 +10,7 @@ from markupsafe import Markup
 from .timetools import (add_to_datetime, strftime, to_fv3time, to_isotime,
                         to_julian, to_timedelta, to_YMD, to_YMDH)
 
-__all__ = ['Jinja']
+__all__ = ['Jinja', 'parse_j2tmpl']
 
 
 @jinja2.pass_eval_context
@@ -260,3 +260,27 @@ class Jinja:
         None
         """
         sys.stdout.write(self.render)
+
+
+def parse_j2tmpl(template_path_or_string: str, data: Dict, output_file=None):
+    """
+    Description
+    -----------
+    Render a jinja2 template and optionally write the output to file
+    Parameters
+    -----------
+    template_path_or_string : str
+        Path to the template file or a templated string
+    data : dict
+        Data to be substituted into the template
+    output_file: str
+    Path to the output file
+    Returns
+    -------
+    None
+    """
+    jobj = Jinja(template_path_or_string, data)
+    if output_file is None:
+        return jobj.render
+    else:
+        jobj.save(output_file)

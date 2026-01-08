@@ -146,7 +146,7 @@ def vanilla_yaml(ctx):
     """
     Transform an input object of complex type as a plain type
     """
-    if isinstance(ctx, AttrDict):
+    if isinstance(ctx, dict):
         return {kk: vanilla_yaml(vv) for kk, vv in ctx.items()}
     elif isinstance(ctx, list):
         return [vanilla_yaml(vv) for vv in ctx]

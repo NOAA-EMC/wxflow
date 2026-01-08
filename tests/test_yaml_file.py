@@ -4,6 +4,8 @@ from datetime import datetime
 import pytest
 
 from wxflow import YAMLFile, parse_j2yaml, save_as_yaml
+from wxflow.attrdict import AttrDict
+from wxflow.yaml_file import vanilla_yaml
 
 host_yaml = """
 host:
@@ -77,3 +79,33 @@ def test_yaml_file_with_j2templates(tmp_path, create_template):
     yaml_in = YAMLFile(path=yaml_out)
 
     assert yaml_in == conf
+
+
+def test_vanilla_yaml_with_regular_dict():
+    """Test that vanilla_yaml processes regular dictionaries, not just AttrDict"""
+    test_datetime = datetime(2024, 1, 1, 12, 0, 0)
+
+    # Test with regular dict containing datetime
+    dict_data = {'key': test_datetime}
+    result = vanilla_yaml(dict_data)
+    assert result == {'key': '2024-01-01T12:00:00Z'}
+
+    # Test with nested regular dict
+    nested_dict = {'outer': {'inner': test_datetime}}
+    result = vanilla_yaml(nested_dict)
+    assert result == {'outer': {'inner': '2024-01-01T12:00:00Z'}}
+
+    # Test with AttrDict still works
+    attrdict_data = AttrDict({'key': test_datetime})
+    result = vanilla_yaml(attrdict_data)
+    assert result == {'key': '2024-01-01T12:00:00Z'}
+
+    # Test with mixed AttrDict and regular dict
+    mixed = AttrDict({'attr': {'regular': test_datetime}})
+    result = vanilla_yaml(mixed)
+    assert result == {'attr': {'regular': '2024-01-01T12:00:00Z'}}
+
+    # Test with list containing dicts with datetime
+    list_data = [{'key': test_datetime}, {'another': test_datetime}]
+    result = vanilla_yaml(list_data)
+    assert result == [{'key': '2024-01-01T12:00:00Z'}, {'another': '2024-01-01T12:00:00Z'}]

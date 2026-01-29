@@ -236,8 +236,8 @@ def logit(logger: logging.Logger, name: str = None, message: str = None):
     def decorate(func):
 
         log_name = name if name else func.__module__
-        log_msg = message if message else log_name + "." + func.__name__
         file_path = func.__code__.co_filename  # Get the file path of the function
+        log_msg = message if message else log_name + "." + func.__name__ + ": " + file_path
 
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -247,7 +247,6 @@ def logit(logger: logging.Logger, name: str = None, message: str = None):
 
             call_msg = 'BEGIN: ' + log_msg
             logger.info(call_msg)
-            logger.info("Called function file path: " + file_path)
             logger.debug(f"( {', '.join(passed_args + passed_kwargs)} )")
 
             # Call the function

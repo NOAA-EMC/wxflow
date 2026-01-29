@@ -106,7 +106,6 @@ def test_logger_logit(tmp_path, logger_init):
     with open(logfile, 'r') as fh:
         log_contents = fh.read()
 
-    assert 'Called function file path:' in log_contents, \
-        "Expected 'Called function file path:' to be in log messages"
-    assert 'test_logger.py' in log_contents, \
+    # Assert that the message contains the test file name full path
+    assert 'Begin: tests.test_logger.add: '+ str(__file__) in log_contents, \
         "Expected test file name to be logged"

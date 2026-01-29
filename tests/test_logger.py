@@ -80,9 +80,10 @@ def test_logger_file(tmp_path, logger_init):
             f"Expected message '{reference[lev]}' but found '{message}' in log file"
 
 
-def test_logger_logit(logger_init):
+def test_logger_logit(tmp_path, logger_init):
 
-    logger = Logger('test_logit', level=level, colored_log=True)
+    logfile = tmp_path / "logit.log"
+    logger = Logger('test_logit', level=level, colored_log=True, logfile_path=logfile)
 
     @logit(logger)
     def add(x, y):
@@ -101,4 +102,11 @@ def test_logger_logit(logger_init):
     usedict(2, k=3)
     spam()
 
-    assert True
+    # Verify that file paths are logged
+    with open(logfile, 'r') as fh:
+        log_contents = fh.read()
+
+    assert 'Called function file path:' in log_contents, \
+        "Expected 'Called function file path:' to be in log messages"
+    assert 'test_logger.py' in log_contents, \
+        "Expected test file name to be logged"

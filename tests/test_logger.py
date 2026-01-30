@@ -80,7 +80,31 @@ def test_logger_file(tmp_path, logger_init):
             f"Expected message '{reference[lev]}' but found '{message}' in log file"
 
 
-def test_logger_logit(tmp_path, logger_init):
+def test_logger_logit_stdout(logger_init):
+
+    logger = Logger('test_logit', level=level, colored_log=True)
+
+    @logit(logger)
+    def add(x, y):
+        return x + y
+
+    @logit(logger)
+    def usedict(n, j=0, k=1):
+        return n + j + k
+
+    @logit(logger, 'example')
+    def spam():
+        print('Spam!')
+
+    add(2, 3)
+    usedict(2, 3)
+    usedict(2, k=3)
+    spam()
+
+    assert True
+
+
+def test_logger_logit_logfile(tmp_path, logger_init):
 
     logfile = tmp_path / "logit.log"
     logger = Logger('test_logit', level=level, colored_log=True, logfile_path=logfile)

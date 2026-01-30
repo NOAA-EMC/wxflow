@@ -80,7 +80,7 @@ def test_logger_file(tmp_path, logger_init):
             f"Expected message '{reference[lev]}' but found '{message}' in log file"
 
 
-def test_logger_logit(logger_init):
+def test_logger_logit_stdout(logger_init):
 
     logger = Logger('test_logit', level=level, colored_log=True)
 
@@ -102,3 +102,34 @@ def test_logger_logit(logger_init):
     spam()
 
     assert True
+
+
+def test_logger_logit_logfile(tmp_path, logger_init):
+
+    logfile = tmp_path / "logit.log"
+    logger = Logger('test_logit', level=level, colored_log=True, logfile_path=logfile)
+
+    @logit(logger)
+    def add(x, y):
+        return x + y
+
+    @logit(logger)
+    def usedict(n, j=0, k=1):
+        return n + j + k
+
+    @logit(logger, 'example')
+    def spam():
+        print('Spam!')
+
+    add(2, 3)
+    usedict(2, 3)
+    usedict(2, k=3)
+    spam()
+
+    # Verify that file paths are logged
+    with open(logfile, 'r') as fh:
+        log_contents = fh.read()
+
+    # Assert that the message contains the test file name full path
+    assert 'BEGIN: tests.test_logger.add: ' + str(__file__) in log_contents, \
+        "Expected test file name to be logged"

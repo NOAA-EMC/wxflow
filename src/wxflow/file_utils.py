@@ -188,7 +188,7 @@ class FileHandler:
             results = pool.starmap(_copy_single_file, valid_files)
 
         # Check if any copies failed
-        for i, (success, src, dest, error) in enumerate(results):
+        for success, src, dest, error in results:
             if not success:
                 logger.exception(f"Error copying {src} to {dest}: {error}")
                 raise error

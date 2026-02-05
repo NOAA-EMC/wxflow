@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import os
 
@@ -418,8 +419,6 @@ def test_copy_parallel_file_integrity(tmp_path):
     ----------
     tmp_path - pytest fixture
     """
-    import hashlib
-
     # Create input directory
     input_dir_path = tmp_path / 'parallel_input'
     config = {'mkdir': [input_dir_path]}

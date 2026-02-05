@@ -263,3 +263,218 @@ def test_link_file_bad(tmp_path, create_dirs_and_files_for_test_link):
     bad_config = {'link_req': bad_link_list}
     with pytest.raises(FileNotFoundError):
         FileHandler(bad_config).sync()
+
+
+def test_copy_parallel_basic(tmp_path):
+    """
+    Test basic parallel copy functionality
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    """
+    # Create input directory and files
+    input_dir_path = tmp_path / 'parallel_input'
+    config = {'mkdir': [input_dir_path]}
+    FileHandler(config).sync()
+
+    # Create multiple test files with some content
+    src_files = []
+    for i in range(10):
+        src_file = input_dir_path / f'file_{i}.txt'
+        src_file.write_text(f'Content of file {i}\n' * 100)
+        src_files.append(src_file)
+
+    # Create output directory
+    output_dir_path = tmp_path / 'parallel_output'
+    config = {'mkdir': [output_dir_path]}
+    FileHandler(config).sync()
+
+    # Create copy list
+    copy_list = []
+    dest_files = []
+    for i, src in enumerate(src_files):
+        dest = output_dir_path / f'file_{i}.txt'
+        copy_list.append([src, dest])
+        dest_files.append(dest)
+
+    # Perform parallel copy
+    FileHandler.copy_parallel(copy_list)
+
+    # Verify all files were copied
+    for src, dest in zip(src_files, dest_files):
+        assert os.path.isfile(dest), f"Destination file {dest} does not exist"
+        # Verify content matches
+        assert src.read_text() == dest.read_text(), f"Content mismatch for {dest}"
+
+
+def test_copy_parallel_with_num_processes(tmp_path):
+    """
+    Test parallel copy with specific number of processes
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    """
+    # Create input directory and files
+    input_dir_path = tmp_path / 'parallel_input'
+    config = {'mkdir': [input_dir_path]}
+    FileHandler(config).sync()
+
+    # Create test files
+    src_files = []
+    for i in range(5):
+        src_file = input_dir_path / f'file_{i}.txt'
+        src_file.write_text(f'Content {i}')
+        src_files.append(src_file)
+
+    # Create output directory
+    output_dir_path = tmp_path / 'parallel_output'
+    config = {'mkdir': [output_dir_path]}
+    FileHandler(config).sync()
+
+    # Create copy list
+    copy_list = []
+    for i, src in enumerate(src_files):
+        dest = output_dir_path / f'file_{i}.txt'
+        copy_list.append([src, dest])
+
+    # Perform parallel copy with 2 processes
+    FileHandler.copy_parallel(copy_list, num_processes=2)
+
+    # Verify all files were copied
+    for i, src in enumerate(src_files):
+        dest = output_dir_path / f'file_{i}.txt'
+        assert os.path.isfile(dest)
+        assert src.read_text() == dest.read_text()
+
+
+def test_copy_parallel_error_propagation(tmp_path):
+    """
+    Test that errors in one copy cause the parent call to fail
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    """
+    # Create input directory and files
+    input_dir_path = tmp_path / 'parallel_input'
+    config = {'mkdir': [input_dir_path]}
+    FileHandler(config).sync()
+
+    # Create valid source files
+    src_files = []
+    for i in range(3):
+        src_file = input_dir_path / f'file_{i}.txt'
+        src_file.write_text(f'Content {i}')
+        src_files.append(src_file)
+
+    # Create copy list with bad destination (unwritable directory)
+    copy_list = []
+    for i, src in enumerate(src_files):
+        # Try to copy to an invalid location
+        dest = "/dev/null/invalid_path.txt"
+        copy_list.append([src, dest])
+
+    # Attempt parallel copy - should fail
+    with pytest.raises(OSError):
+        FileHandler.copy_parallel(copy_list)
+
+
+def test_copy_parallel_missing_required_file(tmp_path):
+    """
+    Test that missing required source files cause the parent call to fail
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    """
+    # Create input directory
+    input_dir_path = tmp_path / 'parallel_input'
+    config = {'mkdir': [input_dir_path]}
+    FileHandler(config).sync()
+
+    # Create one valid file and reference one that doesn't exist
+    valid_file = input_dir_path / 'valid.txt'
+    valid_file.write_text('Valid content')
+    missing_file = input_dir_path / 'missing.txt'
+
+    # Create output directory
+    output_dir_path = tmp_path / 'parallel_output'
+    config = {'mkdir': [output_dir_path]}
+    FileHandler(config).sync()
+
+    # Create copy list with missing file
+    copy_list = [
+        [valid_file, output_dir_path / 'valid.txt'],
+        [missing_file, output_dir_path / 'missing.txt']
+    ]
+
+    # Attempt parallel copy - should fail due to missing file
+    with pytest.raises(FileNotFoundError, match=f"Source file '{missing_file}' does not exist"):
+        FileHandler.copy_parallel(copy_list)
+
+
+def test_copy_parallel_file_integrity(tmp_path):
+    """
+    Test that parallel copies are identical to their sources
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    """
+    import hashlib
+
+    # Create input directory
+    input_dir_path = tmp_path / 'parallel_input'
+    config = {'mkdir': [input_dir_path]}
+    FileHandler(config).sync()
+
+    # Create files with larger content to ensure integrity
+    src_files = []
+    src_hashes = []
+    for i in range(5):
+        src_file = input_dir_path / f'file_{i}.txt'
+        # Create larger content
+        content = f'Line {i}\n' * 10000
+        src_file.write_text(content)
+        src_files.append(src_file)
+        # Calculate hash
+        hash_obj = hashlib.sha256()
+        hash_obj.update(content.encode())
+        src_hashes.append(hash_obj.hexdigest())
+
+    # Create output directory
+    output_dir_path = tmp_path / 'parallel_output'
+    config = {'mkdir': [output_dir_path]}
+    FileHandler(config).sync()
+
+    # Create copy list
+    copy_list = []
+    dest_files = []
+    for i, src in enumerate(src_files):
+        dest = output_dir_path / f'file_{i}.txt'
+        copy_list.append([src, dest])
+        dest_files.append(dest)
+
+    # Perform parallel copy
+    FileHandler.copy_parallel(copy_list)
+
+    # Verify file integrity using hashes
+    for i, dest in enumerate(dest_files):
+        assert os.path.isfile(dest)
+        content = dest.read_text()
+        hash_obj = hashlib.sha256()
+        hash_obj.update(content.encode())
+        dest_hash = hash_obj.hexdigest()
+        assert dest_hash == src_hashes[i], f"Hash mismatch for {dest}"
+
+
+def test_copy_parallel_invalid_format(tmp_path):
+    """
+    Test that invalid copy list format raises appropriate error
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    """
+    # Create a copy list with invalid format
+    bad_copy_list = [['only_one_item']]
+
+    # Attempt parallel copy with bad format - should fail
+    with pytest.raises(IndexError, match="List must be of the form"):
+        FileHandler.copy_parallel(bad_copy_list)

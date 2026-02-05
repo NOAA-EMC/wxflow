@@ -1,5 +1,6 @@
 import os
 from logging import getLogger
+from multiprocessing import Pool
 from pathlib import Path
 
 from .fsutils import cp, mkdir
@@ -7,6 +8,28 @@ from .fsutils import cp, mkdir
 __all__ = ['FileHandler']
 
 logger = getLogger(__name__.split('.')[-1])
+
+
+def _copy_single_file(src, dest):
+    """Helper function to copy a single file. Used by multiprocessing.Pool.
+
+    Parameters
+    ----------
+    src : str
+            Source file path
+    dest : str
+            Destination file path
+
+    Returns
+    -------
+    tuple
+            (success: bool, src: str, dest: str, error: Exception or None)
+    """
+    try:
+        cp(src, dest)
+        return (True, src, dest, None)
+    except Exception as ee:
+        return (False, src, dest, ee)
 
 
 class FileHandler:
@@ -105,6 +128,72 @@ class FileHandler:
                     raise FileNotFoundError(f"Source file '{src}' does not exist")
                 else:
                     logger.warning(f"Source file '{src}' does not exist, skipping!")
+
+    @staticmethod
+    def copy_parallel(filelist, num_processes=None):
+        """Function to copy files in parallel using multiprocessing.Pool
+
+        Parameters
+        ----------
+        filelist : list
+                List of lists of [src, dest]
+        num_processes : int, optional
+                Number of processes to use for parallel copying.
+                If None, uses the number of CPUs on the machine.
+        """
+        FileHandler._copy_files_parallel(filelist, required=True, num_processes=num_processes)
+
+    @staticmethod
+    def _copy_files_parallel(filelist, required=True, num_processes=None):
+        """Function to copy files in parallel using multiprocessing.Pool
+
+        `filelist` should be in the form:
+        - [src, dest]
+
+        Parameters
+        ----------
+        filelist : list
+                List of lists of [src, dest]
+        required : bool, optional
+                Flag to indicate if the src file is required to exist. Default is True
+        num_processes : int, optional
+                Number of processes to use for parallel copying.
+                If None, uses the number of CPUs on the machine.
+        """
+        # Validate filelist format
+        for sublist in filelist:
+            if len(sublist) != 2:
+                raise IndexError(
+                    f"List must be of the form ['src', 'dest'], not {sublist}")
+
+        # Check that all required source files exist before starting any copies
+        for sublist in filelist:
+            src = sublist[0]
+            if not os.path.exists(src):
+                if required:
+                    logger.exception(f"Source file '{src}' does not exist and is required, ABORT!")
+                    raise FileNotFoundError(f"Source file '{src}' does not exist")
+                else:
+                    logger.warning(f"Source file '{src}' does not exist, skipping!")
+
+        # Filter out files where source doesn't exist (for optional copies)
+        valid_files = [sublist for sublist in filelist if os.path.exists(sublist[0])]
+
+        if not valid_files:
+            logger.warning("No valid files to copy")
+            return
+
+        # Use multiprocessing.Pool to copy files in parallel
+        with Pool(processes=num_processes) as pool:
+            results = pool.starmap(_copy_single_file, valid_files)
+
+        # Check if any copies failed
+        for i, (success, src, dest, error) in enumerate(results):
+            if not success:
+                logger.exception(f"Error copying {src} to {dest}: {error}")
+                raise error
+            else:
+                logger.info(f'Copied {src} to {dest}')
 
     @staticmethod
     def _make_dirs(dirlist):

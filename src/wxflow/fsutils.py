@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from logging import getLogger
 
 __all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp',
-           'get_gid', 'chgrp', 'create_dir_before_copy']
+           'get_gid', 'chgrp']
 
 logger = getLogger(__name__.split('.')[-1])
 
@@ -112,51 +112,6 @@ def cp(source: str, target: str) -> None:
     except Exception as ee:
         logger.exception(f"An unknown error occurred while copying {source} to {target}")
         raise ee
-
-
-def create_dir_before_copy(src_path, target_dir, is_dir=False):
-    """Create target_dir if it does not exist, then copy src_path into it.
-
-    Parameters
-    ----------
-    src_path : str
-        Path to the source file or directory.
-    target_dir : str
-        Path to the target directory to create if it does not exist.
-    is_dir : bool, optional
-        If True, treat src_path as a directory and use shutil.copytree.
-        If False (default), treat as a file and use shutil.copy2.
-
-    Returns
-    -------
-    bool
-        True if src_path was successfully copied to target_dir. False otherwise.
-    """
-    src_type = "directory" if is_dir else "file"
-    valid = os.path.isdir(src_path) if is_dir else os.path.isfile(src_path)
-    if not valid:
-        logger.error(f"Source {src_type} '{src_path}' does not exist")
-        return False
-    if not os.access(src_path, os.R_OK):
-        logger.error(f"Source {src_type} '{src_path}' is not readable")
-        return False
-    if not os.path.exists(target_dir):
-        logger.info(f"Directory '{target_dir}' does not exist, creating...")
-        try:
-            mkdir_p(target_dir)
-        except OSError:
-            logger.error(f"Failed to create destination directory '{target_dir}'")
-            return False
-    try:
-        if is_dir:
-            target = os.path.join(target_dir, os.path.basename(src_path))
-            shutil.copytree(src_path, target)
-        else:
-            shutil.copy2(src_path, target_dir)
-    except OSError:
-        logger.error(f"Failed to copy {src_type} '{src_path}' to '{target_dir}'")
-        return False
-    return True
 
 
 # Group ID number for a given group name

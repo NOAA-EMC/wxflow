@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from logging import getLogger
 
 __all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp',
-           'get_gid', 'chgrp']
+           'get_gid', 'chgrp', 'prepare_copy']
 
 logger = getLogger(__name__.split('.')[-1])
 
@@ -112,6 +112,41 @@ def cp(source: str, target: str) -> None:
     except Exception as ee:
         logger.exception(f"An unknown error occurred while copying {source} to {target}")
         raise ee
+
+
+def prepare_copy(src_path, target_dir, is_dir=False):
+    """Check if src_path is available to copy and create target_dir if it does not exist.
+
+    Parameters
+    ----------
+    src_path : str
+        Path to the source file or directory.
+    target_dir : str
+        Path to the target directory to create if it does not exist.
+    is_dir : bool, optional
+        If True, treat src_path as a directory. If False (default), treat as a file.
+
+    Returns
+    -------
+    bool
+        True if src_path exists, is readable, and target_dir is ready. False otherwise.
+    """
+    src_type = "directory" if is_dir else "file"
+    valid = os.path.isdir(src_path) if is_dir else os.path.isfile(src_path)
+    if not valid:
+        logger.error(f"Source {src_type} '{src_path}' does not exist")
+        return False
+    if not os.access(src_path, os.R_OK):
+        logger.error(f"Source {src_type} '{src_path}' is not readable")
+        return False
+    if not os.path.exists(target_dir):
+        logger.info(f"Directory '{target_dir}' does not exist, creating...")
+        try:
+            mkdir_p(target_dir)
+        except OSError:
+            logger.error(f"Failed to create destination directory '{target_dir}'")
+            return False
+    return True
 
 
 # Group ID number for a given group name

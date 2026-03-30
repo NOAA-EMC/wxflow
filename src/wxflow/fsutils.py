@@ -115,7 +115,7 @@ def cp(source: str, target: str) -> None:
 
 
 def create_dir_before_copy(src_path, target_dir, is_dir=False):
-    """Check if src_path is available to copy and create target_dir if it does not exist.
+    """Create target_dir if it does not exist, then copy src_path into it.
 
     Parameters
     ----------
@@ -124,12 +124,13 @@ def create_dir_before_copy(src_path, target_dir, is_dir=False):
     target_dir : str
         Path to the target directory to create if it does not exist.
     is_dir : bool, optional
-        If True, treat src_path as a directory. If False (default), treat as a file.
+        If True, treat src_path as a directory and use shutil.copytree.
+        If False (default), treat as a file and use shutil.copy2.
 
     Returns
     -------
     bool
-        True if src_path exists, is readable, and target_dir is ready. False otherwise.
+        True if src_path was successfully copied to target_dir. False otherwise.
     """
     src_type = "directory" if is_dir else "file"
     valid = os.path.isdir(src_path) if is_dir else os.path.isfile(src_path)
@@ -146,6 +147,15 @@ def create_dir_before_copy(src_path, target_dir, is_dir=False):
         except OSError:
             logger.error(f"Failed to create destination directory '{target_dir}'")
             return False
+    try:
+        if is_dir:
+            target = os.path.join(target_dir, os.path.basename(src_path))
+            shutil.copytree(src_path, target)
+        else:
+            shutil.copy2(src_path, target_dir)
+    except OSError:
+        logger.error(f"Failed to copy {src_type} '{src_path}' to '{target_dir}'")
+        return False
     return True
 
 

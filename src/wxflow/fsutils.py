@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from logging import getLogger
 
 __all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp',
-           'get_gid', 'chgrp', 'prepare_copy']
+           'get_gid', 'chgrp', 'create_dir_before_copy']
 
 logger = getLogger(__name__.split('.')[-1])
 
@@ -114,7 +114,7 @@ def cp(source: str, target: str) -> None:
         raise ee
 
 
-def prepare_copy(src_path, target_dir, is_dir=False):
+def create_dir_before_copy(src_path, target_dir, is_dir=False):
     """Check if src_path is available to copy and create target_dir if it does not exist.
 
     Parameters

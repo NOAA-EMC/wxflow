@@ -242,8 +242,17 @@ def logit(logger: logging.Logger, name: str = None, message: str = None):
         @wraps(func)
         def wrapper(*args, **kwargs):
 
-            # Get all of the arguments passed to the function and log them, skipping the self argument if it exists.
-            passed_args = [repr(aa) for aa in args if aa != 'self']
+            # Get all of the arguments passed to the function and log them, skipping 'self'.
+            passed_args = []
+            # Determine if the function is an instance method.
+            if len(args) > 0 and hasattr(args[0], '__class__'):
+                class_name = args[0].__class__.__name__
+                for aa in args:
+                    if isinstance(aa, args[0].__class__):
+                        passed_args.append(f"{class_name} object")
+                    else:
+                        passed_args.append(repr(aa))
+
             passed_kwargs = [f"{kk}={repr(vv)}" for kk, vv in list(kwargs.items())]
 
             call_msg = 'BEGIN: ' + log_msg

@@ -134,6 +134,7 @@ def test_logger_logit_logfile(tmp_path, logger_init):
     assert 'BEGIN: tests.test_logger.add: ' + str(__file__) in log_contents, \
         "Expected test file name to be logged"
 
+
 def test_logger_logit_instance_method(tmp_path, logger_init):
 
     logfile = tmp_path / "logit_instance.log"

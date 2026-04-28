@@ -133,3 +133,25 @@ def test_logger_logit_logfile(tmp_path, logger_init):
     # Assert that the message contains the test file name full path
     assert 'BEGIN: tests.test_logger.add: ' + str(__file__) in log_contents, \
         "Expected test file name to be logged"
+
+def test_logger_logit_instance_method(tmp_path, logger_init):
+
+    logfile = tmp_path / "logit_instance.log"
+    logger = Logger('test_logit_instance', level=level, colored_log=True, logfile_path=logfile)
+
+    class MyClass:
+        @logit(logger)
+        def instance_method(self, x):
+            return x * 2
+
+    obj = MyClass()
+    result = obj.instance_method(5)
+    assert result == 10, "Expected instance method to return 10"
+
+    # Verify that file paths are logged
+    with open(logfile, 'r') as fh:
+        log_contents = fh.read()
+
+    # Assert that the message contains the test file name full path
+    assert 'BEGIN: tests.test_logger.instance_method: ' + str(__file__) in log_contents
+    assert 'MyClass object' in log_contents, "Expected MyClass method name to be logged. Actual log contents: " + log_contents

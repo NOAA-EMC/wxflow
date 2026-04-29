@@ -1,6 +1,7 @@
 import io
 import logging
 import re
+import sys
 
 import pytest
 
@@ -201,3 +202,52 @@ def test_file_logger_no_ansi(tmp_path, logger_init):
 
     assert not ANSI_ESCAPE_RE.search(log_contents), \
         "Log file written by add_file_logger must not contain ANSI escape/formatting characters"
+
+
+def test_stream_logger_no_ansi_when_stdout_redirected(logger_init, monkeypatch):
+    """Test that no ANSI codes appear when sys.stdout is redirected (bash: script.py > log.txt)
+
+    Simulates what happens when an entire bash script is redirected to a file.
+    add_stream_logger is called without an explicit stream so it uses sys.stdout,
+    which is no longer a TTY when redirected by the shell.
+    """
+
+    buf = io.StringIO()
+    monkeypatch.setattr(sys, 'stdout', buf)
+
+    log = logging.getLogger('test_redirected_stdout')
+    # Call without explicit stream — mirrors real-world usage; sys.stdout is used internally
+    add_stream_logger(log, level='debug', colored_log=True)
+    log.setLevel(logging.DEBUG)
+    log.debug(reference['debug'])
+    log.info(reference['info'])
+    log.warning(reference['warning'])
+    log.error(reference['error'])
+    log.critical(reference['critical'])
+
+    content = buf.getvalue()
+    assert not ANSI_ESCAPE_RE.search(content), \
+        "Output must not contain ANSI escape/formatting characters when sys.stdout is redirected"
+
+
+def test_logger_class_no_ansi_when_stdout_redirected(logger_init, monkeypatch):
+    """Test that Logger(colored_log=True) emits no ANSI codes when sys.stdout is redirected
+
+    Simulates: ./run_script.sh > logfile.log 2>&1
+    The Logger class must automatically detect the redirection and suppress color codes.
+    """
+
+    buf = io.StringIO()
+    monkeypatch.setattr(sys, 'stdout', buf)
+
+    logger = Logger('test_logger_redirect', level='debug', colored_log=True)
+    logger.setLevel(logging.DEBUG)
+    logger.debug(reference['debug'])
+    logger.info(reference['info'])
+    logger.warning(reference['warning'])
+    logger.error(reference['error'])
+    logger.critical(reference['critical'])
+
+    content = buf.getvalue()
+    assert not ANSI_ESCAPE_RE.search(content), \
+        "Logger output must not contain ANSI escape/formatting characters when sys.stdout is redirected"

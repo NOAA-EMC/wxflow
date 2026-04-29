@@ -145,7 +145,8 @@ class Logger:
 def add_stream_logger(logger: logging.Logger,
                       level: str = Logger.DEFAULT_LEVEL,
                       _format: str = Logger.DEFAULT_FORMAT,
-                      colored_log: bool = False):
+                      colored_log: bool = False,
+                      stream=None):
     """
     Stream logs to stdout
     This method will allow setting a custom stream handler on children
@@ -163,16 +164,29 @@ def add_stream_logger(logger: logging.Logger,
     colored_log : bool
                     enable colored output for stdout
                     default : False
+    stream : file-like object
+                Stream to write logs to. Colored formatting is only applied when
+                the stream is a TTY (terminal). When the stream is redirected to a
+                file, formatting characters are automatically suppressed.
+                default : sys.stdout
 
     Returns
     -------
     None
     """
 
-    handler = logging.StreamHandler(sys.stdout)
+    if stream is None:
+        stream = sys.stdout
+
+    handler = logging.StreamHandler(stream)
     handler.setLevel(level.upper())
-    _format = ColoredFormatter(
-        _format) if colored_log else logging.Formatter(_format)
+    # Only use colored formatting when the stream is a TTY to avoid writing
+    # ANSI escape codes into log files or piped output.
+    try:
+        is_tty = colored_log and hasattr(stream, 'isatty') and stream.isatty()
+    except Exception:
+        is_tty = False
+    _format = ColoredFormatter(_format) if is_tty else logging.Formatter(_format)
     handler.setFormatter(_format)
     logger.addHandler(handler)
 

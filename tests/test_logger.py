@@ -1,8 +1,13 @@
+import io
 import logging
+import re
 
 import pytest
 
 from wxflow import Logger, add_file_logger, add_stream_logger, logit
+
+# Regex that matches ANSI escape sequences (e.g. \x1b[38;21m)
+ANSI_ESCAPE_RE = re.compile(r'\x1b\[[0-9;]*m')
 
 level = 'debug'
 reference = {'debug': "Logging test has started",
@@ -133,3 +138,66 @@ def test_logger_logit_logfile(tmp_path, logger_init):
     # Assert that the message contains the test file name full path
     assert 'BEGIN: tests.test_logger.add: ' + str(__file__) in log_contents, \
         "Expected test file name to be logged"
+
+    # Assert that no ANSI escape codes are present in the log file even though
+    # colored_log=True was requested (file is not a TTY)
+    assert not ANSI_ESCAPE_RE.search(log_contents), \
+        "Log file must not contain ANSI escape/formatting characters"
+
+
+def test_stream_logger_no_ansi_on_non_tty(logger_init):
+    """Test that colored_log=True does not emit ANSI codes when stream is not a TTY"""
+
+    stream = io.StringIO()
+    log = logging.getLogger('test_no_ansi_non_tty')
+    add_stream_logger(log, level='debug', colored_log=True, stream=stream)
+    log.setLevel(logging.DEBUG)
+    log.debug(reference['debug'])
+    log.info(reference['info'])
+    log.warning(reference['warning'])
+    log.error(reference['error'])
+    log.critical(reference['critical'])
+
+    content = stream.getvalue()
+    assert not ANSI_ESCAPE_RE.search(content), \
+        "Stream output must not contain ANSI escape/formatting characters when stream is not a TTY"
+
+
+def test_stream_logger_ansi_on_tty(logger_init):
+    """Test that colored_log=True emits ANSI codes when stream is a TTY"""
+
+    class _FakeTTY(io.StringIO):
+        def isatty(self):
+            return True
+
+    stream = _FakeTTY()
+    log = logging.getLogger('test_ansi_tty')
+    add_stream_logger(log, level='debug', colored_log=True, stream=stream)
+    log.setLevel(logging.DEBUG)
+    log.info(reference['info'])
+
+    content = stream.getvalue()
+    assert ANSI_ESCAPE_RE.search(content), \
+        "Stream output must contain ANSI escape/formatting characters when stream is a TTY and colored_log=True"
+
+
+def test_file_logger_no_ansi(tmp_path, logger_init):
+    """Test that log files written via add_file_logger never contain ANSI codes"""
+
+    logfile = tmp_path / "no_ansi.log"
+    log = logging.getLogger('test_file_no_ansi')
+    add_file_logger(log, level='debug', logfile_path=logfile)
+    log.setLevel(logging.DEBUG)
+
+    for msg in reference.values():
+        log.debug(msg)
+        log.info(msg)
+        log.warning(msg)
+        log.error(msg)
+        log.critical(msg)
+
+    with open(logfile, 'r') as fh:
+        log_contents = fh.read()
+
+    assert not ANSI_ESCAPE_RE.search(log_contents), \
+        "Log file written by add_file_logger must not contain ANSI escape/formatting characters"

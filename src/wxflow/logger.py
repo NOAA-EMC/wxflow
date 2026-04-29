@@ -262,7 +262,7 @@ def logit(logger: logging.Logger, name: str = None, message: str = None):
             # Determine if the function is an instance method.
             if len(args) > 0:
                 if inspect.signature(func).parameters.get('self') is not None:
-                    class_name=args[0].__class__.__name__
+                    class_name = args[0].__class__.__name__
                     passed_args.append(f"{class_name} object")
                     passed_args.extend([repr(aa) for aa in args[1:]])
                 else:

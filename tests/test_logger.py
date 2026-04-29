@@ -169,6 +169,48 @@ def test_logger_logit_instance_method(tmp_path, logger_init):
     assert 'MyClass object' in log_contents, "Expected MyClass method name to be logged. Actual log contents: " + log_contents
 
 
+def test_logger_logit_noninstance_method(tmp_path, logger_init):
+
+    logfile = tmp_path / "logit_noninstance.log"
+    logger = Logger('test_logit_noninstance', level=level, colored_log=True, logfile_path=logfile)
+
+    class DummyClass:
+        def __str__(self):
+            return "DummyClass instance"
+
+    class MyClass:
+        @staticmethod
+        @logit(logger)
+        def non_instance_method(x):
+            return x * 3
+
+        @staticmethod
+        @logit(logger)
+        def non_instance_method_object_arg(obj):
+            return str(obj)
+
+    result = MyClass.non_instance_method(5)
+    assert result == 15, "Expected non-instance method to return 15"
+
+    obj = DummyClass()
+
+    result = MyClass.non_instance_method_object_arg(obj)
+    assert result == "DummyClass instance", "Expected non-instance method to return string representation of DummyClass instance"
+
+    # Check the logfile for correct logging of non-instance method and object argument
+    with open(logfile, 'r') as fh:
+        log_contents = fh.read()
+    assert 'BEGIN: tests.test_logger.non_instance_method: ' + str(__file__) in log_contents, \
+        "Expected non-instance method name to be logged. Actual log contents: " + log_contents
+
+    assert 'BEGIN: tests.test_logger.non_instance_method_object_arg: ' + str(__file__) in log_contents, \
+        "Expected non-instance method name to be logged. Actual log contents: " + log_contents
+
+    # Make sure that the string representation is not simply'DummyClass object' but includes the instance's memory address (default __str__ for objects)
+    assert 'DummyClass object at' in log_contents, \
+        "Expected string representation of DummyClass instance to be logged. Actual log contents: " + log_contents
+
+
 def test_stream_logger_no_ansi_on_non_tty(logger_init):
     """Test that colored_log=True does not emit ANSI codes when stream is not a TTY"""
 

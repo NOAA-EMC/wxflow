@@ -166,7 +166,8 @@ def test_logger_logit_instance_method(tmp_path, logger_init):
 
     # Assert that the message contains the test file name full path
     assert 'BEGIN: tests.test_logger.instance_method: ' + str(__file__) in log_contents
-    assert 'MyClass object' in log_contents, "Expected MyClass method name to be logged. Actual log contents: " + log_contents
+    assert not re.search(r'<[^>]*MyClass object at 0x[0-9A-Fa-f]+>', log_contents), \
+        "Log output must not contain the default MyClass self repr with memory address. Actual log contents: " + log_contents
 
 
 def test_logger_logit_noninstance_method(tmp_path, logger_init):
@@ -206,9 +207,9 @@ def test_logger_logit_noninstance_method(tmp_path, logger_init):
     assert 'BEGIN: tests.test_logger.non_instance_method_object_arg: ' + str(__file__) in log_contents, \
         "Expected non-instance method name to be logged. Actual log contents: " + log_contents
 
-    # Make sure that the string representation is not simply'DummyClass object' but includes the instance's memory address (default __str__ for objects)
+    # Make sure that the logged object representation is the default repr, which includes the instance's memory address
     assert 'DummyClass object at' in log_contents, \
-        "Expected string representation of DummyClass instance to be logged. Actual log contents: " + log_contents
+        "Expected repr of DummyClass instance (including memory address) to be logged. Actual log contents: " + log_contents
 
 
 def test_stream_logger_no_ansi_on_non_tty(logger_init):

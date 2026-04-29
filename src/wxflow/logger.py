@@ -2,13 +2,13 @@
 Logger
 """
 
+import inspect
 import logging
 import os
 import sys
 from functools import wraps
 from pathlib import Path
 from typing import Any, Union
-import inspect
 
 __all__ = ['Logger', 'add_stream_logger', 'add_file_logger', 'logit']
 

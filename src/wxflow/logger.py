@@ -8,6 +8,7 @@ import sys
 from functools import wraps
 from pathlib import Path
 from typing import Any, Union
+import inspect
 
 __all__ = ['Logger', 'add_stream_logger', 'add_file_logger', 'logit']
 
@@ -260,13 +261,10 @@ def logit(logger: logging.Logger, name: str = None, message: str = None):
             passed_args = []
             # Determine if the function is an instance method.
             if len(args) > 0:
-                if hasattr(args[0], '__class__'):
-                    class_name = args[0].__class__.__name__
-                    for aa in args:
-                        if isinstance(aa, args[0].__class__):
-                            passed_args.append(f"{class_name} object")
-                        else:
-                            passed_args.append(repr(aa))
+                if inspect.signature(func).parameters.get('self') is not None:
+                    class_name=args[0].__class__.__name__
+                    passed_args.append(f"{class_name} object")
+                    passed_args.extend([repr(aa) for aa in args[1:]])
                 else:
                     passed_args = [repr(aa) for aa in args]
 

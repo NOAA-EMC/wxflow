@@ -2,6 +2,7 @@
 Logger
 """
 
+import inspect
 import logging
 import os
 import sys
@@ -145,7 +146,8 @@ class Logger:
 def add_stream_logger(logger: logging.Logger,
                       level: str = Logger.DEFAULT_LEVEL,
                       _format: str = Logger.DEFAULT_FORMAT,
-                      colored_log: bool = False):
+                      colored_log: bool = False,
+                      stream=None):
     """
     Stream logs to stdout
     This method will allow setting a custom stream handler on children
@@ -163,16 +165,29 @@ def add_stream_logger(logger: logging.Logger,
     colored_log : bool
                     enable colored output for stdout
                     default : False
+    stream : file-like object
+                Stream to write logs to. Colored formatting is only applied when
+                the stream is a TTY (terminal). When the stream is redirected to a
+                file, formatting characters are automatically suppressed.
+                default : sys.stdout
 
     Returns
     -------
     None
     """
 
-    handler = logging.StreamHandler(sys.stdout)
+    if stream is None:
+        stream = sys.stdout
+
+    handler = logging.StreamHandler(stream)
     handler.setLevel(level.upper())
-    _format = ColoredFormatter(
-        _format) if colored_log else logging.Formatter(_format)
+    # Only use colored formatting when the stream is a TTY to avoid writing
+    # ANSI escape codes into log files or piped output.
+    try:
+        is_tty = colored_log and hasattr(stream, 'isatty') and stream.isatty()
+    except Exception:
+        is_tty = False
+    _format = ColoredFormatter(_format) if is_tty else logging.Formatter(_format)
     handler.setFormatter(_format)
     logger.addHandler(handler)
 
@@ -242,7 +257,17 @@ def logit(logger: logging.Logger, name: str = None, message: str = None):
         @wraps(func)
         def wrapper(*args, **kwargs):
 
-            passed_args = [repr(aa) for aa in args]
+            # Get all of the arguments passed to the function and log them, skipping 'self'.
+            passed_args = []
+            # Determine if the function is an instance method.
+            if len(args) > 0:
+                if inspect.signature(func).parameters.get('self') is not None:
+                    class_name = args[0].__class__.__name__
+                    passed_args.append(f"{class_name} object")
+                    passed_args.extend([repr(aa) for aa in args[1:]])
+                else:
+                    passed_args = [repr(aa) for aa in args]
+
             passed_kwargs = [f"{kk}={repr(vv)}" for kk, vv in list(kwargs.items())]
 
             call_msg = 'BEGIN: ' + log_msg

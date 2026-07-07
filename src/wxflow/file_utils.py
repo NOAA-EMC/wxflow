@@ -1,8 +1,9 @@
 import os
+import tempfile
 from logging import getLogger
 from pathlib import Path
 
-from .fsutils import cp, cpfs, mkdir
+from .fsutils import cp, mkdir, rm_p
 
 __all__ = ['FileHandler']
 
@@ -77,7 +78,50 @@ class FileHandler:
 
     @staticmethod
     def copy_safe(filelist):
-        FileHandler._copy_files(filelist, required=True, copy_fn=cpfs)
+        FileHandler._copy_files(filelist, required=True, copy_fn=FileHandler._safe_cp)
+
+    @staticmethod
+    def _safe_cp(source, target):
+        """Copy ``source`` to ``target`` via a fsync'd temporary file that is
+        atomically renamed onto the destination (mirrors prod_util ``cpfs``).
+
+        Directory targets are handled like :func:`fsutils.cp` — the basename of
+        ``source`` is retained.
+        """
+        if os.path.isdir(target):
+            target = os.path.join(target, os.path.basename(source))
+
+        dest_dir = os.path.dirname(target) or '.'
+        if not os.path.isdir(dest_dir):
+            raise OSError(f"Destination directory {dest_dir} does not exist")
+
+        # Temp file in the destination directory keeps the rename atomic (same fs).
+        try:
+            fd, tmp_path = tempfile.mkstemp(prefix=f".{os.path.basename(target)}.",
+                                            suffix='.tmp', dir=dest_dir)
+            os.close(fd)
+        except OSError:
+            raise OSError(f"Unable to create temporary file in {dest_dir}")
+
+        try:
+            # Reuse cp() so metadata handling stays consistent with copy_req/copy_opt.
+            cp(source, tmp_path)
+
+            # Force the temp file's data to durable storage before the rename.
+            try:
+                with open(tmp_path, 'rb') as fh:
+                    os.fsync(fh.fileno())
+            except OSError:
+                raise OSError(f"Unable to fsync temporary file {tmp_path}")
+
+            # Atomic rename; overwrites target if it exists.
+            try:
+                os.replace(tmp_path, target)
+            except OSError:
+                raise OSError(f"Unable to move {tmp_path} to {target}")
+        except Exception:
+            rm_p(tmp_path, missing_ok=True)
+            raise
 
     @staticmethod
     def _copy_files(filelist, required=True, copy_fn=cp):

@@ -1,11 +1,10 @@
 import grp
 import os
 import shutil
-import tempfile
 from contextlib import contextmanager
 from logging import getLogger
 
-__all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp', 'cpfs',
+__all__ = ['mkdir', 'mkdir_p', 'rmdir', 'chdir', 'rm_p', 'cp',
            'get_gid', 'chgrp']
 
 logger = getLogger(__name__.split('.')[-1])
@@ -113,67 +112,6 @@ def cp(source: str, target: str) -> None:
     except Exception as ee:
         logger.exception(f"An unknown error occurred while copying {source} to {target}")
         raise ee
-
-
-def cpfs(source: str, target: str) -> None:
-    """
-    Safely copy ``source`` to ``target`` by first writing to a temporary file in
-    the destination folder, fsync'ing it to durable storage, and then atomically
-    renaming it onto the final target (overwriting any existing file).
-
-    This mirrors the behavior of the ``prod_util`` ``cpfs`` utility used when
-    staging files from ``DATA`` to ``COM``.  If ``target`` is a directory, the
-    basename of ``source`` is retained (matching :func:`cp`).
-
-    Parameters
-    ----------
-        source : str
-                 Source filename
-        target : str
-                 Destination filename or directory
-
-    Returns
-    -------
-        None
-    """
-
-    # Match cp() semantics for directory targets.
-    if os.path.isdir(target):
-        target = os.path.join(target, os.path.basename(source))
-
-    dest_dir = os.path.dirname(target) or '.'
-    if not os.path.isdir(dest_dir):
-        raise OSError(f"Destination directory {dest_dir} does not exist")
-
-    # Create a uniquely-named temporary file in the destination directory so the
-    # subsequent rename is atomic on the same filesystem.
-    try:
-        fd, tmp_path = tempfile.mkstemp(prefix=f".{os.path.basename(target)}.",
-                                        suffix='.tmp', dir=dest_dir)
-        os.close(fd)
-    except OSError:
-        raise OSError(f"Unable to create temporary file in {dest_dir}")
-
-    try:
-        # Reuse cp() for the copy so metadata is preserved consistently.
-        cp(source, tmp_path)
-
-        # Force the temp file's data to durable storage before the rename.
-        try:
-            with open(tmp_path, 'rb') as fh:
-                os.fsync(fh.fileno())
-        except OSError:
-            raise OSError(f"Unable to fsync temporary file {tmp_path}")
-
-        # Atomic rename (overwrites target if it exists).
-        try:
-            os.replace(tmp_path, target)
-        except OSError:
-            raise OSError(f"Unable to move {tmp_path} to {target}")
-    except Exception:
-        # Clean up the temp file on any failure so we don't leave debris behind.
-        rm_p(tmp_path, missing_ok=True)
-        raise
 
 
 # Group ID number for a given group name

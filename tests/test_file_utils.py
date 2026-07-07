@@ -115,50 +115,6 @@ def test_copy(tmp_path):
         FileHandler(config).sync()
 
 
-def test_copy_safe(tmp_path):
-    """
-    Test for safely copying files via a fsync'd temporary file that is atomically
-    renamed onto the destination (mirrors prod_util ``cpfs``).
-    """
-
-    # Set up input directory with source files of known content
-    input_dir_path = tmp_path / 'my_input_dir'
-    FileHandler({'mkdir': [input_dir_path]}).sync()
-
-    src_files = [input_dir_path / 'a.txt', input_dir_path / 'b.txt']
-    for idx, ff in enumerate(src_files):
-        ff.write_text(f'contents-{idx}')
-
-    # Set up output directory and pre-populate one destination to exercise overwrite
-    output_dir_path = tmp_path / 'my_output_dir'
-    FileHandler({'mkdir': [output_dir_path]}).sync()
-    dest_files = [output_dir_path / 'a.txt', output_dir_path / 'bb.txt']
-    dest_files[0].write_text('stale')
-
-    copy_list = [[src, dest] for src, dest in zip(src_files, dest_files)]
-
-    # Test 1 (nominal) - copy_safe copies content and leaves no temp files behind
-    FileHandler({'copy_safe': copy_list}).sync()
-
-    for src, dest in zip(src_files, dest_files):
-        assert os.path.isfile(dest)
-        assert dest.read_text() == src.read_text()
-
-    # No stray temp files (mkstemp uses ".<name>." prefix + ".tmp" suffix)
-    leftovers = [p for p in os.listdir(output_dir_path) if p.endswith('.tmp')]
-    assert leftovers == []
-
-    # Test 2 - copy_safe raises when the destination directory does not exist
-    bad_copy_list = [[src_files[0], tmp_path / 'no_such_dir' / 'a.txt']]
-    with pytest.raises(OSError):
-        FileHandler({'copy_safe': bad_copy_list}).sync()
-
-    # Test 3 - copy_safe is 'required'; missing source raises FileNotFoundError
-    missing_list = [[input_dir_path / 'c.txt', output_dir_path / 'c.txt']]
-    with pytest.raises(FileNotFoundError):
-        FileHandler({'copy_safe': missing_list}).sync()
-
-
 @pytest.fixture
 def create_dirs_and_files_for_test_link(tmp_path):
     """

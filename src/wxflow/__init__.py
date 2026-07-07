@@ -8,7 +8,8 @@ from .exceptions import (WorkflowException, WorkflowKeyError,
 from .executable import CommandNotFoundError, Executable, ProcessError, which
 from .factory import Factory
 from .file_utils import FileHandler
-from .fsutils import chdir, chgrp, cp, get_gid, mkdir, mkdir_p, rm_p, rmdir
+from .fsutils import (chdir, chgrp, cp, cpfs, get_gid, mkdir, mkdir_p, rm_p,
+                      rmdir)
 from .hsi import Hsi
 from .htar import Htar
 from .jinja import Jinja, parse_j2tmpl

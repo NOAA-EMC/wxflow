@@ -86,8 +86,12 @@ class FileHandler:
         atomically renamed onto the destination (mirrors prod_util ``cpfs``).
 
         Directory targets are handled like :func:`fsutils.cp` — the basename of
-        ``source`` is retained.
+        ``source`` is retained.  A directory ``source`` is not supported and
+        raises an ``IsADirectoryError``.
         """
+        if os.path.isdir(source):
+            raise IsADirectoryError(f"Source '{source}' is a directory; copy_safe only supports files")
+
         if os.path.isdir(target):
             target = os.path.join(target, os.path.basename(source))
 

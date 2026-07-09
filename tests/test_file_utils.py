@@ -115,6 +115,60 @@ def test_copy(tmp_path):
         FileHandler(config).sync()
 
 
+def test_copy_safe(tmp_path):
+    """
+    Test for safely copying files via a fsync'd temporary file that is atomically
+    renamed onto the destination (mirrors prod_util ``cpfs``).
+    Parameters
+    ----------
+    tmp_path - pytest fixture
+    """
+
+    # Create the input directory with source files of known content
+    input_dir_path = tmp_path / 'my_input_dir'
+    FileHandler({'mkdir': [input_dir_path]}).sync()
+
+    src_files = [input_dir_path / 'a.txt', input_dir_path / 'b.txt']
+    for idx, ff in enumerate(src_files):
+        ff.write_text(f'contents-{idx}')
+
+    # Create output directory; pre-populate one destination to exercise overwrite
+    output_dir_path = tmp_path / 'my_output_dir'
+    FileHandler({'mkdir': [output_dir_path]}).sync()
+    dest_files = [output_dir_path / 'a.txt', output_dir_path / 'bb.txt']
+    dest_files[0].write_text('stale')
+
+    copy_list = [[src, dest] for src, dest in zip(src_files, dest_files)]
+
+    # Test 1 (nominal) - content is copied correctly and overwrites existing dest
+    FileHandler({'copy_safe': copy_list}).sync()
+    for src, dest in zip(src_files, dest_files):
+        assert os.path.isfile(dest)
+        assert dest.read_text() == src.read_text()
+
+    # Test 2 - no leftover temporary files remain in the destination directory
+    leftovers = [p for p in os.listdir(output_dir_path) if p.endswith('.tmp')]
+    assert leftovers == []
+
+    # Test 3 - a directory target retains the source basename
+    FileHandler({'copy_safe': [[src_files[0], output_dir_path]]}).sync()
+    assert (output_dir_path / 'a.txt').read_text() == src_files[0].read_text()
+
+    # Test 4 - copy_safe is 'required'; a missing source raises FileNotFoundError
+    missing = input_dir_path / 'c.txt'
+    with pytest.raises(FileNotFoundError, match=f"Source file '{missing}' does not exist"):
+        FileHandler({'copy_safe': [[missing, output_dir_path / 'c.txt']]}).sync()
+
+    # Test 5 - a non-existent destination directory raises OSError
+    bad_dest = tmp_path / 'no_such_dir' / 'a.txt'
+    with pytest.raises(OSError, match="Destination directory .* does not exist"):
+        FileHandler({'copy_safe': [[src_files[0], bad_dest]]}).sync()
+
+    # Test 6 - a directory source is not supported and raises IsADirectoryError
+    with pytest.raises(IsADirectoryError, match="is a directory"):
+        FileHandler({'copy_safe': [[input_dir_path, output_dir_path / 'dir_copy']]}).sync()
+
+
 @pytest.fixture
 def create_dirs_and_files_for_test_link(tmp_path):
     """
